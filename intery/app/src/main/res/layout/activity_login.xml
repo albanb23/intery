@@ -8,14 +8,14 @@
     tools:context=".LoginActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/inputsLinearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="24dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        app:layout_constraintBottom_toTopOf="@+id/buttonsLinearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent">
@@ -44,7 +44,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout3"
+        android:id="@+id/buttonsLinearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -78,10 +78,13 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/logInGoogleButton"
-            style="@style/button"
+            style="@style/button_google"
             android:layout_width="match_parent"
-            android:layout_height="46dp"
             android:text="Iniciar sesión con Google"
+            android:layout_height="46dp"
+            android:drawablePadding="8dp"
+            android:paddingStart="48dp"
+            android:paddingLeft="24dp"
             android:textAlignment="center" />
 
         <LinearLayout
@@ -94,8 +97,10 @@
                 android:layout_height="16dp" />
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:baselineAligned="false"
                 android:orientation="horizontal">
 
                 <TextView
@@ -103,19 +108,14 @@
                     style="@style/text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingRight="8dp"
                     android:text="@string/noAcc" />
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/signInTextView"
                     style="@style/text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:clickable="true"
                     android:text="@string/register" />
             </LinearLayout>

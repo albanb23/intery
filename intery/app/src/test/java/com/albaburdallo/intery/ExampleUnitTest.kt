@@ -1,4 +1,4 @@
-package com.albaburdallo.tfg
+package com.albaburdallo.intery
 
 import org.junit.Test
 

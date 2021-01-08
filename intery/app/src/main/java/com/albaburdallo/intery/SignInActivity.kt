@@ -1,16 +1,13 @@
-package com.albaburdallo.tfg
+package com.albaburdallo.intery
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.CheckBox
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.wajahatkarim3.easyvalidation.core.rules.BaseRule
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
-import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_sign_in.*
 
 
@@ -42,7 +39,8 @@ class SignInActivity : AppCompatActivity() {
                             //Creamos el nuevo usuario
                             val user = hashMapOf("name" to nameEditText.text.toString(),
                                 "surname" to surnameEditText.text.toString())
-                            db.collection("users").add(user)
+//                            db.collection("users").add(user)
+                            db.collection("users").document(emailEditTextSignIn.text.toString()).set(user)
                             showLogin()
                         } else {
                             showAlert()
