@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "12678555690",
+    "project_id": "tfg-albaburdallo-2020",
+    "storage_bucket": "tfg-albaburdallo-2020.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12678555690:android:9904e4d6f1344e3f1abb53",
+        "android_client_info": {
+          "package_name": "com.albaburdallo.tfg"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "12678555690-qetrq38aom4hua0fp6be6rb1k0rb40ti.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBu0zkCUYUdDhvFWd55oXZNV8CadC5_RZA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "12678555690-qetrq38aom4hua0fp6be6rb1k0rb40ti.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

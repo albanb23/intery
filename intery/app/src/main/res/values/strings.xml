@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">TFG</string>
+    <string name="or">o</string>
+    <string name="register"><b>Registrate aquí</b></string>
+    <string name="noAcc">¿Todavía no tienes una cuenta?</string>
+    <string name="logIn">Iniciar sesión</string>
+    <string name="signIn">Crear cuenta</string>
+    <string name="createAcc"><b>Crear una cuenta</b></string>
+    <string name="name"><b>Nombre</b></string>
+    <string name="surname"><b>Apellidos</b></string>
+    <string name="email"><b>Email</b></string>
+    <string name="password"><b>Contraseña</b></string>
+    <string name="repeat_password"><b>Repite la contraseña</b></string>
+</resources>
