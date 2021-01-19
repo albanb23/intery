@@ -1,15 +1,32 @@
 <resources>
+    <!-- common -->
     <string name="app_name">intery</string>
     <string name="prefs_file">com.albaburdallo.intery.PREFERENCE_FILE_KEY</string>
     <string name="or">o</string>
+    <string name="save">Guardar</string>
+    <!-- login -->
     <string name="register"><b>Registrate aquí</b></string>
     <string name="noAcc">¿Todavía no tienes una cuenta?</string>
     <string name="logIn">Iniciar sesión</string>
     <string name="signIn">Crear cuenta</string>
+    <string name="logOut"><b><i>Cerrar sesión</i></b></string>
+    <!-- sign in -->
     <string name="createAcc"><b>Crear una cuenta</b></string>
     <string name="name"><b>Nombre</b></string>
     <string name="surname"><b>Apellidos</b></string>
     <string name="email"><b>Email</b></string>
     <string name="password"><b>Contraseña</b></string>
     <string name="repeat_password"><b>Repite la contraseña</b></string>
+    <!-- home -->
+    <string name="hello">¡Hola, </string>
+    <!-- task -->
+    <string name="noTasks"><i>Aún no hay tareas</i></string>
+    <string name="create_task">Nueva tarea</string>
+    <string name="addTask"><b>Añadir tarea</b></string>
+    <string name="taskName">Título</string>
+    <string name="taskStartDay">Empieza</string>
+    <string name="taskEndDay">Termina</string>
+    <string name="taskAllDay">Todo el día</string>
+    <string name="taskRemindMe">Recuerdame</string>
+    <string name="taskNotes">Notas</string>
 </resources>

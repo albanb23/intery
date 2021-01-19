@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".SignInActivity">
 
-
     <!-- close button -->
     <ImageView
         android:id="@+id/closeViewSignIn"
@@ -63,7 +62,7 @@
 
         <LinearLayout
             android:id="@+id/linearLayout2"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
             android:orientation="vertical">
@@ -93,7 +92,7 @@
                 style="@style/input"
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
-                android:background="@drawable/ic_input_signin"
+                android:background="@drawable/ic_input"
                 android:ems="10"
                 android:inputType="textPersonName" />
 
@@ -114,7 +113,7 @@
                 style="@style/input"
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
-                android:background="@drawable/ic_input_signin"
+                android:background="@drawable/ic_input"
                 android:ems="10"
                 android:inputType="textPersonName" />
 
@@ -134,8 +133,8 @@
                 android:id="@+id/emailEditTextSignIn"
                 style="@style/input"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_input_signin"
+                android:layout_height="46dp"
+                android:background="@drawable/ic_input"
                 android:ems="10"
                 android:inputType="textEmailAddress" />
 
@@ -156,7 +155,7 @@
                 style="@style/input"
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
-                android:background="@drawable/ic_input_signin"
+                android:background="@drawable/ic_input"
                 android:ems="10"
                 android:inputType="textPassword" />
 
@@ -175,9 +174,9 @@
             <EditText
                 android:id="@+id/repeatPasswordEditText"
                 style="@style/input"
-                android:background="@drawable/ic_input_signin"
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
+                android:background="@drawable/ic_input"
                 android:ems="10"
                 android:inputType="textPassword" />
 
@@ -203,16 +202,17 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatButton
+                <Button
                     android:id="@+id/signInButton"
                     style="@style/button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginRight="32dp"
                     android:layout_weight="1"
                     android:background="@drawable/button"
-                    android:text="Crear cuenta" />
+                    android:paddingLeft="24dp"
+                    android:paddingRight="24dp"
+                    android:text="@string/createAcc"
+                    android:layout_gravity="center" />
 
                 <Space
                     android:layout_width="match_parent"
