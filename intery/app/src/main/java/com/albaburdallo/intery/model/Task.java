@@ -12,10 +12,13 @@ public class Task implements Serializable {
 
     private String name;
     private boolean done;
-    private Calendar start;
-    private Calendar end;
+    private Date startDate;
+    private Date startTime;
+    private Date endDate;
+    private Date endTime;
     private Boolean allDay;
-    private String description;
+    private Boolean notifyMe;
+    private String notes;
     private Calendar created;
     //calendario
     //tarea padre
@@ -30,26 +33,17 @@ public class Task implements Serializable {
         this.created = java.util.Calendar.getInstance();
     }
 
-    public Task(String name, Calendar start, Calendar end, Boolean allDay, String description) {
+    public Task(String name, Date startDate, Date startTime, Date endDate, Date endTime, Boolean allDay, Boolean notifyMe, String notes) {
         this.name = name;
-        this.start = start;
-        this.end = end;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.endDate = endDate;
+        this.endTime = endTime;
         this.allDay = allDay;
-        this.description = description;
+        this.notifyMe = notifyMe;
+        this.notes = notes;
         this.done = false;
-        this.created = java.util.Calendar.getInstance();
-    }
-
-    public Map<String, Object> toMap() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", this.name);
-        map.put("start", this.start);
-        map.put("end", this.end);
-        map.put("allDay", this.allDay);
-        map.put("description", this.description);
-        map.put("name", this.name);
-        map.put("created", this.created);
-        return map;
+        this.created = Calendar.getInstance();
     }
 
     public String getName() {
@@ -68,20 +62,36 @@ public class Task implements Serializable {
         this.done = done;
     }
 
-    public Calendar getStart() {
-        return start;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setStart(Calendar start) {
-        this.start = start;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
-    public Calendar getEnd() {
-        return end;
+    public Date getStartTime() {
+        return startTime;
     }
 
-    public void setEnd(Calendar end) {
-        this.end = end;
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
     public Boolean getAllDay() {
@@ -92,12 +102,12 @@ public class Task implements Serializable {
         this.allDay = allDay;
     }
 
-    public String getDescription() {
-        return description;
+    public String getNotes() {
+        return notes;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public Calendar getCreated() {
@@ -108,15 +118,12 @@ public class Task implements Serializable {
         this.created = created;
     }
 
-    @Override
-    public String toString() {
-        return "Task{" +
-                "name='" + name + '\'' +
-                ", done=" + done +
-                ", start=" + start +
-                ", end=" + end +
-                ", allDay=" + allDay +
-                ", description='" + description + '\'' +
-                '}';
+    public Boolean getNotifyMe() {
+        return notifyMe;
     }
+
+    public void setNotifyMe(Boolean notifyMe) {
+        this.notifyMe = notifyMe;
+    }
+
 }

@@ -12,9 +12,12 @@ import android.widget.ListView
 import com.albaburdallo.intery.HomeActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.model.Task
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_task.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class TaskActivity : AppCompatActivity(){
     private val db = FirebaseFirestore.getInstance()
@@ -39,7 +42,15 @@ class TaskActivity : AppCompatActivity(){
         tasks = arrayListOf()
         db.collection("tasks").orderBy("created.time", Query.Direction.DESCENDING).get().addOnSuccessListener { documents ->
             for (document in documents) {
-                tasks.add(Task(document.get("name") as String))
+                val name = document.get("name") as String
+                val startDate = document.get("startDate") as Timestamp
+                val endDate = document.get("endDate") as Timestamp
+                val startTime = document.get("startTime") as Timestamp
+                val endTime = document.get("endTime") as Timestamp
+                val allday = document.get("allDay") as Boolean
+                val notifyme = document.get("notifyMe") as Boolean
+                val notes = document.get("notes") as String
+                tasks.add(Task(name, startDate.toDate(), endDate.toDate(), startTime.toDate(), endTime.toDate(), allday, notifyme, notes))
             }
 
             adapter = TaskAdapter(this, tasks)
@@ -54,7 +65,6 @@ class TaskActivity : AppCompatActivity(){
                 adapter.notifyDataSetChanged()
             }
         }
-
 
         createTaskButton.setOnClickListener {
             showTaskForm()

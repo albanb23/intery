@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -58,51 +57,88 @@
                 android:hint="@string/taskName"
                 android:inputType="textPersonName" />
 
+            <TextView
+                android:id="@+id/taskStartTextView"
+                style="@style/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="24dp"
+                android:paddingBottom="8dp"
+                android:text="@string/taskStart" />
+
             <LinearLayout
                 android:id="@+id/startDateLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="24dp">
+                android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/startDateEditText"
+                <TextView
+                    android:id="@+id/startDateInput"
                     style="@style/input"
                     android:layout_width="match_parent"
                     android:layout_height="46dp"
-                    android:background="@drawable/ic_input"
                     android:layout_weight="1"
+                    android:background="@drawable/ic_input"
                     android:ems="10"
-                    android:hint="@string/taskStartDay"
-                    android:inputType="text" />
+                    android:gravity="center_vertical"
+                    android:hint="@string/taskDate" />
 
                 <Space
                     android:layout_width="8dp"
                     android:layout_height="wrap_content" />
 
+                <TextView
+                    android:id="@+id/startTimeInput"
+                    style="@style/input"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/ic_input"
+                    android:gravity="center_vertical"
+                    android:hint="@string/taskTime" />
+
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/taskEndTextView"
+                style="@style/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="@string/taskEnd" />
 
             <LinearLayout
                 android:id="@+id/endDateLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="16dp">
+                android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/endDateEditText"
+                <TextView
+                    android:id="@+id/endDateInput"
                     style="@style/input"
                     android:layout_width="match_parent"
                     android:layout_height="46dp"
-                    android:background="@drawable/ic_input"
                     android:layout_weight="1"
+                    android:background="@drawable/ic_input"
                     android:ems="10"
-                    android:hint="@string/taskEndDay"
-                    android:inputType="text" />
+                    android:gravity="center_vertical"
+                    android:hint="@string/taskDate" />
 
                 <Space
                     android:layout_width="8dp"
                     android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/endTimeInput"
+                    style="@style/input"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/ic_input"
+                    android:ems="10"
+                    android:gravity="center_vertical"
+                    android:hint="@string/taskTime" />
 
             </LinearLayout>
 
@@ -140,8 +176,8 @@
                     android:id="@+id/whenSlect"
                     android:layout_width="wrap_content"
                     android:layout_height="46dp"
-                    android:background="@drawable/ic_input"
-                    android:layout_weight="2" />
+                    android:layout_weight="2"
+                    android:background="@drawable/ic_input" />
 
             </LinearLayout>
 
@@ -149,14 +185,14 @@
                 android:id="@+id/calendarSelect"
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
-                android:background="@drawable/ic_input"
-                android:layout_marginTop="24dp" />
+                android:layout_marginTop="24dp"
+                android:background="@drawable/ic_input" />
 
             <EditText
                 android:id="@+id/notesEditText"
                 style="@style/textarea"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="220dp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/ic_input"
                 android:ems="10"

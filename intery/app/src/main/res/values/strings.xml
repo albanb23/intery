@@ -24,8 +24,10 @@
     <string name="create_task">Nueva tarea</string>
     <string name="addTask"><b>Añadir tarea</b></string>
     <string name="taskName">Título</string>
-    <string name="taskStartDay">Empieza</string>
-    <string name="taskEndDay">Termina</string>
+    <string name="taskStart">Inicio</string>
+    <string name="taskEnd">Fin</string>
+    <string name="taskDate">Fecha</string>
+    <string name="taskTime">Hora</string>
     <string name="taskAllDay">Todo el día</string>
     <string name="taskRemindMe">Recuerdame</string>
     <string name="taskNotes">Notas</string>
