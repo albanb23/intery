@@ -6,14 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.CheckBox
+import android.widget.RadioButton
 import android.widget.TextView
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.model.Task
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import java.text.SimpleDateFormat
 import java.util.*
 
 class TaskAdapter(context: Context, private val tasks: List<Task>) : ArrayAdapter<Task?>(context, -1, tasks) {
+
+    private val db = FirebaseFirestore.getInstance()
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convertView = convertView
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -22,33 +28,46 @@ class TaskAdapter(context: Context, private val tasks: List<Task>) : ArrayAdapte
         }
         val taskName = convertView!!.findViewById<View>(R.id.taskNameList) as TextView
         val taskDate = convertView!!.findViewById<View>(R.id.dateTaskList) as TextView
+        val radioButton = convertView!!.findViewById<CheckBox>(R.id.taskRadioButton)
         val task = tasks[position]
-        if (task.isDone) {
-            taskName.paintFlags = taskName.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG //si la tarea esta completada se tacha
-        } else {
-            taskName.paintFlags = taskName.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-        }
         taskName.text = task.name
-        taskDate.text = asignarFechas(task)
+        taskDate.text = putDates(task)
+
+        radioButton.setOnCheckedChangeListener { buttonView, isChecked ->
+            task.isDone = isChecked
+            db.collection("tasks").document(taskName.text.toString()).update("done", task.isDone)
+            checkWhenDone(isChecked, taskName)
+        }
+
+        radioButton.isChecked = task.isDone
+        checkWhenDone(radioButton.isChecked, taskName)
 
         return convertView
     }
 
-    private fun asignarFechas(task: Task): String {
+    private fun checkWhenDone(isChecked: Boolean, taskName: TextView) {
+        if (isChecked) {
+            taskName.paintFlags = taskName.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+        } else {
+            taskName.paintFlags = taskName.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+        }
+    }
+
+    private fun putDates(task: Task): String {
         var date = ""
        if (task.endDate == null || (task.endDate != null && task.startDate==task.endDate)) {
-           date += formatearFecha(task.startDate)
+           date += formatDate(task.startDate)
            if (task.startTime!=null ) {
-               date += " " + formatearHora(task.startTime)
+               date += " " + formatTime(task.startTime)
                if (task.endTime!= null && task.startTime!=task.endTime) {
-                   date += " - " + formatearHora(task.endTime)
+                   date += " - " + formatTime(task.endTime)
                }
            } else {
-               date += " " + R.string.taskAllDay.toString()
+               date += " " + context.resources.getString(R.string.taskAllDay)
            }
         } else {
            if (task.startTime!=null) {
-               date += formatearFecha(task.startDate) + " " + formatearHora(task.startTime) + " - " + formatearFecha(task.endDate) + " " + formatearHora(task.endTime)
+               date += formatDate(task.startDate) + " " + formatTime(task.startTime) + " - " + formatDate(task.endDate) + " " + formatTime(task.endTime)
            }
         }
 
@@ -56,13 +75,13 @@ class TaskAdapter(context: Context, private val tasks: List<Task>) : ArrayAdapte
         return date
     }
 
-    private fun formatearFecha(date: Date): String {
+    private fun formatDate(date: Date): String {
         val pattern = "dd/MM/yyyy"
         val simpleDateFormat = SimpleDateFormat(pattern)
         return simpleDateFormat.format(date)
     }
 
-    private fun formatearHora(date: Date): String {
+    private fun formatTime(date: Date): String {
         var res = ""
         val pattern = "dd/MM/yyyy HH:mm"
         val simpleDateFormat = SimpleDateFormat(pattern)

@@ -8,6 +8,7 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import com.albaburdallo.intery.model.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -130,7 +131,8 @@ class LoginActivity : AppCompatActivity() {
                     val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                     FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
                         if (it.isSuccessful) {
-                            val user = hashMapOf("name" to account.displayName.toString())
+                            val user = User(account.displayName.toString(), "",
+                                account.email.toString(), account.photoUrl.toString())
                             db.collection("users").document(account.email.toString()).set(user)
                             showHome(account.email?: "")
                         } else {

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.albaburdallo.intery.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
@@ -29,7 +30,11 @@ class SignInActivity : AppCompatActivity() {
             //validamos el formulario
             if (validateForm()) {
                 if (!termsCheckBox.isChecked) {
-                    Toast.makeText(this, "Se deben aceptar los términos y condiciones", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this,
+                        "Se deben aceptar los términos y condiciones",
+                        Toast.LENGTH_LONG
+                    ).show()
                 } else {
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(
                         emailEditTextSignIn.text.toString(),
@@ -37,10 +42,11 @@ class SignInActivity : AppCompatActivity() {
                     ).addOnCompleteListener {
                         if (it.isSuccessful) {
                             //Creamos el nuevo usuario
-                            val user = hashMapOf("name" to nameEditText.text.toString(),
-                                "surname" to surnameEditText.text.toString())
-//                            db.collection("users").add(user)
-                            db.collection("users").document(emailEditTextSignIn.text.toString()).set(user)
+                            val user = User(
+                                nameEditText.text.toString(), surnameEditText.text.toString(),
+                                emailEditTextSignIn.text.toString(), "")
+                            db.collection("users").document(emailEditTextSignIn.text.toString())
+                                .set(user)
                             showLogin()
                         } else {
                             showAlert()
@@ -59,14 +65,23 @@ class SignInActivity : AppCompatActivity() {
     private fun validateForm(): Boolean {
         var res = true
         if (emailEditTextSignIn != null && passwordEditTextSignIn != null) {
-            res =  nameEditText.validator().nonEmpty().addErrorCallback { nameEditText.error = it }.check() &&
-                    surnameEditText.validator().nonEmpty().addErrorCallback { surnameEditText.error = it }.check() &&
-                    emailEditTextSignIn.validator().nonEmpty().validEmail().addErrorCallback { emailEditTextSignIn.error = it }.check() &&
-                    passwordEditTextSignIn.validator().nonEmpty().atleastOneNumber().addErrorCallback { passwordEditTextSignIn.error = it }.check() &&
-                    repeatPasswordEditText.validator().textEqualTo(passwordEditTextSignIn.text.toString())
-                            .addErrorCallback { repeatPasswordEditText.error = it }.check()
+            res = nameEditText.validator().nonEmpty().addErrorCallback { nameEditText.error = it }
+                .check() &&
+                    surnameEditText.validator().nonEmpty()
+                        .addErrorCallback { surnameEditText.error = it }.check() &&
+                    emailEditTextSignIn.validator().nonEmpty().validEmail()
+                        .addErrorCallback { emailEditTextSignIn.error = it }.check() &&
+                    passwordEditTextSignIn.validator().nonEmpty().atleastOneNumber()
+                        .addErrorCallback { passwordEditTextSignIn.error = it }.check() &&
+                    repeatPasswordEditText.validator()
+                        .textEqualTo(passwordEditTextSignIn.text.toString())
+                        .addErrorCallback { repeatPasswordEditText.error = it }.check()
         } else {
-            Toast.makeText(this, "Se ha producido un error. Por favor revise su email y contraseña", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                "Se ha producido un error. Por favor revise su email y contraseña",
+                Toast.LENGTH_LONG
+            ).show()
         }
         return res
     }

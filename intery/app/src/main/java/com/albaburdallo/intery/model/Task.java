@@ -3,12 +3,11 @@ package com.albaburdallo.intery.model;
 import com.google.type.DateTime;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Task implements Serializable {
+public class Task extends Base implements Serializable {
 
     private String name;
     private boolean done;
@@ -19,21 +18,28 @@ public class Task implements Serializable {
     private Boolean allDay;
     private Boolean notifyMe;
     private String notes;
-    private Calendar created;
     //calendario
+    private Calendar calendar;
     //tarea padre
+    private Task mainTask;
 
     public Task() {
+        super();
 
     }
 
-    public Task(String name) {
+    public Task(String name, Date startDate, Boolean allDay, Boolean notifyMe, String notes, Boolean done) {
+        super();
         this.name = name;
-        this.done = false;
-        this.created = java.util.Calendar.getInstance();
+        this.startDate = startDate;
+        this.allDay = allDay;
+        this.notifyMe = notifyMe;
+        this.notes = notes;
+        this.done = done;
     }
 
-    public Task(String name, Date startDate, Date startTime, Date endDate, Date endTime, Boolean allDay, Boolean notifyMe, String notes) {
+    public Task(String name, Date startDate, Date startTime, Date endDate, Date endTime, Boolean allDay, Boolean notifyMe, String notes, Boolean done) {
+        super();
         this.name = name;
         this.startDate = startDate;
         this.startTime = startTime;
@@ -42,8 +48,7 @@ public class Task implements Serializable {
         this.allDay = allDay;
         this.notifyMe = notifyMe;
         this.notes = notes;
-        this.done = false;
-        this.created = Calendar.getInstance();
+        this.done = done;
     }
 
     public String getName() {
@@ -108,14 +113,6 @@ public class Task implements Serializable {
 
     public void setNotes(String notes) {
         this.notes = notes;
-    }
-
-    public Calendar getCreated() {
-        return created;
-    }
-
-    public void setCreated(Calendar created) {
-        this.created = created;
     }
 
     public Boolean getNotifyMe() {
