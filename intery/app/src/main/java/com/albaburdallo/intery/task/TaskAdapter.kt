@@ -5,18 +5,23 @@ import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.CheckBox
-import android.widget.RadioButton
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import com.albaburdallo.intery.R
-import com.albaburdallo.intery.model.Task
+import com.albaburdallo.intery.model.entities.Task
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TaskAdapter(context: Context, private val tasks: List<Task>) : ArrayAdapter<Task?>(context, -1, tasks) {
+
+class TaskAdapter(context: Context, private val tasks: List<Task>) : ArrayAdapter<Task?>(
+    context,
+    -1,
+    tasks
+) {
 
     private val db = FirebaseFirestore.getInstance()
 
@@ -31,14 +36,17 @@ class TaskAdapter(context: Context, private val tasks: List<Task>) : ArrayAdapte
         val radioButton = convertView!!.findViewById<CheckBox>(R.id.taskRadioButton)
         val task = tasks[position]
         taskName.text = task.name
-        taskDate.text = putDates(task)
-
         radioButton.setOnCheckedChangeListener { buttonView, isChecked ->
             task.isDone = isChecked
-            db.collection("tasks").document(taskName.text.toString()).update("done", task.isDone)
+            db.collection("tasks").document(task.id.toString()).update("done", task.isDone)
             checkWhenDone(isChecked, taskName)
+            if (isChecked) {
+                tasks.toMutableList().removeAt(position)
+                println("========tasks when click========" + tasks)
+            }
         }
-
+        taskDate.text = putDates(task)
+        println("================" + tasks)
         radioButton.isChecked = task.isDone
         checkWhenDone(radioButton.isChecked, taskName)
 
@@ -67,7 +75,9 @@ class TaskAdapter(context: Context, private val tasks: List<Task>) : ArrayAdapte
            }
         } else {
            if (task.startTime!=null) {
-               date += formatDate(task.startDate) + " " + formatTime(task.startTime) + " - " + formatDate(task.endDate) + " " + formatTime(task.endTime)
+               date += formatDate(task.startDate) + " " + formatTime(task.startTime) + " - " + formatDate(
+                   task.endDate
+               ) + " " + formatTime(task.endTime)
            }
         }
 

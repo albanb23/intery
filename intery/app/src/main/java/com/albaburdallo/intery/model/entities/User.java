@@ -1,4 +1,5 @@
-package com.albaburdallo.intery.model;
+package com.albaburdallo.intery.model.entities;
+
 
 public class User {
 

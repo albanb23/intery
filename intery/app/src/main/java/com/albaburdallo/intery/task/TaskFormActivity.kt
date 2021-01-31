@@ -1,30 +1,25 @@
 package com.albaburdallo.intery.task
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
-import android.text.format.DateFormat.is24HourFormat
 import android.view.View
 import android.widget.DatePicker
-import android.widget.EditText
 import android.widget.TimePicker
-import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
-import com.albaburdallo.intery.HomeActivity
-import com.albaburdallo.intery.LoginActivity
 import com.albaburdallo.intery.R
-import com.albaburdallo.intery.model.Task
+import com.albaburdallo.intery.model.entities.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
-import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.activity_task_form.*
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.collections.ArrayList
 
 class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
@@ -55,6 +50,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
     private var end: Date? = null
     private var startTime: Date? = null
     private var endTime: Date? = null
+    private lateinit var taskid: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,9 +58,9 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         this.getSupportActionBar()?.hide()
 
 
-        val taskname = intent.extras?.getString("taskName") ?: ""
-        if (taskname != "") {
-            db.collection("tasks").document(taskname).get().addOnSuccessListener {
+        taskid = intent.extras?.getString("taskid") ?: ""
+        if (taskid != "") {
+            db.collection("tasks").document(taskid).get().addOnSuccessListener {
                 taskNameEditText.setText(it.get("name") as? String)
                 startDateInput.text = formatDate((it.get("startDate") as Timestamp).toDate())
                 start = (it.get("startDate") as Timestamp).toDate()
@@ -82,8 +78,18 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
             }
 
             trashImageView.setOnClickListener {
-                db.collection("tasks").document(taskname).delete()
-                showList()
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage(this.resources.getString(R.string.delete))
+                    .setCancelable(false)
+                    .setPositiveButton(this.resources.getString(R.string.yes)) { dialog, id ->
+                        db.collection("tasks").document(taskid).delete()
+                        showList()
+                    }
+                    .setNegativeButton(this.resources.getString(R.string.no)) { dialog, id ->
+                        dialog.dismiss()
+                    }
+                val alert = builder.create()
+                alert.show()
             }
         }
         setup()
@@ -95,7 +101,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
 
         backImageView.setOnClickListener { onBackPressed() }
 
-        val form = intent.extras?.getString("form")?:""
+        val form = intent.extras?.getString("form") ?: ""
         if (form == "edit") {
             trashImageView.visibility = View.VISIBLE
         } else {
@@ -174,22 +180,59 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         val allDay = allDayCheckBox.isChecked
         val remindMe = remindMeCheckBox.isChecked
 
-        if (!TextUtils.isEmpty(name)) {
-            if (end != null && startTime != null && endTime != null) {
-                println("======start time=====" + startTime)
-                task = Task(name, start, startTime, end, endTime, allDay, remindMe, notes, false)
-            } else {
-                task = Task(name, start, allDay, remindMe, notes, false)
-            }
+        //escribir los ids
+        val idList = arrayListOf<Int>()
+        db.collection("tasks").orderBy("id", Query.Direction.DESCENDING).get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val id = document.get("id") as Long
+                    idList.add(id.toInt())
+                }
 
-            if (task != null) {
-                db.collection("tasks").document(name).set(task as Task)
+                if (taskid == "") {
+                    var int = 1
+                    if (!idList.isEmpty()) {
+                        int = idList[0] + 1
+                    }
+                    taskid = int.toString()
+                }
 
-                tasks.add(task as Task)
-                adapter.notifyDataSetChanged()
-                showList()
+                if (!TextUtils.isEmpty(name)) {
+                    if (end != null && startTime != null && endTime != null) {
+                        task = Task(
+                            Integer.parseInt(taskid),
+                            name,
+                            start,
+                            startTime,
+                            end,
+                            endTime,
+                            allDay,
+                            remindMe,
+                            notes,
+                            false
+                        )
+                    } else {
+                        task = Task(
+                            Integer.parseInt(taskid),
+                            name,
+                            start,
+                            allDay,
+                            remindMe,
+                            notes,
+                            false
+                        )
+                    }
+
+                    if (task != null) {
+                        db.collection("tasks").document(taskid).set(task as Task)
+                        taskid = ""
+
+                        tasks.add(task as Task)
+                        adapter.notifyDataSetChanged()
+                        showList()
+                    }
+                }
             }
-        }
     }
 
     private fun validateForm(): Boolean {
@@ -221,7 +264,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         myDay = day
         myYear = year
         myMonth = month
-        val date = myDay.toString() + "/" + (myMonth+1).toString() + "/" + myYear.toString()
+        val date = myDay.toString() + "/" + (myMonth + 1).toString() + "/" + myYear.toString()
         val calendar: Calendar = Calendar.getInstance()
         if (startClicked) {
             startDateInput.text = date

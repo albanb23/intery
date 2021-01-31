@@ -1,15 +1,14 @@
-package com.albaburdallo.intery.model;
+package com.albaburdallo.intery.model.entities;
 
-public class Section extends Base {
+public class Entity extends Base {
 
     private String name;
     private String description;
-    private String color;
 
-    public Section(String name, String description, String color) {
+    public Entity(String name, String description) {
+        super();
         this.name = name;
         this.description = description;
-        this.color = color;
     }
 
     public String getName() {
@@ -26,13 +25,5 @@ public class Section extends Base {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
     }
 }

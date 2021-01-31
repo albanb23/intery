@@ -1,13 +1,16 @@
-package com.albaburdallo.intery.model;
+package com.albaburdallo.intery.model.entities;
 
-public class Entity extends Base {
+public class Calendar extends Base{
 
     private String name;
     private String description;
+    private String color;
 
-    public Entity(String name, String description) {
+    public Calendar(String name, String description, String color) {
+        super();
         this.name = name;
         this.description = description;
+        this.color = color;
     }
 
     public String getName() {
@@ -24,5 +27,13 @@ public class Entity extends Base {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }

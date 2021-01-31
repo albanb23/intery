@@ -1,14 +1,9 @@
-package com.albaburdallo.intery.model;
+package com.albaburdallo.intery.model.entities;
 
-import com.google.type.DateTime;
-
-import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
-public class Task extends Base implements Serializable {
-
+public class Task extends Base {
+    private Integer id;
     private String name;
     private boolean done;
     private Date startDate;
@@ -20,16 +15,14 @@ public class Task extends Base implements Serializable {
     private String notes;
     //calendario
     private Calendar calendar;
-    //tarea padre
-    private Task mainTask;
 
     public Task() {
         super();
-
     }
 
-    public Task(String name, Date startDate, Boolean allDay, Boolean notifyMe, String notes, Boolean done) {
+    public Task(Integer id, String name, Date startDate, Boolean allDay, Boolean notifyMe, String notes, Boolean done) {
         super();
+        this.id = id;
         this.name = name;
         this.startDate = startDate;
         this.allDay = allDay;
@@ -38,8 +31,9 @@ public class Task extends Base implements Serializable {
         this.done = done;
     }
 
-    public Task(String name, Date startDate, Date startTime, Date endDate, Date endTime, Boolean allDay, Boolean notifyMe, String notes, Boolean done) {
+    public Task(Integer id, String name, Date startDate, Date startTime, Date endDate, Date endTime, Boolean allDay, Boolean notifyMe, String notes, Boolean done) {
         super();
+        this.id = id;
         this.name = name;
         this.startDate = startDate;
         this.startTime = startTime;
@@ -123,4 +117,11 @@ public class Task extends Base implements Serializable {
         this.notifyMe = notifyMe;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }

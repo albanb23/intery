@@ -50,7 +50,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:paddingLeft="8dp"
-                android:src="@drawable/ic_feather_eye" />
+                android:src="@drawable/ic_feather_eye"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/bookmarkIcon"

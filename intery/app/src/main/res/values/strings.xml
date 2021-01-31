@@ -4,6 +4,9 @@
     <string name="prefs_file">com.albaburdallo.intery.PREFERENCE_FILE_KEY</string>
     <string name="or">o</string>
     <string name="save">Guardar</string>
+    <string name="delete">¿Está seguro/a de que quiere borrar?</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
     <!-- login -->
     <string name="register"><b>Registrate aquí</b></string>
     <string name="noAcc">¿Todavía no tienes una cuenta?</string>

@@ -1,4 +1,4 @@
-package com.albaburdallo.intery.model;
+package com.albaburdallo.intery.model.entities;
 
 import java.util.Date;
 
@@ -11,11 +11,12 @@ public class Transaction extends Base {
     private Date date;
     private String notes;
     //Entidad
-    private Entity entity;
+    private long entityId;
     //Sección
-    private Section section;
+    private long sectionId;
 
     public Transaction(Boolean isExpenditure, Boolean isIncome, String concept, Double money, Date date, String notes) {
+        super();
         this.isExpenditure = isExpenditure;
         this.isIncome = isIncome;
         this.concept = concept;

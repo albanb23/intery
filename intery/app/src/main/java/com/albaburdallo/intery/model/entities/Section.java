@@ -1,12 +1,13 @@
-package com.albaburdallo.intery.model;
+package com.albaburdallo.intery.model.entities;
 
-public class Calendar extends Base{
+public class Section extends Base {
 
     private String name;
     private String description;
     private String color;
 
-    public Calendar(String name, String description, String color) {
+    public Section(String name, String description, String color) {
+        super();
         this.name = name;
         this.description = description;
         this.color = color;

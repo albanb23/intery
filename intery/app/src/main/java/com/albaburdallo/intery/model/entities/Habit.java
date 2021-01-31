@@ -1,4 +1,4 @@
-package com.albaburdallo.intery.model;
+package com.albaburdallo.intery.model.entities;
 
 import java.util.Date;
 
@@ -13,6 +13,7 @@ public class Habit extends Base{
     private Integer frequency;
 
     public Habit(String name, String description, Date startDate, Date endDate, String color, Boolean notifyMe, Integer frequency) {
+        super();
         this.name = name;
         this.description = description;
         this.startDate = startDate;

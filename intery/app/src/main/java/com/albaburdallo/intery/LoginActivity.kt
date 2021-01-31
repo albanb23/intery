@@ -8,7 +8,7 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import com.albaburdallo.intery.model.User
+import com.albaburdallo.intery.model.entities.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -16,10 +16,8 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.inputsLinearLayout
-import kotlinx.android.synthetic.main.activity_sign_in.*
 
 class LoginActivity : AppCompatActivity() {
 
@@ -131,8 +129,11 @@ class LoginActivity : AppCompatActivity() {
                     val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                     FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
                         if (it.isSuccessful) {
-                            val user = User(account.displayName.toString(), "",
-                                account.email.toString(), account.photoUrl.toString())
+                            val user =
+                                User(
+                                    account.displayName.toString(), "",
+                                    account.email.toString(), account.photoUrl.toString()
+                                )
                             db.collection("users").document(account.email.toString()).set(user)
                             showHome(account.email?: "")
                         } else {
