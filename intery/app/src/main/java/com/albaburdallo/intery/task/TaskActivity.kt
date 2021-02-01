@@ -3,10 +3,10 @@ package com.albaburdallo.intery.task
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_task.*
+import kotlinx.android.synthetic.main.task_list.*
 import java.util.*
 
 
@@ -27,7 +28,7 @@ class TaskActivity : AppCompatActivity() {
     private lateinit var taskList: ListView
     private lateinit var createTaskButton: Button
     private lateinit var adapter: TaskAdapter
-    private lateinit var tasks: ArrayList<Task>
+    private lateinit var tasks: MutableList<Task>
     private lateinit var taskid: String
     private var showAll = false
 
@@ -39,7 +40,6 @@ class TaskActivity : AppCompatActivity() {
         //Guardado de datos
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
         showAll = prefs.getBoolean("showAll", false)
-        println("==============" + showAll)
         setup()
 
     }
@@ -61,7 +61,6 @@ class TaskActivity : AppCompatActivity() {
         }
 
         eyeClosedIcon.setOnClickListener {
-
             prefs.putBoolean("showAll", true)
             prefs.apply()
             restartView()
@@ -134,6 +133,7 @@ class TaskActivity : AppCompatActivity() {
                     showTaskForm(task, "edit")
                     adapter.notifyDataSetChanged()
                 }
+
             }
 
         createTaskButton.setOnClickListener {

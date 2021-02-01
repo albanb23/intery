@@ -124,4 +124,15 @@ public class Task extends Base {
     public void setId(Integer id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "name='" + name + '\'' +
+                ", startDate=" + startDate +
+                ", startTime=" + startTime +
+                ", endDate=" + endDate +
+                ", endTime=" + endTime +
+                '}';
+    }
 }

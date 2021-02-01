@@ -17,10 +17,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class TaskAdapter(context: Context, private val tasks: List<Task>) : ArrayAdapter<Task?>(
+class TaskAdapter(context: Context, val tasks: MutableList<Task>) : ArrayAdapter<Task?>(
     context,
     -1,
-    tasks
+    tasks as List<Task?>
 ) {
 
     private val db = FirebaseFirestore.getInstance()
@@ -31,6 +31,9 @@ class TaskAdapter(context: Context, private val tasks: List<Task>) : ArrayAdapte
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.task_list, parent, false)
         }
+        val prefs = context.getSharedPreferences(context.getString(R.string.prefs_file), Context.MODE_PRIVATE)
+        val showAll = prefs.getBoolean("showAll", false)
+
         val taskName = convertView!!.findViewById<View>(R.id.taskNameList) as TextView
         val taskDate = convertView!!.findViewById<View>(R.id.dateTaskList) as TextView
         val radioButton = convertView!!.findViewById<CheckBox>(R.id.taskRadioButton)
@@ -40,13 +43,17 @@ class TaskAdapter(context: Context, private val tasks: List<Task>) : ArrayAdapte
             task.isDone = isChecked
             db.collection("tasks").document(task.id.toString()).update("done", task.isDone)
             checkWhenDone(isChecked, taskName)
-            if (isChecked) {
-                tasks.toMutableList().removeAt(position)
-                println("========tasks when click========" + tasks)
+            if (!showAll) {
+                if (isChecked) {
+                    tasks.remove(task)
+                    notifyDataSetChanged()
+                } else {
+                    tasks.add(task)
+                    notifyDataSetChanged()
+                }
             }
         }
         taskDate.text = putDates(task)
-        println("================" + tasks)
         radioButton.isChecked = task.isDone
         checkWhenDone(radioButton.isChecked, taskName)
 

@@ -10,6 +10,7 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.DatePicker
 import android.widget.TimePicker
+import android.widget.Toast
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.model.entities.Task
 import com.google.firebase.Timestamp
@@ -223,13 +224,21 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                         )
                     }
 
-                    if (task != null) {
-                        db.collection("tasks").document(taskid).set(task as Task)
-                        taskid = ""
+                    if (task.startDate>task.endDate || (task.startDate==task.endDate && task.startTime.time>task.endTime.time)) {
+                            Toast.makeText(
+                                this,
+                                "La fecha de comienzo debe de ser anterior a la fecha de fin",
+                                Toast.LENGTH_LONG
+                            ).show()
+                    } else {
+                        if (task != null) {
+                            db.collection("tasks").document(taskid).set(task as Task)
+                            taskid = ""
 
-                        tasks.add(task as Task)
-                        adapter.notifyDataSetChanged()
-                        showList()
+                            tasks.add(task as Task)
+                            adapter.notifyDataSetChanged()
+                            showList()
+                        }
                     }
                 }
             }
@@ -281,6 +290,18 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         myHour = hourOfDay
         myMinute = minute
         val date = myHour.toString() + ":" + myMinute.toString()
+        when {
+            myYear==0 -> {
+                myYear = Calendar.getInstance().get(Calendar.YEAR)
+            }
+            myMonth==0 -> {
+                myMonth = Calendar.getInstance().get(Calendar.MONTH)
+            }
+            myDay==0 -> {
+                myDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+            }
+        }
+
         if (startClicked) {
             startTimeInput.text = date
             startTime = Date(myYear - 1900, myMonth, myDay, myHour, myMinute)
