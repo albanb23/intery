@@ -1,0 +1,38 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/calendarItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:paddingStart="32dp"
+    android:paddingEnd="16dp">
+
+    <ImageView
+        android:id="@+id/calendarColorPoint"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/ic_circle" />
+
+    <TextView
+        android:id="@+id/calendarNameList"
+        style="@style/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:text="TextView"
+        android:textSize="24dp" />
+
+    <TextView
+        android:id="@+id/tasksRemaining"
+        style="@style/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="tasks remining"
+        android:textColor="@color/gray" />
+
+</LinearLayout>

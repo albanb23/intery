@@ -32,7 +32,7 @@ class SignInActivity : AppCompatActivity() {
                 if (!termsCheckBox.isChecked) {
                     Toast.makeText(
                         this,
-                        "Se deben aceptar los términos y condiciones",
+                        this.getString(R.string.termsAndConditions),
                         Toast.LENGTH_LONG
                     ).show()
                 } else {

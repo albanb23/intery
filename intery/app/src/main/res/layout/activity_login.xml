@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:ems="10"
-            android:hint="Email"
+            android:hint="@string/logInEmail"
             android:inputType="textEmailAddress" />
 
         <Space
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:ems="10"
-            android:hint="Contraseña"
+            android:hint="@string/logInPassword"
             android:inputType="textPassword" />
     </LinearLayout>
 
@@ -80,7 +80,7 @@
             android:id="@+id/logInGoogleButton"
             style="@style/button_google"
             android:layout_width="match_parent"
-            android:text="Iniciar sesión con Google"
+            android:text="@string/logInGoogle"
             android:layout_height="46dp"
             android:drawablePadding="8dp"
             android:paddingStart="48dp"

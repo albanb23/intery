@@ -10,7 +10,13 @@
         <item name="colorSecondaryVariant">@color/red_var</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/pink</item>
         <!-- Customize your theme here. -->
+        <item name="android:itemTextAppearance">@style/item</item>
+    </style>
+
+    <style name="Theme.intery.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 </resources>

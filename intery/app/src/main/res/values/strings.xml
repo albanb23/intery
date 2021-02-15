@@ -1,37 +1,55 @@
 <resources>
-    <!-- common -->
     <string name="app_name">intery</string>
     <string name="prefs_file">com.albaburdallo.intery.PREFERENCE_FILE_KEY</string>
-    <string name="or">o</string>
-    <string name="save">Guardar</string>
-    <string name="delete">¿Está seguro/a de que quiere borrar?</string>
-    <string name="yes">Sí</string>
+    <string name="or">or</string>
+    <string name="save">Save</string>
+    <string name="delete">Are you sure you want to delete?</string>
+    <string name="yes">Yes</string>
     <string name="no">No</string>
-    <!-- login -->
-    <string name="register"><b>Registrate aquí</b></string>
-    <string name="noAcc">¿Todavía no tienes una cuenta?</string>
-    <string name="logIn">Iniciar sesión</string>
-    <string name="signIn">Crear cuenta</string>
-    <string name="logOut"><b><i>Cerrar sesión</i></b></string>
-    <!-- sign in -->
-    <string name="createAcc"><b>Crear una cuenta</b></string>
-    <string name="name"><b>Nombre</b></string>
-    <string name="surname"><b>Apellidos</b></string>
+    <string name="register"><b>Register here</b></string>
+    <string name="noAcc">Don\'t have an account yet?</string>
+    <string name="logIn">Log in</string>
+    <string name="logInGoogle">Log in with Google</string>
+    <string name="logInEmail">Email</string>
+    <string name="logInPassword">Password</string>
+    <string name="signIn">Sign in</string>
+    <string name="logOut"><b><i>Log out</i></b></string>
+    <string name="createAcc"><b>New account</b></string>
+    <string name="name"><b>Name</b></string>
+    <string name="surname"><b>Surname</b></string>
     <string name="email"><b>Email</b></string>
-    <string name="password"><b>Contraseña</b></string>
-    <string name="repeat_password"><b>Repite la contraseña</b></string>
-    <!-- home -->
-    <string name="hello">¡Hola, </string>
-    <!-- task -->
-    <string name="noTasks"><i>Aún no hay tareas</i></string>
-    <string name="create_task">Nueva tarea</string>
-    <string name="addTask"><b>Añadir tarea</b></string>
-    <string name="taskName">Título</string>
-    <string name="taskStart">Inicio</string>
-    <string name="taskEnd">Fin</string>
-    <string name="taskDate">Fecha</string>
-    <string name="taskTime">Hora</string>
-    <string name="taskAllDay">Todo el día</string>
-    <string name="taskRemindMe">Recuerdame</string>
-    <string name="taskNotes">Notas</string>
+    <string name="password"><b>Password</b></string>
+    <string name="repeat_password"><b>Repeat password</b></string>
+    <string name="termsAndConditions">You must accept the terms and conditions</string>
+    <string name="hello">¡Hi, </string>
+    <string name="noTasks"><i>No tasks</i></string>
+    <string name="create_task">New task</string>
+    <string name="addTask"><b>Add task</b></string>
+    <string name="taskName">Title</string>
+    <string name="taskStart">Start</string>
+    <string name="taskEnd">End</string>
+    <string name="taskDate">Date</string>
+    <string name="taskTime">Time</string>
+    <string name="taskAllDay">All day</string>
+    <string name="taskRemindMe">Remind me</string>
+    <string name="taskNotes">Notes</string>
+    <string name="taskDateValidation">Start date must be prior to the end date</string>
+    <string name="accept">Accept</string>
+    <string name="userError">Something went wrong while authenticating the user</string>
+    <string name="tasksOption"><b><i>Tasks</i></b></string>
+    <string name="walletOption"><b><i>Wallet</i></b></string>
+    <string name="habitOption"><b><i>Habits</i></b></string>
+    <string name="settingsOption"><b><i>Settings</i></b></string>
+    <string name="myCalendars"><b>My calendars</b></string>
+    <string name="noCalendars">No calendars</string>
+    <string name="create_calendar">New calendar</string>
+    <string name="create_calendar_title"><b><i>New calendar</i></b></string>
+    <string name="calendarTitle">Title</string>
+    <string name="cancel">Cancel</string>
+    <string name="calendarDescription">Description</string>
+    <string name="calendarColor">Color</string>
+    <string name="remainingTasks">tasks remaining</string>
+    <string name="calendarValidation">You must select a calendar</string>
+    <string name="select">-- Select --</string>
+    <string name="deleteCalendar" >Deleting the calendar will delete all of its tasks, do you want to continue?</string>
 </resources>

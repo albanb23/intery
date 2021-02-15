@@ -20,7 +20,7 @@ public class Task extends Base {
         super();
     }
 
-    public Task(Integer id, String name, Date startDate, Boolean allDay, Boolean notifyMe, String notes, Boolean done) {
+    public Task(Integer id, String name, Date startDate, Boolean allDay, Boolean notifyMe, String notes, Boolean done, Calendar calendar) {
         super();
         this.id = id;
         this.name = name;
@@ -29,9 +29,10 @@ public class Task extends Base {
         this.notifyMe = notifyMe;
         this.notes = notes;
         this.done = done;
+        this.calendar = calendar;
     }
 
-    public Task(Integer id, String name, Date startDate, Date startTime, Date endDate, Date endTime, Boolean allDay, Boolean notifyMe, String notes, Boolean done) {
+    public Task(Integer id, String name, Date startDate, Date startTime, Date endDate, Date endTime, Boolean allDay, Boolean notifyMe, String notes, Boolean done, Calendar calendar) {
         super();
         this.id = id;
         this.name = name;
@@ -43,6 +44,7 @@ public class Task extends Base {
         this.notifyMe = notifyMe;
         this.notes = notes;
         this.done = done;
+        this.calendar = calendar;
     }
 
     public String getName() {
@@ -123,6 +125,14 @@ public class Task extends Base {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Calendar getCalendar() {
+        return calendar;
+    }
+
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
     }
 
     @Override

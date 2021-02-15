@@ -14,4 +14,19 @@
     <color name="red_var">#F67653</color>
     <color name="layout_background">#FAF7F4</color>
     <color name="gray">#979797</color>
+
+    <array name="colors">
+        <item name="red">#FF9AA2</item>
+        <item name="dark orange">#FFDAC1</item>
+        <item name="orange">#FCECC0</item>
+        <item name="yellow">#FFFAB6</item>
+        <item name="light green">#E2F0CB</item>
+        <item name="green">#B9F5A9</item>
+        <item name="turquoise">#B5EAD7</item>
+        <item name="blue">#BCE5E2</item>
+        <item name="dark blue">#C7CEEA</item>
+        <item name="purple">#D8C3E0</item>
+        <item name="pink">#F4C2DF</item>
+        <item name="light pink">#F7D0D5</item>
+    </array>
 </resources>

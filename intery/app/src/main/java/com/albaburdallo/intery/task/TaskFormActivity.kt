@@ -3,32 +3,34 @@ package com.albaburdallo.intery.task
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
-import android.widget.DatePicker
-import android.widget.TimePicker
-import android.widget.Toast
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.model.entities.Task
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
 import kotlinx.android.synthetic.main.activity_task_form.*
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.atomic.AtomicInteger
-import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+
 
 class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     TimePickerDialog.OnTimeSetListener {
     private lateinit var adapter: TaskAdapter
     private lateinit var tasks: ArrayList<Task>
+    private lateinit var calendars: ArrayList<String>
     private val db = FirebaseFirestore.getInstance()
     lateinit var task: Task
+    private var calendarName: String = ""
 
     var startClicked = false
     var endClicked = false
@@ -57,9 +59,13 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_form)
         this.getSupportActionBar()?.hide()
+        val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
+        calendarName = prefs.getString("calendar", "").toString()
 
-
+        val authEmail = FirebaseAuth.getInstance().currentUser?.email;
         taskid = intent.extras?.getString("taskid") ?: ""
+
+
         if (taskid != "") {
             db.collection("tasks").document(taskid).get().addOnSuccessListener {
                 taskNameEditText.setText(it.get("name") as? String)
@@ -93,6 +99,52 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                 alert.show()
             }
         }
+
+        val spinner: Spinner = findViewById(R.id.calendarSelect)
+        calendars = arrayListOf()
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            applicationContext,
+            android.R.layout.simple_spinner_item,
+            calendars
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+
+        calendars.add(0, this.resources.getString(R.string.select))
+        db.collection("calendars").get().addOnSuccessListener { documents ->
+            for (document in documents) {
+                val user = document.get("user") as HashMap<String, String>
+                if (user["email"] == authEmail) {
+                    val calendarName = document.get("name") as String
+                    calendars.add(calendarName)
+                }
+            }
+            adapter.notifyDataSetChanged()
+
+            if (taskid != "") {
+                db.collection("tasks").document(taskid).get().addOnSuccessListener {
+                    val cal = it.get("calendar") as HashMap<String, String>
+                    for (calendar in calendars) {
+                        if (calendar == cal["name"]) {
+                            spinner.setSelection(calendars.indexOf(calendar))
+                            break
+                        }
+                    }
+                }
+            } else {
+                if (calendarName!="") {
+                    for (calendar in calendars) {
+                        if (calendar == calendarName) {
+                            spinner.setSelection(calendars.indexOf(calendar))
+                            break
+                        }
+                    }
+                } else {
+                    spinner.setSelection(0)
+                }
+            }
+        }
+
         setup()
 
     }
@@ -180,6 +232,8 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         val notes = notesEditText.text.toString()
         val allDay = allDayCheckBox.isChecked
         val remindMe = remindMeCheckBox.isChecked
+        var calendar: com.albaburdallo.intery.model.entities.Calendar
+        val calendarTitle = calendarSelect.selectedItem.toString()
 
         //escribir los ids
         val idList = arrayListOf<Int>()
@@ -192,52 +246,63 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
 
                 if (taskid == "") {
                     var int = 1
-                    if (!idList.isEmpty()) {
+                    if (idList.isNotEmpty()) {
                         int = idList[0] + 1
                     }
                     taskid = int.toString()
                 }
 
-                if (!TextUtils.isEmpty(name)) {
-                    if (end != null && startTime != null && endTime != null) {
-                        task = Task(
-                            Integer.parseInt(taskid),
-                            name,
-                            start,
-                            startTime,
-                            end,
-                            endTime,
-                            allDay,
-                            remindMe,
-                            notes,
-                            false
-                        )
-                    } else {
-                        task = Task(
-                            Integer.parseInt(taskid),
-                            name,
-                            start,
-                            allDay,
-                            remindMe,
-                            notes,
-                            false
-                        )
-                    }
+                db.collection("calendars").document(calendarTitle).get().addOnSuccessListener {
+                    calendar = com.albaburdallo.intery.model.entities.Calendar(
+                        it.get("name") as String,
+                        it.get("description") as String,
+                        it.get("color") as String
+                    )
 
-                    if (task.startDate>task.endDate || (task.startDate==task.endDate && task.startTime.time>task.endTime.time)) {
+
+                    if (!TextUtils.isEmpty(name)) {
+                        if (end != null && startTime != null && endTime != null) {
+                            task = Task(
+                                Integer.parseInt(taskid),
+                                name,
+                                start,
+                                startTime,
+                                end,
+                                endTime,
+                                allDay,
+                                remindMe,
+                                notes,
+                                false,
+                                calendar
+                            )
+                        } else {
+                            task = Task(
+                                Integer.parseInt(taskid),
+                                name,
+                                start,
+                                allDay,
+                                remindMe,
+                                notes,
+                                false,
+                                calendar
+                            )
+                        }
+
+                        if (!allDay && (task.startDate > task.endDate || (task.startDate == task.endDate && task.startTime.time > task.endTime.time))) {
                             Toast.makeText(
                                 this,
-                                "La fecha de comienzo debe de ser anterior a la fecha de fin",
+                                this.getString(R.string.taskDateValidation),
                                 Toast.LENGTH_LONG
                             ).show()
-                    } else {
-                        if (task != null) {
-                            db.collection("tasks").document(taskid).set(task as Task)
-                            taskid = ""
+                        } else {
+                            if (task != null) {
+                                db.collection("tasks").document(taskid).set(task as Task)
+                                taskid = ""
 
-                            tasks.add(task as Task)
-                            adapter.notifyDataSetChanged()
-                            showList()
+                                tasks.add(task as Task)
+                                adapter.notifyDataSetChanged()
+                                showList()
+                            }
                         }
                     }
                 }
@@ -259,6 +324,14 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                     .addErrorCallback { endDateInput.error = it }.check()
                         && endTimeInput.validator().nonEmpty()
                     .addErrorCallback { endTimeInput.error = it }.check()
+        }
+        if (calendarSelect.selectedItem.toString() == this.resources.getString(R.string.select)) {
+            Toast.makeText(
+                this,
+                this.getString(R.string.calendarValidation),
+                Toast.LENGTH_LONG
+            ).show()
+            res = false
         }
 
         return res
@@ -291,13 +364,13 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         myMinute = minute
         val date = myHour.toString() + ":" + myMinute.toString()
         when {
-            myYear==0 -> {
+            myYear == 0 -> {
                 myYear = Calendar.getInstance().get(Calendar.YEAR)
             }
-            myMonth==0 -> {
+            myMonth == 0 -> {
                 myMonth = Calendar.getInstance().get(Calendar.MONTH)
             }
-            myDay==0 -> {
+            myDay == 0 -> {
                 myDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
             }
         }

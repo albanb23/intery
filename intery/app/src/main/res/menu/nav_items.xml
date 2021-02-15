@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group >
+        <item
+            android:id="@+id/tasks_item"
+            android:title="@string/tasksOption" />
+        <item
+            android:id="@+id/wallet_item"
+            android:title="@string/walletOption" />
+        <item
+            android:id="@+id/habits_item"
+            android:title="@string/habitOption" />
+    </group>
+    <group >
+        <item
+            android:id="@+id/settings_item"
+            android:title="@string/settingsOption" />
+    </group>
+</menu>

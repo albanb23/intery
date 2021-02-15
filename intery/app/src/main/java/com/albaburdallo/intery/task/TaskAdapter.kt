@@ -1,15 +1,16 @@
 package com.albaburdallo.intery.task
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.CheckBox
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.graphics.drawable.DrawableCompat
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.model.entities.Task
 import com.google.firebase.firestore.FirebaseFirestore
@@ -31,14 +32,25 @@ class TaskAdapter(context: Context, val tasks: MutableList<Task>) : ArrayAdapter
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.task_list, parent, false)
         }
-        val prefs = context.getSharedPreferences(context.getString(R.string.prefs_file), Context.MODE_PRIVATE)
+        val prefs = context.getSharedPreferences(
+            context.getString(R.string.prefs_file),
+            Context.MODE_PRIVATE
+        )
         val showAll = prefs.getBoolean("showAll", false)
 
         val taskName = convertView!!.findViewById<View>(R.id.taskNameList) as TextView
         val taskDate = convertView!!.findViewById<View>(R.id.dateTaskList) as TextView
         val radioButton = convertView!!.findViewById<CheckBox>(R.id.taskRadioButton)
+        val caldraw = convertView!!.findViewById<View>(R.id.calendarDraw) as TextView
         val task = tasks[position]
+
         taskName.text = task.name
+        val unwrappedDrawable = AppCompatResources.getDrawable(context, R.drawable.calendar)
+        val calendarDrawable = DrawableCompat.wrap(unwrappedDrawable!!)
+        DrawableCompat.setTint(calendarDrawable, Integer.parseInt(task.calendar.color))
+        caldraw.text = task.calendar.name
+        caldraw.background = calendarDrawable
+
         radioButton.setOnCheckedChangeListener { buttonView, isChecked ->
             task.isDone = isChecked
             db.collection("tasks").document(task.id.toString()).update("done", task.isDone)

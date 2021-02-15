@@ -6,4 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".habit.HabitActivity">
 
+    <include layout="@layout/activity_options"></include>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
