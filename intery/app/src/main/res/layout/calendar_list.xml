@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
     android:paddingStart="32dp"
-    android:paddingEnd="16dp">
+    android:paddingEnd="16dp"
+    >
 
     <ImageView
         android:id="@+id/calendarColorPoint"

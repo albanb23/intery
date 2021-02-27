@@ -19,6 +19,14 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:drawableStart">@drawable/ic_google</item>
     </style>
+    <style name="toggle_button">
+        <item name="fontFamily">Inter</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/transaction_button</item>
+        <item name="android:radius">8sp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
     <style name="input">
         <item name="fontFamily">Inter</item>
         <item name="android:textColor">@color/black</item>

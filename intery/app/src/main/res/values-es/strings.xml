@@ -52,4 +52,14 @@
     <string name="calendarValidation">Se debe seleccionar un calendario</string>
     <string name="select">-- Seleccionar --</string>
     <string name="deleteCalendar" >Al borrar el calendario se borrarán todas las tareas que contiene, ¿desea continuar?</string>
+    <string name="seeMore"><i>Ver más...</i></string>
+    <string name="noTasksForToday"><i>No hay tareas para hoy</i></string>
+    <string name="addTransaction">Añadir transacción</string>
+    <string name="all">Todo</string>
+    <string name="expenditures">Gastos</string>
+    <string name="incomes">Ingresos</string>
+    <string name="noTransactions">Aún no hay transacciones</string>
+    <string name="cantDeleteCalendar">No se puede borrar este calendario</string>
+    <string name="defaultCalendar">Calendario por defecto</string>
+    <string name="exisitingCalendar">Este calendario ya existe</string>
 </resources>

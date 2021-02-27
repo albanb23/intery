@@ -30,7 +30,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
     private lateinit var calendars: ArrayList<String>
     private val db = FirebaseFirestore.getInstance()
     lateinit var task: Task
-    private var calendarName: String = ""
+    private var calendarId: String = ""
 
     var startClicked = false
     var endClicked = false
@@ -54,17 +54,16 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
     private var startTime: Date? = null
     private var endTime: Date? = null
     private lateinit var taskid: String
+    private val authEmail = FirebaseAuth.getInstance().currentUser?.email;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_form)
         this.getSupportActionBar()?.hide()
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
-        calendarName = prefs.getString("calendar", "").toString()
+        calendarId = prefs.getString("calendar", "").toString()
 
-        val authEmail = FirebaseAuth.getInstance().currentUser?.email;
         taskid = intent.extras?.getString("taskid") ?: ""
-
 
         if (taskid != "") {
             db.collection("tasks").document(taskid).get().addOnSuccessListener {
@@ -110,10 +109,9 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
 
-        calendars.add(0, this.resources.getString(R.string.select))
-        db.collection("calendars").get().addOnSuccessListener { documents ->
+        db.collection("calendars").orderBy("created").get().addOnSuccessListener { documents ->
             for (document in documents) {
-                val user = document.get("user") as HashMap<String, String>
+                val user = document.get("user") as HashMap<*, *>
                 if (user["email"] == authEmail) {
                     val calendarName = document.get("name") as String
                     calendars.add(calendarName)
@@ -123,7 +121,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
 
             if (taskid != "") {
                 db.collection("tasks").document(taskid).get().addOnSuccessListener {
-                    val cal = it.get("calendar") as HashMap<String, String>
+                    val cal = it.get("calendar") as HashMap<*, *>
                     for (calendar in calendars) {
                         if (calendar == cal["name"]) {
                             spinner.setSelection(calendars.indexOf(calendar))
@@ -132,9 +130,9 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                     }
                 }
             } else {
-                if (calendarName!="") {
+                if (calendarId != "") {
                     for (calendar in calendars) {
-                        if (calendar == calendarName) {
+                        if (calendar == calendarId.substring(0, calendarId.indexOf("-"))) {
                             spinner.setSelection(calendars.indexOf(calendar))
                             break
                         }
@@ -232,38 +230,28 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         val notes = notesEditText.text.toString()
         val allDay = allDayCheckBox.isChecked
         val remindMe = remindMeCheckBox.isChecked
-        var calendar: com.albaburdallo.intery.model.entities.Calendar
         val calendarTitle = calendarSelect.selectedItem.toString()
-
-        //escribir los ids
-        val idList = arrayListOf<Int>()
-        db.collection("tasks").orderBy("id", Query.Direction.DESCENDING).get()
+        var calendar: com.albaburdallo.intery.model.entities.Calendar? = null
+        db.collection("calendars").whereEqualTo("name", calendarTitle).get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {
-                    val id = document.get("id") as Long
-                    idList.add(id.toInt())
-                }
-
-                if (taskid == "") {
-                    var int = 1
-                    if (idList.isNotEmpty()) {
-                        int = idList[0] + 1
+                    val user = document.get("user") as HashMap<*, *>
+                    if (user["email"] == authEmail) {
+                        calendar = com.albaburdallo.intery.model.entities.Calendar(
+                            document.get("id") as String,
+                            document.get("name") as String,
+                            document.get("description") as String,
+                            document.get("color") as String
+                        )
                     }
-                    taskid = int.toString()
-                }
-
-                db.collection("calendars").document(calendarTitle).get().addOnSuccessListener {
-                    calendar = com.albaburdallo.intery.model.entities.Calendar(
-                        it.get("name") as String,
-                        it.get("description") as String,
-                        it.get("color") as String
-                    )
-
-
+                    var id = taskid
+                    if (taskid=="") {
+                        id = name + "-" +  authEmail
+                    }
                     if (!TextUtils.isEmpty(name)) {
                         if (end != null && startTime != null && endTime != null) {
                             task = Task(
-                                Integer.parseInt(taskid),
+                                id,
                                 name,
                                 start,
                                 startTime,
@@ -277,7 +265,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                             )
                         } else {
                             task = Task(
-                                Integer.parseInt(taskid),
+                                id,
                                 name,
                                 start,
                                 allDay,
@@ -295,19 +283,17 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                                 Toast.LENGTH_LONG
                             ).show()
                         } else {
-                            if (task != null) {
-                                db.collection("tasks").document(taskid).set(task as Task)
-                                taskid = ""
-
-                                tasks.add(task as Task)
-                                adapter.notifyDataSetChanged()
-                                showList()
-                            }
+                            db.collection("tasks").document(task.id).set(task as Task)
+//                            taskid = ""
+                            tasks.add(task as Task)
+                            adapter.notifyDataSetChanged()
+                            showList()
                         }
                     }
                 }
             }
     }
+
 
     private fun validateForm(): Boolean {
         var res = true
@@ -325,7 +311,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                         && endTimeInput.validator().nonEmpty()
                     .addErrorCallback { endTimeInput.error = it }.check()
         }
-        if (calendarSelect.selectedItem.toString() == this.resources.getString(R.string.select)) {
+        if (calendarSelect.selectedItem == null) {
             Toast.makeText(
                 this,
                 this.getString(R.string.calendarValidation),
@@ -393,7 +379,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
     }
 
     private fun formatTime(date: Date): String {
-        var res = ""
+        var res: String
         val pattern = "dd/MM/yyyy HH:mm"
         val simpleDateFormat = SimpleDateFormat(pattern)
         res = simpleDateFormat.format(date)

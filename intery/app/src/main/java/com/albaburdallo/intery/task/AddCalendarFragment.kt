@@ -15,7 +15,9 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.model.entities.Calendar
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import dev.sasikanth.colorsheet.ColorSheet
 import kotlinx.android.synthetic.main.create_calendar.*
 
@@ -56,13 +58,14 @@ class AddCalendarFragment: DialogFragment() {
 
             builder.setView(dialogview)
                 .setPositiveButton(R.string.save, DialogInterface.OnClickListener { dialog, id ->
-                    val titleText = dialogview?.findViewById(R.id.calendarNameEditText) as EditText
-                    val descriptionText = dialogview?.findViewById(R.id.calendarDescriptionEditText) as EditText
+                    val titleText = dialogview.findViewById(R.id.calendarNameEditText) as EditText
+                    val descriptionText = dialogview.findViewById(R.id.calendarDescriptionEditText) as EditText
                     val title = titleText.text.toString()
                     val description = descriptionText.text.toString()
                     val color = selectedColor.toString()
+                    val id = title + "-" +FirebaseAuth.getInstance().currentUser?.email
 
-                    val calendar = Calendar(title, description, color)
+                    val calendar = Calendar(id,title, description, color)
                     //add calendar
                     addCalendar(calendar)
                 })
@@ -74,19 +77,9 @@ class AddCalendarFragment: DialogFragment() {
         }?: throw IllegalStateException("Activity cannot be null")
     }
 
-//    private fun colorNames(color: String): String? {
-//        val res = null
-//        when {
-//            color == -"25950" -> {
-//                res =
-//            }
-//        }
-//        return res
-//    }
-
     private fun addCalendar(calendar: Calendar){
         if (!TextUtils.isEmpty(calendar.name) && activity is CalendarCallbackListener) {
-            (activity as CalendarCallbackListener)?.onCalendarAdded(calendar)
+            (activity as CalendarCallbackListener).onCalendarAdded(calendar)
         }
     }
 

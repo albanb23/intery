@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.albaburdallo.intery.model.entities.Calendar
 import com.albaburdallo.intery.model.entities.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
 import kotlinx.android.synthetic.main.activity_sign_in.*
 
@@ -49,6 +51,15 @@ class SignInActivity : AppCompatActivity() {
                                 )
                             db.collection("users").document(emailEditTextSignIn.text.toString())
                                 .set(user)
+                            //creamos el calendario por defecto
+                            val defaultCalendar = Calendar(
+                                nameEditText.text.toString() + "-" + emailEditTextSignIn.text.toString(),
+                                nameEditText.text.toString(),
+                                R.string.defaultCalendar.toString(),
+                                "-4590167"
+                            )
+                            db.collection("calendars").document(defaultCalendar.id)
+                                .set(defaultCalendar)
                             showLogin()
                         } else {
                             showAlert()

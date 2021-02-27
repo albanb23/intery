@@ -4,12 +4,14 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.albaburdallo.intery.HomeActivity
 import com.albaburdallo.intery.LoginActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.habit.HabitActivity
 import com.albaburdallo.intery.task.TaskActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_options.*
+import kotlinx.android.synthetic.main.activity_wallet.*
 
 class WalletActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,6 +21,8 @@ class WalletActivity : AppCompatActivity() {
     }
 
     private fun setup() {
+
+        closeWalletImageView.setOnClickListener { showHome() }
 
         nav_view.setNavigationItemSelectedListener {
             when (it.itemId) {
@@ -76,4 +80,8 @@ class WalletActivity : AppCompatActivity() {
         startActivity(habitIntent)
     }
 
+    private fun showHome() {
+        val homeIntent = Intent(this, HomeActivity::class.java).apply { }
+        startActivity(homeIntent)
+    }
 }

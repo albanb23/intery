@@ -5,18 +5,35 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.ActionMode
+import android.widget.ListView
+import android.widget.TextView
 import androidx.core.view.GravityCompat
+import androidx.core.view.size
 import com.albaburdallo.intery.habit.HabitActivity
+import com.albaburdallo.intery.model.entities.Task
 import com.albaburdallo.intery.task.TaskActivity
+import com.albaburdallo.intery.task.TaskAdapter
 import com.albaburdallo.intery.wallet.WalletActivity
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_options.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HomeActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
+    private lateinit var todayTasks: MutableList<Task>
+    private lateinit var tomorrowTasks: MutableList<Task>
+    private lateinit var nextDayTasks: MutableList<Task>
+    private lateinit var todayAdapter: TaskAdapter
+    private lateinit var tomorrowAdapter: TaskAdapter
+    private lateinit var nextDayAdapter: TaskAdapter
+    private lateinit var todayTaskList: ListView
+    private lateinit var tomorrowTaskList: ListView
+    private lateinit var nextDayTaskList: ListView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,23 +42,98 @@ class HomeActivity : AppCompatActivity() {
 
         val bundle = intent.extras
         val email = bundle?.getString("email")
-//        val name = bundle?.getString("name")
 
         setup(email?:"")
 
         //Guardado de datos
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
         prefs.putString("email", email)
-//        prefs.putString("name", userNameTextView.text.toString())
         prefs.apply()
     }
 
-    //Setup
     private fun setup(email: String) {
-//        userEmailTextView.text = email
-//        db.collection("users").document(email).get().addOnSuccessListener {
-//            userNameTextView.text = " " + it.get("name") as String? + "!"
-//        }
+        val authEmail = FirebaseAuth.getInstance().currentUser?.email;
+        todayTasks = arrayListOf()
+        tomorrowTasks = arrayListOf()
+        nextDayTasks = arrayListOf()
+        todayTaskList = findViewById(R.id.todayTaskList)
+        tomorrowTaskList = findViewById(R.id.tomorrowTaskList)
+        nextDayTaskList = findViewById(R.id.nextDayTaskList)
+
+        val pattern = "EEEE, dd MMMM"
+        val simpleDateFormat = SimpleDateFormat(pattern)
+        val cal = Calendar.getInstance()
+        val today = simpleDateFormat.format(cal.time)
+        cal.add(Calendar.DATE, 1)
+        val tomorrow = simpleDateFormat.format(cal.time)
+        cal.add(Calendar.DATE, 1)
+        val nextDay = simpleDateFormat.format(cal.time)
+        todayTextView.text = today
+        tomorrowTextView.text = tomorrow
+        nextDayTextView.text = nextDay
+
+        db.collection("tasks").whereEqualTo("done", false).get().addOnSuccessListener { documents ->
+            for (document in documents) {
+                val user = document.get("user") as HashMap<String, String>
+                if (user["email"] == authEmail) {
+                    val name = document.get("name") as String
+                    val startDate = document.get("startDate") as Timestamp
+                    val endDate = document.get("endDate") as? Timestamp
+                    val startTime = document.get("startTime") as? Timestamp
+                    val endTime = document.get("endTime") as? Timestamp
+                    val allday = document.get("allDay") as Boolean
+                    val notifyme = document.get("notifyMe") as Boolean
+                    val notes = document.get("notes") as String
+                    val done = document.get("done") as Boolean
+                    val id = document.get("id") as String
+                    val calendar = document.get("calendar") as HashMap<String, String>
+                    val task: Task = if (endDate != null && startTime != null && endTime != null) {
+                        Task(id, name, startDate.toDate(), startTime.toDate(), endDate.toDate(), endTime.toDate(), allday, notifyme, notes, done,
+                            com.albaburdallo.intery.model.entities.Calendar(calendar["id"], calendar["name"],calendar["description"],calendar["color"]))
+                    } else {
+                        Task(id, name, startDate.toDate(), allday, notifyme, notes, done,
+                            com.albaburdallo.intery.model.entities.Calendar(calendar["id"], calendar["name"],calendar["description"],calendar["color"]))
+                    }
+                    if (simpleDateFormat.format(task.startDate.time) == today) {
+                        todayTasks.add(task)
+                    } else if (simpleDateFormat.format(task.startDate.time) == tomorrow) {
+                        tomorrowTasks.add(task)
+                    } else if (simpleDateFormat.format(task.startDate.time) == nextDay) {
+                        nextDayTasks.add(task)
+                    }
+                }
+            }
+
+            //today
+            todayAdapter = if (todayTasks.size>3) {
+                TaskAdapter(this, todayTasks.subList(0, 3))
+            } else {
+                TaskAdapter(this, todayTasks)
+            }
+            todayTaskList.adapter = todayAdapter
+            todayTaskList.isEnabled = false
+            todayTaskList.emptyView = findViewById<TextView>(R.id.noTasksForTodayTextView)
+
+            //tomorrow
+            tomorrowAdapter = if (tomorrowTasks.size>2) {
+                TaskAdapter(this, tomorrowTasks.subList(0, 2))
+            } else {
+                TaskAdapter(this, tomorrowTasks)
+            }
+            tomorrowTaskList.adapter = tomorrowAdapter
+            tomorrowTaskList.isEnabled = false
+            tomorrowTaskList.emptyView = findViewById<TextView>(R.id.noTasksForTomorrowTextView)
+
+            //nextday
+            nextDayAdapter = if(nextDayTasks.size>1) {
+                TaskAdapter(this, nextDayTasks.subList(0, 1))
+            } else {
+                TaskAdapter(this, nextDayTasks)
+            }
+            nextDayTaskList.adapter = nextDayAdapter
+            nextDayTaskList.isEnabled = false
+            nextDayTaskList.emptyView = findViewById<TextView>(R.id.noTasksForNextDayTextView)
+        }
 
         nav_view.setNavigationItemSelectedListener {
             when (it.itemId) {

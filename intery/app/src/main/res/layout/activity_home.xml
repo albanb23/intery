@@ -27,55 +27,139 @@
                 android:layout_weight="1"
                 app:srcCompat="@drawable/ic_options" />
 
-<!--            <TextView-->
-<!--                android:id="@+id/textView"-->
-<!--                style="@style/text"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:paddingStart="16dp"-->
-<!--                android:text="@string/hello"-->
-<!--                android:textSize="24dp" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/userNameTextView"-->
-<!--                style="@style/text"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:hint="username"-->
-<!--                android:textSize="24dp" />-->
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/walletLayout"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/layout_background"
-            android:orientation="vertical"></LinearLayout>
+<!--        <ScrollView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:fillViewport="true">-->
 
-        <LinearLayout
-            android:id="@+id/taskFrame"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/layout_background"
-            android:orientation="vertical"></LinearLayout>
+            <LinearLayout
+                android:id="@+id/allLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/habitLayout"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/layout_background"
-            android:orientation="horizontal"></LinearLayout>
+                <LinearLayout
+                    android:id="@+id/walletLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/layout_background"
+                    android:orientation="vertical" />
+
+                <LinearLayout
+                    android:id="@+id/taskFrame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/layout_background"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/todayTextView"
+                        style="@style/title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="8dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:text="TextView" />
+
+                    <ListView
+                        android:id="@+id/todayTaskList"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <TextView
+                        android:id="@+id/noTasksForTodayTextView"
+                        style="@style/text"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@string/noTasksForToday"
+                        android:textColor="@color/gray"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/tomorrowTextView"
+                        style="@style/title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="8dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:text="TextView" />
+
+                    <ListView
+                        android:id="@+id/tomorrowTaskList"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <TextView
+                        android:id="@+id/noTasksForTomorrowTextView"
+                        style="@style/text"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@string/noTasksForToday"
+                        android:textColor="@color/gray"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/nextDayTextView"
+                        style="@style/title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="8dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:text="TextView" />
+
+                    <ListView
+                        android:id="@+id/nextDayTaskList"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <TextView
+                        android:id="@+id/noTasksForNextDayTextView"
+                        style="@style/text"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@string/noTasksForToday"
+                        android:textColor="@color/gray"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/seeMoreTextView"
+                        style="@style/text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:paddingRight="8dp"
+                        android:text="@string/seeMore"
+                        android:textColor="@color/gray" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/habitLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/layout_background"
+                    android:orientation="horizontal" />
+
+            </LinearLayout>
+
+<!--        </ScrollView>-->
+
     </LinearLayout>
 
     <include layout="@layout/activity_options"></include>

@@ -54,25 +54,22 @@ class TaskAdapter(context: Context, val tasks: MutableList<Task>) : ArrayAdapter
         radioButton.setOnCheckedChangeListener { buttonView, isChecked ->
             task.isDone = isChecked
             db.collection("tasks").document(task.id.toString()).update("done", task.isDone)
-            checkWhenDone(isChecked, taskName)
+            checkWhenDone(isChecked, taskName, tasks, task)
             if (!showAll) {
                 if (isChecked) {
                     tasks.remove(task)
-                    notifyDataSetChanged()
-                } else {
-                    tasks.add(task)
-                    notifyDataSetChanged()
                 }
+                notifyDataSetChanged()
             }
         }
         taskDate.text = putDates(task)
         radioButton.isChecked = task.isDone
-        checkWhenDone(radioButton.isChecked, taskName)
+        checkWhenDone(radioButton.isChecked, taskName, tasks, task)
 
         return convertView
     }
 
-    private fun checkWhenDone(isChecked: Boolean, taskName: TextView) {
+    private fun checkWhenDone(isChecked: Boolean, taskName: TextView, tasks: MutableList<Task>, task: Task) {
         if (isChecked) {
             taskName.paintFlags = taskName.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
         } else {

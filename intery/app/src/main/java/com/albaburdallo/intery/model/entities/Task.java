@@ -3,7 +3,7 @@ package com.albaburdallo.intery.model.entities;
 import java.util.Date;
 
 public class Task extends Base {
-    private Integer id;
+    private String id;
     private String name;
     private boolean done;
     private Date startDate;
@@ -20,7 +20,7 @@ public class Task extends Base {
         super();
     }
 
-    public Task(Integer id, String name, Date startDate, Boolean allDay, Boolean notifyMe, String notes, Boolean done, Calendar calendar) {
+    public Task(String id, String name, Date startDate, Boolean allDay, Boolean notifyMe, String notes, Boolean done, Calendar calendar) {
         super();
         this.id = id;
         this.name = name;
@@ -32,7 +32,7 @@ public class Task extends Base {
         this.calendar = calendar;
     }
 
-    public Task(Integer id, String name, Date startDate, Date startTime, Date endDate, Date endTime, Boolean allDay, Boolean notifyMe, String notes, Boolean done, Calendar calendar) {
+    public Task(String id, String name, Date startDate, Date startTime, Date endDate, Date endTime, Boolean allDay, Boolean notifyMe, String notes, Boolean done, Calendar calendar) {
         super();
         this.id = id;
         this.name = name;
@@ -119,11 +119,11 @@ public class Task extends Base {
         this.notifyMe = notifyMe;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

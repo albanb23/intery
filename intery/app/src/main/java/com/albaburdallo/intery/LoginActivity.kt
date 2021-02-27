@@ -8,6 +8,7 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import com.albaburdallo.intery.model.entities.Calendar
 import com.albaburdallo.intery.model.entities.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -16,6 +17,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.inputsLinearLayout
 
@@ -74,14 +76,16 @@ class LoginActivity : AppCompatActivity() {
             //comprobamos que se haya metido email y contraseña
             if (emailEditText.text.isNotEmpty() && passwordEditText.text.isNotEmpty()) {
                 val email = emailEditText.text.toString()
-                FirebaseAuth.getInstance().signInWithEmailAndPassword(email,
-                passwordEditText.text.toString()).addOnCompleteListener {
+                FirebaseAuth.getInstance().signInWithEmailAndPassword(
+                    email,
+                    passwordEditText.text.toString()
+                ).addOnCompleteListener {
                     if (it.isSuccessful) {
-                            showHome(it.result?.user?.email?: "")
-                        } else {
-                            showAlert()
-                        }
+                        showHome(it.result?.user?.email ?: "")
+                    } else {
+                        showAlert()
                     }
+                }
             }
         }
 
@@ -89,9 +93,9 @@ class LoginActivity : AppCompatActivity() {
         logInGoogleButton.setOnClickListener {
             //Config
             val googleConf = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(getString(R.string.default_web_client_id))
-                    .requestEmail()
-                    .build()
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
 
             val googleClient = GoogleSignIn.getClient(this, googleConf)
             googleClient.signOut()
@@ -127,19 +131,42 @@ class LoginActivity : AppCompatActivity() {
             try {
                 if (account != null) {
                     val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-                    FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            val user =
-                                User(
-                                    account.displayName.toString(), "",
-                                    account.email.toString(), account.photoUrl.toString()
-                                )
-                            db.collection("users").document(account.email.toString()).set(user)
-                            showHome(account.email?: "")
-                        } else {
-                            showAlert()
+                    FirebaseAuth.getInstance().signInWithCredential(credential)
+                        .addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                val user =
+                                    User(
+                                        account.displayName.toString(), "",
+                                        account.email.toString(), account.photoUrl.toString()
+                                    )
+                                db.collection("users").document(account.email.toString()).set(user)
+
+                                var firstTime = true
+                                db.collection("calendars").get().addOnSuccessListener { documents ->
+                                        for (document in documents) {
+                                            val userCalendar = document.get("user") as HashMap<*,*>
+                                            if (userCalendar["email"] == user.email) {
+                                                firstTime = false
+                                                break
+                                            }
+                                        }
+                                        if (firstTime) {
+                                            val defaultCalendar = Calendar(
+                                                account.displayName + "-" + account.email,
+                                                account.displayName,
+                                                R.string.defaultCalendar.toString(),
+                                                "-4590167"
+                                            )
+
+                                            db.collection("calendars").document(defaultCalendar.id)
+                                                .set(defaultCalendar)
+                                        }
+                                    }
+                                showHome(account.email ?: "")
+                            } else {
+                                showAlert()
+                            }
                         }
-                    }
                 }
             } catch (e: ApiException) {
                 showAlert()
