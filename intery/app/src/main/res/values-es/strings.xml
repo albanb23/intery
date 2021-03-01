@@ -62,4 +62,5 @@
     <string name="cantDeleteCalendar">No se puede borrar este calendario</string>
     <string name="defaultCalendar">Calendario por defecto</string>
     <string name="exisitingCalendar">Este calendario ya existe</string>
+    <string name="nothing_here">Aún no hay nada...</string>
 </resources>

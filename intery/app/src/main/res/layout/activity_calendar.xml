@@ -38,7 +38,7 @@
 
     </LinearLayout>
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/calendarList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -51,6 +51,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/noCalendars"
+            android:visibility="gone"
             android:textSize="16dp" />
 
     <LinearLayout

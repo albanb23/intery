@@ -29,7 +29,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        this.getSupportActionBar()?.hide()
+        this.supportActionBar?.hide()
 
         //Analytics event
         val analytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(this)
@@ -154,8 +154,9 @@ class LoginActivity : AppCompatActivity() {
                                             val defaultCalendar = Calendar(
                                                 account.displayName + "-" + account.email,
                                                 account.displayName,
-                                                R.string.defaultCalendar.toString(),
-                                                "-4590167"
+                                                "",
+                                                "-4590167",
+                                                true
                                             )
 
                                             db.collection("calendars").document(defaultCalendar.id)

@@ -5,10 +5,13 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.ActionMode
+import android.view.View
 import android.widget.ListView
 import android.widget.TextView
 import androidx.core.view.GravityCompat
 import androidx.core.view.size
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.habit.HabitActivity
 import com.albaburdallo.intery.model.entities.Task
 import com.albaburdallo.intery.task.TaskActivity
@@ -19,7 +22,9 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.activity_home.taskFrame
 import kotlinx.android.synthetic.main.activity_options.*
+import kotlinx.android.synthetic.main.activity_task.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,12 +33,10 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var todayTasks: MutableList<Task>
     private lateinit var tomorrowTasks: MutableList<Task>
     private lateinit var nextDayTasks: MutableList<Task>
-    private lateinit var todayAdapter: TaskAdapter
-    private lateinit var tomorrowAdapter: TaskAdapter
-    private lateinit var nextDayAdapter: TaskAdapter
-    private lateinit var todayTaskList: ListView
-    private lateinit var tomorrowTaskList: ListView
-    private lateinit var nextDayTaskList: ListView
+    private lateinit var adapter: TaskAdapter
+    private lateinit var todayTaskList: RecyclerView
+    private lateinit var tomorrowTaskList: RecyclerView
+    private lateinit var nextDayTaskList: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +46,7 @@ class HomeActivity : AppCompatActivity() {
         val bundle = intent.extras
         val email = bundle?.getString("email")
 
-        setup(email?:"")
+        setup()
 
         //Guardado de datos
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
@@ -51,7 +54,7 @@ class HomeActivity : AppCompatActivity() {
         prefs.apply()
     }
 
-    private fun setup(email: String) {
+    private fun setup() {
         val authEmail = FirebaseAuth.getInstance().currentUser?.email;
         todayTasks = arrayListOf()
         tomorrowTasks = arrayListOf()
@@ -105,34 +108,55 @@ class HomeActivity : AppCompatActivity() {
             }
 
             //today
-            todayAdapter = if (todayTasks.size>3) {
-                TaskAdapter(this, todayTasks.subList(0, 3))
+            todayTaskList.layoutManager = LinearLayoutManager(this)
+            adapter = if (todayTasks.size>3) {
+                TaskAdapter(todayTasks.subList(0, 3))
             } else {
-                TaskAdapter(this, todayTasks)
+                TaskAdapter(todayTasks)
             }
-            todayTaskList.adapter = todayAdapter
+            todayTaskList.adapter = adapter
             todayTaskList.isEnabled = false
-            todayTaskList.emptyView = findViewById<TextView>(R.id.noTasksForTodayTextView)
+            if (todayTasks.isEmpty()) {
+                noTasksForTodayTextView.visibility = View.VISIBLE
+                adapter.notifyDataSetChanged()
+            } else {
+                noTasksForTodayTextView.visibility = View.GONE
+                adapter.notifyDataSetChanged()
+            }
 
             //tomorrow
-            tomorrowAdapter = if (tomorrowTasks.size>2) {
-                TaskAdapter(this, tomorrowTasks.subList(0, 2))
+            tomorrowTaskList.layoutManager = LinearLayoutManager(this)
+            adapter = if (tomorrowTasks.size>2) {
+                TaskAdapter(tomorrowTasks.subList(0, 2))
             } else {
-                TaskAdapter(this, tomorrowTasks)
+                TaskAdapter(tomorrowTasks)
             }
-            tomorrowTaskList.adapter = tomorrowAdapter
+            tomorrowTaskList.adapter = adapter
             tomorrowTaskList.isEnabled = false
-            tomorrowTaskList.emptyView = findViewById<TextView>(R.id.noTasksForTomorrowTextView)
+            if (tomorrowTasks.isEmpty()) {
+                noTasksForTomorrowTextView.visibility = View.VISIBLE
+                adapter.notifyDataSetChanged()
+            } else {
+                noTasksForTomorrowTextView.visibility = View.GONE
+                adapter.notifyDataSetChanged()
+            }
 
             //nextday
-            nextDayAdapter = if(nextDayTasks.size>1) {
-                TaskAdapter(this, nextDayTasks.subList(0, 1))
+            nextDayTaskList.layoutManager = LinearLayoutManager(this)
+            adapter = if(nextDayTasks.size>1) {
+                TaskAdapter(nextDayTasks.subList(0, 1))
             } else {
-                TaskAdapter(this, nextDayTasks)
+                TaskAdapter(nextDayTasks)
             }
-            nextDayTaskList.adapter = nextDayAdapter
+            nextDayTaskList.adapter = adapter
             nextDayTaskList.isEnabled = false
-            nextDayTaskList.emptyView = findViewById<TextView>(R.id.noTasksForNextDayTextView)
+            if (nextDayTasks.isEmpty()) {
+                noTasksForNextDayTextView.visibility = View.VISIBLE
+                adapter.notifyDataSetChanged()
+            } else {
+                noTasksForNextDayTextView.visibility = View.GONE
+                adapter.notifyDataSetChanged()
+            }
         }
 
         nav_view.setNavigationItemSelectedListener {

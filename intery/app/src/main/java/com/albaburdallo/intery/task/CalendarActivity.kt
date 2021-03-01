@@ -5,14 +5,18 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.ListView
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.model.entities.Calendar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_calendar.*
+import kotlinx.android.synthetic.main.activity_task.*
 import kotlinx.android.synthetic.main.activity_task_form.*
 import kotlinx.android.synthetic.main.activity_task_form.backImageView
 import java.util.HashMap
@@ -20,12 +24,11 @@ import java.util.HashMap
 class CalendarActivity : AppCompatActivity(), AddCalendarFragment.CalendarCallbackListener {
     private val db = FirebaseFirestore.getInstance()
 
-    private lateinit var calendarList: ListView
+    private lateinit var calendarList: RecyclerView
     private lateinit var createCalendarButton: Button
     private lateinit var adapter: CalendarAdapter
     private lateinit var calendars: MutableList<Calendar>
     private val authEmail = FirebaseAuth.getInstance().currentUser?.email;
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +43,6 @@ class CalendarActivity : AppCompatActivity(), AddCalendarFragment.CalendarCallba
         calendarList = findViewById(R.id.calendarList)
         createCalendarButton = findViewById(R.id.createCalendarButton)
         calendars = arrayListOf()
-        val authEmail = FirebaseAuth.getInstance().currentUser?.email;
 
         db.collection("calendars").get().addOnSuccessListener { documents ->
             for (document in documents) {
@@ -54,25 +56,34 @@ class CalendarActivity : AppCompatActivity(), AddCalendarFragment.CalendarCallba
                 }
             }
 
-            adapter = CalendarAdapter(this, calendars)
+            calendarList.layoutManager = LinearLayoutManager(this)
+            adapter = CalendarAdapter(calendars)
             calendarList.adapter = adapter
-            calendarList.emptyView = findViewById(R.id.noCalendarsTextView)
+            adapter.setOnItemClickListener(object: CalendarAdapter.ClickListener{
+                override fun onItemClick(v: View, position: Int) {
+                    val calendar = calendars[position]
+                    val prefs =
+                        getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
+                    if (calendar != null) {
+                        prefs.putString("calendar", calendar.id)
+                        prefs.apply()
+                        showTasks()
+                    }
+                }
+            })
+
+            if (calendars.isEmpty()) {
+                noCalendarsTextView.visibility = View.VISIBLE
+                adapter.notifyDataSetChanged()
+            } else {
+                noCalendarsTextView.visibility = View.GONE
+                adapter.notifyDataSetChanged()
+            }
         }
 
         createCalendarButton.setOnClickListener {
             AddCalendarFragment.newInstance()
                 .show(supportFragmentManager, this.resources.getString(R.string.create_calendar))
-        }
-
-        calendarList.setOnItemClickListener { parent, view, position, id ->
-            val calendar = adapter.getItem(position)
-            val prefs =
-                getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
-            if (calendar != null) {
-                prefs.putString("calendar", calendar.id)
-                prefs.apply()
-                showTasks()
-            }
         }
 
     }

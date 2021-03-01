@@ -6,6 +6,7 @@ public class Calendar extends Base{
     private String name;
     private String description;
     private String color;
+    private Boolean def;
 
     public Calendar(String id, String name, String description, String color) {
         super();
@@ -13,6 +14,16 @@ public class Calendar extends Base{
         this.name = name;
         this.description = description;
         this.color = color;
+        this.def = false;
+    }
+
+    public Calendar(String id, String name, String description, String color, Boolean def) {
+        super();
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.color = color;
+        this.def = def;
     }
 
     public String getName() {
@@ -45,6 +56,14 @@ public class Calendar extends Base{
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Boolean getDef() {
+        return def;
+    }
+
+    public void setDef(Boolean def) {
+        this.def = def;
     }
 
     @Override

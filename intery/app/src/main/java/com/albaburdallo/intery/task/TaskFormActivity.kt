@@ -25,7 +25,7 @@ import kotlin.collections.HashMap
 
 class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     TimePickerDialog.OnTimeSetListener {
-    private lateinit var adapter: TaskAdapter
+//    private lateinit var adapter: TaskAdapter
     private lateinit var tasks: ArrayList<Task>
     private lateinit var calendars: ArrayList<String>
     private val db = FirebaseFirestore.getInstance()
@@ -216,7 +216,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
 
         }
 
-        adapter = TaskAdapter(this, tasks)
+//        adapter = TaskAdapter(this, tasks)
         saveTaskButton.setOnClickListener { i ->
             if (validateForm()) {
                 addTask()
@@ -286,7 +286,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                             db.collection("tasks").document(task.id).set(task as Task)
 //                            taskid = ""
                             tasks.add(task as Task)
-                            adapter.notifyDataSetChanged()
+//                            adapter.notifyDataSetChanged()
                             showList()
                         }
                     }

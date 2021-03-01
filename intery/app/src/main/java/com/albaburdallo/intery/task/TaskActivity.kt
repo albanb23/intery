@@ -6,9 +6,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.HomeActivity
 import com.albaburdallo.intery.LoginActivity
@@ -55,14 +55,14 @@ class TaskActivity : AppCompatActivity() {
             eyeOpenIcon.visibility = View.GONE
             calendarIcon.visibility = View.GONE
             bookmarkIcon.visibility = View.GONE
+
             val query = db.collection("calendars")
 
             query.document(calendarId).get().addOnSuccessListener {
-                if (it.get("description") as String != R.string.defaultCalendar.toString()) {
+                if (!(it.get("def") as Boolean)) {
                     trashCalendarImageView.visibility = View.VISIBLE
                 }
             }
-
 
             trashCalendarImageView.setOnClickListener {
                 val builder = AlertDialog.Builder(this)
@@ -184,13 +184,21 @@ class TaskActivity : AppCompatActivity() {
                     }
                 }
 
-                adapter = TaskAdapter(this, tasks)
+                taskList.layoutManager = LinearLayoutManager(this)
+                adapter = TaskAdapter(tasks)
                 taskList.adapter = adapter
-                taskList.emptyView = findViewById(R.id.noTasksTextView)
+                adapter.setOnItemClickListener(object: TaskAdapter.ClickListener {
+                    override fun onItemClick(v: View, position: Int) {
+                        val task = tasks[position]
+                        showTaskForm(task, "edit")
+                    }
+                })
 
-                taskList.setOnItemClickListener { parent, view, position, id ->
-                    val task = adapter.getItem(position)
-                    showTaskForm(task, "edit")
+                if (tasks.isEmpty()) {
+                    noTasksTextView.visibility = View.VISIBLE
+                    adapter.notifyDataSetChanged()
+                } else {
+                    noTasksTextView.visibility = View.GONE
                     adapter.notifyDataSetChanged()
                 }
 
@@ -202,8 +210,6 @@ class TaskActivity : AppCompatActivity() {
                     }
                 }
                 tasks.removeAll(borrar)
-//                prefs.putString("calendar", null)
-//                prefs.apply()
             }
 
         createTaskButton.setOnClickListener {

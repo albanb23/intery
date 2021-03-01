@@ -51,7 +51,7 @@
     <string name="remainingTasks">tasks remaining</string>
     <string name="calendarValidation">You must select a calendar</string>
     <string name="select">-- Select --</string>
-    <string name="deleteCalendar" >Deleting the calendar will delete all of its tasks, do you want to continue?</string>
+    <string name="deleteCalendar">Deleting the calendar will delete all of its tasks, do you want to continue?</string>
     <string name="seeMore"><i>See more...</i></string>
     <string name="noTasksForToday"><i>No tasks for today</i></string>
     <string name="addTransaction">Add transaction</string>
@@ -62,4 +62,5 @@
     <string name="cantDeleteCalendar">Cannot delete this calendar</string>
     <string name="defaultCalendar">Default calendar</string>
     <string name="exisitingCalendar">This calendar already exists</string>
+    <string name="nothing_here">Nothing here...</string>
 </resources>

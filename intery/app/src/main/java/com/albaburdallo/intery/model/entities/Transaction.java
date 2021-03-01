@@ -11,11 +11,11 @@ public class Transaction extends Base {
     private Date date;
     private String notes;
     //Entidad
-    private long entityId;
+    private Entity entity;
     //Sección
-    private long sectionId;
+    private Section section;
 
-    public Transaction(Boolean isExpenditure, Boolean isIncome, String concept, Double money, Date date, String notes) {
+    public Transaction(Boolean isExpenditure, Boolean isIncome, String concept, Double money, Date date, String notes, Entity entity, Section section) {
         super();
         this.isExpenditure = isExpenditure;
         this.isIncome = isIncome;
@@ -23,6 +23,8 @@ public class Transaction extends Base {
         this.money = money;
         this.date = date;
         this.notes = notes;
+        this.entity = entity;
+        this.section = section;
     }
 
     public Boolean getExpenditure() {
@@ -71,5 +73,21 @@ public class Transaction extends Base {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public Entity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
+
+    public Section getSection() {
+        return section;
+    }
+
+    public void setSection(Section section) {
+        this.section = section;
     }
 }
