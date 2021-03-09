@@ -48,7 +48,12 @@ class CalendarAdapter(val calendars: MutableList<Calendar>) : RecyclerView.Adapt
             colorPoint.setImageDrawable(calendarDrawable);
 
             calendarName.text = calendar.name
-            calendarDescription.text = calendar.description
+            if (calendar.description == "Default") {
+                calendarDescription.text = context.resources.getString(R.string.defaultCalendar)
+            } else {
+                calendarDescription.text = calendar.description
+            }
+
             var remaining = hashSetOf<String>()
             db.collection("tasks").whereEqualTo("done", false).get().addOnSuccessListener { documents ->
                 for(document in documents) {

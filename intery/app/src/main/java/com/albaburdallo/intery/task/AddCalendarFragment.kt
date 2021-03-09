@@ -30,7 +30,6 @@ class AddCalendarFragment: DialogFragment() {
         fun newInstance(): AddCalendarFragment = AddCalendarFragment()
     }
 
-    private val db = FirebaseFirestore.getInstance()
     private var selectedColor: Int = ColorSheet.NO_COLOR
     private var noColorOption = false
 

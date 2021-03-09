@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,17 +13,15 @@ import com.albaburdallo.intery.HomeActivity
 import com.albaburdallo.intery.LoginActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.habit.HabitActivity
-import com.albaburdallo.intery.model.entities.Calendar
 import com.albaburdallo.intery.model.entities.Task
 import com.albaburdallo.intery.wallet.WalletActivity
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_options.*
 import kotlinx.android.synthetic.main.activity_task.*
-import kotlinx.android.synthetic.main.task_list.*
-import java.util.*
 import kotlin.collections.HashMap
 
 

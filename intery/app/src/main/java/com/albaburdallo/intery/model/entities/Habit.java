@@ -12,8 +12,12 @@ public class Habit extends Base{
     private Boolean notifyMe;
     private Integer frequency;
 
+    public Habit() {
+
+    }
+
     public Habit(String name, String description, Date startDate, Date endDate, String color, Boolean notifyMe, Integer frequency) {
-        super();
+        super(java.util.Calendar.getInstance().getTime());
         this.name = name;
         this.description = description;
         this.startDate = startDate;

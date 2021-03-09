@@ -2,15 +2,17 @@ package com.albaburdallo.intery.model.entities;
 
 public class Section extends Base {
 
+    private String id;
     private String name;
-    private String description;
-    private String color;
 
-    public Section(String name, String description, String color) {
-        super();
+    public Section(String id, String name) {
+        super(java.util.Calendar.getInstance().getTime());
+        this.id = id;
         this.name = name;
-        this.description = description;
-        this.color = color;
+    }
+
+    public Section() {
+
     }
 
     public String getName() {
@@ -21,19 +23,11 @@ public class Section extends Base {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getId() {
+        return id;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
+    public void setId(String id) {
+        this.id = id;
     }
 }

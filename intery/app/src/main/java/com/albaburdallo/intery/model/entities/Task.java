@@ -17,11 +17,11 @@ public class Task extends Base {
     private Calendar calendar;
 
     public Task() {
-        super();
+
     }
 
     public Task(String id, String name, Date startDate, Boolean allDay, Boolean notifyMe, String notes, Boolean done, Calendar calendar) {
-        super();
+        super(java.util.Calendar.getInstance().getTime());
         this.id = id;
         this.name = name;
         this.startDate = startDate;
@@ -33,7 +33,7 @@ public class Task extends Base {
     }
 
     public Task(String id, String name, Date startDate, Date startTime, Date endDate, Date endTime, Boolean allDay, Boolean notifyMe, String notes, Boolean done, Calendar calendar) {
-        super();
+        super(java.util.Calendar.getInstance().getTime());
         this.id = id;
         this.name = name;
         this.startDate = startDate;

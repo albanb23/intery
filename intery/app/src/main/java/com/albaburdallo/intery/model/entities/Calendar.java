@@ -8,8 +8,12 @@ public class Calendar extends Base{
     private String color;
     private Boolean def;
 
+    public Calendar() {
+
+    }
+
     public Calendar(String id, String name, String description, String color) {
-        super();
+        super(java.util.Calendar.getInstance().getTime());
         this.id = id;
         this.name = name;
         this.description = description;
@@ -18,7 +22,7 @@ public class Calendar extends Base{
     }
 
     public Calendar(String id, String name, String description, String color, Boolean def) {
-        super();
+        super(java.util.Calendar.getInstance().getTime());
         this.id = id;
         this.name = name;
         this.description = description;

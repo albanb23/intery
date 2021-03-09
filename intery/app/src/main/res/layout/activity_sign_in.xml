@@ -68,7 +68,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/createAccTextView"
+                android:id="@+id/createTextView"
                 style="@style/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

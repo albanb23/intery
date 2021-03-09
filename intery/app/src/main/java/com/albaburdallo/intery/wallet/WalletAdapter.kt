@@ -9,12 +9,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.model.entities.Transaction
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import org.w3c.dom.Text
 import java.text.SimpleDateFormat
 import java.util.*
 
-class WalletAdapter(val transactions: MutableList<Transaction>): RecyclerView.Adapter<WalletAdapter.ViewHolder>() {
+class WalletAdapter(options: FirestoreRecyclerOptions<Transaction>
+): FirestoreRecyclerAdapter<Transaction,WalletAdapter.ViewHolder>(options) {
 
     private var clickListener: ClickListener? = null
 
@@ -32,7 +35,7 @@ class WalletAdapter(val transactions: MutableList<Transaction>): RecyclerView.Ad
             itemView.setOnClickListener(this)
         }
 
-        fun bind(transaction: Transaction, transactions: MutableList<Transaction>) {
+        fun bind(transaction: Transaction) {
             if(transaction.expenditure) {
                 expenditureIcon.visibility = View.VISIBLE
                 incomeIcon.visibility = View.GONE
@@ -66,16 +69,25 @@ class WalletAdapter(val transactions: MutableList<Transaction>): RecyclerView.Ad
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: WalletAdapter.ViewHolder, position: Int) {
-        val transaction = transactions[position]
-        holder.bind(transaction, transactions)
-    }
+//    override fun onBindViewHolder(holder: WalletAdapter.ViewHolder, position: Int) {
+//        val transaction = transactions[position]
+//        holder.bind(transaction, transactions)
+//    }
 
-    override fun getItemCount(): Int {
-        return transactions.size
+//    override fun getItemCount(): Int {
+//        return transactions.size
+//    }
+
+    fun setOnItemClickListener(clickListener: ClickListener) {
+        this.clickListener = clickListener
     }
 
     interface ClickListener {
         fun onItemCLick(v: View, position: Int)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, model: Transaction) {
+//        val transaction = transactions[position]
+        holder.bind(model)
     }
 }

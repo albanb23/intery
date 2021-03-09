@@ -154,7 +154,7 @@ class LoginActivity : AppCompatActivity() {
                                             val defaultCalendar = Calendar(
                                                 account.displayName + "-" + account.email,
                                                 account.displayName,
-                                                "",
+                                                "Default",
                                                 "-4590167",
                                                 true
                                             )

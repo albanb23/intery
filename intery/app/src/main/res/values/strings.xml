@@ -24,7 +24,7 @@
     <string name="hello">¡Hi, </string>
     <string name="noTasks"><i>No tasks</i></string>
     <string name="create_task">New task</string>
-    <string name="addTask"><b>Add task</b></string>
+    <string name="addTask"><b>New task</b></string>
     <string name="taskName">Title</string>
     <string name="taskStart">Start</string>
     <string name="taskEnd">End</string>
@@ -51,10 +51,13 @@
     <string name="remainingTasks">tasks remaining</string>
     <string name="calendarValidation">You must select a calendar</string>
     <string name="select">-- Select --</string>
+    <string name="selectEntity">Select an entity</string>
+    <string name="selectSection">Select a section</string>
     <string name="deleteCalendar">Deleting the calendar will delete all of its tasks, do you want to continue?</string>
     <string name="seeMore"><i>See more...</i></string>
     <string name="noTasksForToday"><i>No tasks for today</i></string>
-    <string name="addTransaction">Add transaction</string>
+    <string name="addTransaction"><b><i>Add transaction</i></b></string>
+    <string name="addTransactionButton">Add transaction</string>
     <string name="all">All</string>
     <string name="expenditures">Expenditures</string>
     <string name="incomes">Incomes</string>
@@ -62,5 +65,20 @@
     <string name="cantDeleteCalendar">Cannot delete this calendar</string>
     <string name="defaultCalendar">Default calendar</string>
     <string name="exisitingCalendar">This calendar already exists</string>
-    <string name="nothing_here">Nothing here...</string>
+    <string name="nothing_here">Nothing here…</string>
+    <string name="newTransaction"><b><i>New transaction</i></b></string>
+    <string name="expenditure">Expenditure</string>
+    <string name="income">Income</string>
+    <string name="transactionQuantity">Quantity</string>
+    <string name="transactionConcept">Concept</string>
+    <string name="transactionDate">Date</string>
+    <string name="transactionNotes">Notes</string>
+    <string name="addEntity">Add entity</string>
+    <string name="addSection">Add section</string>
+    <string name="entityExists">This entity already exists</string>
+    <string name="sectionExists">This section already exists</string>
+    <string name="createEntity"><b><i>Create entity</i></b></string>
+    <string name="createSection"><b><i>Create section</i></b></string>
+    <string name="validateEntity">You must select an entity</string>
+    <string name="validateSection">You must select a section</string>
 </resources>

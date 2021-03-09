@@ -26,7 +26,7 @@
     <string name="hello">¡Hola, </string>
     <string name="noTasks"><i>Aún no hay tareas</i></string>
     <string name="create_task">Nueva tarea</string>
-    <string name="addTask"><b>Añadir tarea</b></string>
+    <string name="addTask"><b>Nueva tarea</b></string>
     <string name="taskName">Título</string>
     <string name="taskStart">Inicio</string>
     <string name="taskEnd">Fin</string>
@@ -51,10 +51,12 @@
     <string name="remainingTasks">tareas sin completar</string>
     <string name="calendarValidation">Se debe seleccionar un calendario</string>
     <string name="select">-- Seleccionar --</string>
+    <string name="selectEntity">Selecciona una entidad</string>
+    <string name="selectSection">Selecciona una sección</string>
     <string name="deleteCalendar" >Al borrar el calendario se borrarán todas las tareas que contiene, ¿desea continuar?</string>
     <string name="seeMore"><i>Ver más...</i></string>
     <string name="noTasksForToday"><i>No hay tareas para hoy</i></string>
-    <string name="addTransaction">Añadir transacción</string>
+    <string name="addTransaction"><i><b>Añadir transacción</b></i></string>
     <string name="all">Todo</string>
     <string name="expenditures">Gastos</string>
     <string name="incomes">Ingresos</string>
@@ -63,4 +65,20 @@
     <string name="defaultCalendar">Calendario por defecto</string>
     <string name="exisitingCalendar">Este calendario ya existe</string>
     <string name="nothing_here">Aún no hay nada...</string>
+    <string name="newTransaction"><b><i>Nueva transacción</i></b></string>
+    <string name="expenditure">Gasto</string>
+    <string name="income">Ingreso</string>
+    <string name="transactionQuantity">Cantidad</string>
+    <string name="transactionConcept">Concepto</string>
+    <string name="transactionDate">Fecha</string>
+    <string name="transactionNotes">Notas</string>
+    <string name="addEntity">Añadir entidad</string>
+    <string name="addSection">Añadir sección</string>
+    <string name="entityExists">Esta entidad ya existe</string>
+    <string name="sectionExists">Esta sección ya existe</string>
+    <string name="createEntity"><b><i>Crear entidad</i></b></string>
+    <string name="createSection"><b><i>Crear sección</i></b></string>
+    <string name="addTransactionButton">Añadir transacción</string>
+    <string name="validateEntity">Se debe seleccionar una entidad</string>
+    <string name="validateSection">Se debe seleccionar una sección</string>
 </resources>

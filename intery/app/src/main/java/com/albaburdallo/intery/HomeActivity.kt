@@ -4,12 +4,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.ActionMode
 import android.view.View
-import android.widget.ListView
-import android.widget.TextView
 import androidx.core.view.GravityCompat
-import androidx.core.view.size
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.habit.HabitActivity
@@ -17,7 +13,6 @@ import com.albaburdallo.intery.model.entities.Task
 import com.albaburdallo.intery.task.TaskActivity
 import com.albaburdallo.intery.task.TaskAdapter
 import com.albaburdallo.intery.wallet.WalletActivity
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -56,6 +51,14 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setup() {
         val authEmail = FirebaseAuth.getInstance().currentUser?.email;
+
+        db.collection("common").document(authEmail?:"").get().addOnSuccessListener {
+            if (it.get("money")!=null && it.get("currency")!=null) {
+                moneyHomeTextView.text = it.get("money") as String
+                currencyHomeTextView.text = it.get("currency") as String
+            }
+        }
+
         todayTasks = arrayListOf()
         tomorrowTasks = arrayListOf()
         nextDayTasks = arrayListOf()

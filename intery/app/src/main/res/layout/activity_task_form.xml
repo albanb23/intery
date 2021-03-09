@@ -46,7 +46,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/createAccTextView"
+            android:id="@+id/createTextView"
             style="@style/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -212,6 +212,8 @@
                 android:id="@+id/calendarSelect"
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
+                style="@style/input"
+                android:textSize="12sp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/ic_input" />
 

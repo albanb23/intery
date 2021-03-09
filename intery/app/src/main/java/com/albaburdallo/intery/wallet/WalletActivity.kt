@@ -4,6 +4,10 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.HomeActivity
@@ -14,14 +18,21 @@ import com.albaburdallo.intery.model.entities.Entity
 import com.albaburdallo.intery.model.entities.Section
 import com.albaburdallo.intery.model.entities.Transaction
 import com.albaburdallo.intery.task.TaskActivity
+import com.albaburdallo.intery.task.TaskFormActivity
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.android.synthetic.main.activity_options.*
 import kotlinx.android.synthetic.main.activity_wallet.*
+import kotlinx.android.synthetic.main.activity_wallet.view.*
 import java.util.HashMap
 
-class WalletActivity : AppCompatActivity() {
+class WalletActivity : AppCompatActivity(){
 
     private val db = FirebaseFirestore.getInstance()
 
@@ -38,39 +49,121 @@ class WalletActivity : AppCompatActivity() {
 
     private fun setup() {
 
+        val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
         closeWalletImageView.setOnClickListener { showHome() }
+
+        if (authEmail != null) {
+            db.collection("common").document(authEmail).get().addOnSuccessListener {
+                if (it.get("money")!=null && it.get("currency")!=null) {
+                    moneyTextNumber.setText(it.get("money") as String)
+                    prefs.putString("totalMoney",it.get("money") as String)
+                    prefs.apply()
+                    currencyTextView.text = it.get("currency") as String
+                }
+            }
+        }
+
+        moneyTextNumber.doAfterTextChanged { text ->
+            if (authEmail != null) {
+                db.collection("common").document(authEmail).set(
+                    hashMapOf("money" to text.toString(), "currency" to "$")
+                )
+                prefs.putString("totalMoney",text.toString())
+                prefs.apply()
+            }
+        }
 
         walletList = findViewById(R.id.walletList)
         transactions = arrayListOf()
 
-        db.collection("wallet").get().addOnSuccessListener { documents ->
+        val query = db.collection("wallet").orderBy("date", Query.Direction.DESCENDING)
+
+        query.get().addOnSuccessListener { documents ->
             for (document in documents) {
                 val user = document.get("user") as HashMap<*, *>
                 if (user["email"] == authEmail) {
-                    val isExpenditure = document.get("id") as Boolean
-                    val isIncome = document.get("id") as Boolean
-                    val concept = document.get("id") as String
-                    val money = document.get("id") as Double
-                    val date = document.get("id") as Timestamp
-                    val notes = document.get("id") as String
-                    val entity = document.get("id") as HashMap<String, String>
-                    val section = document.get("id") as HashMap<String, String>
-                    transactions.add(Transaction(isExpenditure, isIncome, concept, money,
-                        date.toDate(), notes, Entity(entity["name"], entity["description"]),
-                        Section(section["name"], section["description"], section["color"])
+                    val id = document.get("id") as String
+                    val isExpenditure = document.get("expenditure") as Boolean
+                    val isIncome = document.get("income") as Boolean
+                    val concept = document.get("concept") as String
+                    val money = document.get("money") as Double
+                    val date = document.get("date") as Timestamp
+                    val notes = document.get("notes") as String
+                    val entity = document.get("entity") as HashMap<String, String>
+                    val section = document.get("section") as HashMap<String, String>
+                    transactions.add(Transaction(id, isExpenditure, isIncome, concept, money,
+                        date.toDate(), notes, Entity(entity["id"], entity["name"]),
+                        Section(section["id"], section["name"])
                     ))
                 }
             }
 
+            val options = FirestoreRecyclerOptions.Builder<Transaction>().setQuery(query, Transaction::class.java).build()
             walletList.layoutManager = LinearLayoutManager(this)
-            adapter = WalletAdapter(transactions)
+            adapter = WalletAdapter(options)
             walletList.adapter = adapter
             //setonclicklistener
+            adapter.setOnItemClickListener(object: WalletAdapter.ClickListener{
+                override fun onItemCLick(v: View, position: Int) {
+                    val transaction = transactions[position]
+                    showWalletForm(transaction, "edit")
+                }
+            })
+            adapter.startListening()
         }
 
         addTransactionButton.setOnClickListener {
-
+            prefs.putString("transactionId", null)
+            prefs.apply()
+            val transaction: Transaction? = null
+            showWalletForm(transaction, "create")
         }
+
+        toggleGroupMain.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            val incomes = arrayListOf<Transaction>()
+            val expenditures = arrayListOf<Transaction>()
+            val all = arrayListOf<Transaction>()
+            for (transaction in transactions) {
+                if (transaction.income) {
+                    incomes.add(transaction)
+                    all.add(transaction)
+                } else if (transaction.expenditure) {
+                    expenditures.add(transaction)
+                    all.add(transaction)
+                }
+            }
+            var exp = false
+            when(checkedId) {
+                R.id.expendituresButton -> {
+                    if (isChecked) {
+                        val newQuery = query.whereEqualTo("expenditure", true)
+                        val newOptions = FirestoreRecyclerOptions.Builder<Transaction>()
+                            .setQuery(newQuery, Transaction::class.java).build()
+
+                        adapter.updateOptions(newOptions)
+                    }
+                }
+                R.id.incomesButton -> {
+                    if (isChecked) {
+                        val newQuery = query.whereEqualTo("income", true)
+                        val newOptions = FirestoreRecyclerOptions.Builder<Transaction>()
+                            .setQuery(newQuery, Transaction::class.java).build()
+
+                        adapter.updateOptions(newOptions)
+                    }
+                }
+                R.id.allButton ->{
+                    if (isChecked) {
+                        val newQuery = query
+                        val newOptions = FirestoreRecyclerOptions.Builder<Transaction>()
+                            .setQuery(newQuery, Transaction::class.java).build()
+
+                        adapter.updateOptions(newOptions)
+                    }
+                }
+            }
+        }
+
 
         nav_view.setNavigationItemSelectedListener {
             when (it.itemId) {
@@ -108,6 +201,15 @@ class WalletActivity : AppCompatActivity() {
         }
     }
 
+    private fun showWalletForm(transaction: Transaction?, form: String) {
+        val walletFormIntent = Intent(this, WalletFormActivity::class.java)
+        if (transaction != null) {
+            walletFormIntent.putExtra("transactionId", transaction.id.toString())
+        }
+        walletFormIntent.putExtra("form", form)
+        startActivity(walletFormIntent)
+    }
+
     private fun showLogin() {
         val loginIntent = Intent(this, LoginActivity::class.java).apply { }
         startActivity(loginIntent)
@@ -132,4 +234,18 @@ class WalletActivity : AppCompatActivity() {
         val homeIntent = Intent(this, HomeActivity::class.java).apply { }
         startActivity(homeIntent)
     }
+
+//    override fun onStart() {
+//        super.onStart()
+//        adapter!!.startListening()
+//    }
+//
+//    override fun onStop() {
+//        super.onStop()
+//
+//        if (adapter != null) {
+//            adapter!!.stopListening()
+//        }
+//    }
+
 }

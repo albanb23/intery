@@ -4,6 +4,203 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WalletFormActivity">
+    tools:context=".wallet.WalletFormActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/backImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                app:srcCompat="@drawable/ic_back" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center|right"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                android:paddingRight="16dp">
+
+                <ImageView
+                    android:id="@+id/trashImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:srcCompat="@drawable/ic_trash" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/createTextView"
+            style="@style/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/addTransaction"
+            android:textAlignment="center" />
+
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggleGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/white"
+                app:checkedButton="@+id/expenditureBut"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/expenditureBut"
+                    android:layout_width="110dp"
+                    android:layout_height="40dp"
+                    android:backgroundTint="@drawable/toggle_back_form"
+                    android:text="@string/expenditure"
+                    android:textAllCaps="false"
+                    android:textColor="@drawable/toggle_text"
+                    android:textSize="12sp"
+                    app:cornerRadius="16dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/incomeBut"
+                    android:layout_width="110dp"
+                    android:layout_height="40dp"
+                    android:backgroundTint="@drawable/toggle_back_form"
+                    android:text="@string/income"
+                    android:textAllCaps="false"
+                    android:textColor="@drawable/toggle_text"
+                    android:textSize="12sp"
+                    app:cornerRadius="16dp" />
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <EditText
+                android:id="@+id/quantityEditText"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                style="@style/input"
+                android:background="@drawable/ic_input"
+                android:hint="@string/transactionQuantity"
+                android:inputType="numberDecimal" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <EditText
+                android:id="@+id/conceptEditText"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                style="@style/input"
+                android:background="@drawable/ic_input"
+                android:hint="@string/transactionConcept"
+                android:inputType="text" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <TextView
+                android:id="@+id/dateEditText"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                style="@style/input"
+                android:background="@drawable/ic_input"
+                android:gravity="center_vertical"
+                android:hint="@string/transactionDate" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <Spinner
+                android:id="@+id/entitySpinner"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                style="@style/input"
+                android:textSize="12sp"
+                android:background="@drawable/ic_input"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <Spinner
+                android:id="@+id/sectionSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                style="@style/input"
+                android:textSize="12sp"
+                android:background="@drawable/ic_input"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <EditText
+                android:id="@+id/notesEditText"
+                style="@style/textarea"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:background="@drawable/ic_input"
+                android:hint="@string/transactionNotes"
+                android:inputType="textPersonName" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="bottom|right"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/saveTransactionButton"
+            style="@style/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp"
+            android:text="@string/save"  />
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

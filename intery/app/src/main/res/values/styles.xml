@@ -30,7 +30,7 @@
     <style name="input">
         <item name="fontFamily">Inter</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:height">44dp</item>
         <item name="android:radius">8sp</item>
         <item name="android:background">@drawable/input</item>

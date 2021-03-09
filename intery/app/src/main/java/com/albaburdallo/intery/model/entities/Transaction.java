@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Transaction extends Base {
 
+    private String id;
     private Boolean isExpenditure;
     private Boolean isIncome;
     private String concept;
@@ -15,8 +16,12 @@ public class Transaction extends Base {
     //Sección
     private Section section;
 
-    public Transaction(Boolean isExpenditure, Boolean isIncome, String concept, Double money, Date date, String notes, Entity entity, Section section) {
-        super();
+    public Transaction(){
+    }
+
+    public Transaction(String id, Boolean isExpenditure, Boolean isIncome, String concept, Double money, Date date, String notes, Entity entity, Section section) {
+        super(java.util.Calendar.getInstance().getTime());
+        this.id = id;
         this.isExpenditure = isExpenditure;
         this.isIncome = isIncome;
         this.concept = concept;
@@ -89,5 +94,13 @@ public class Transaction extends Base {
 
     public void setSection(Section section) {
         this.section = section;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

@@ -5,18 +5,21 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Base {
 
-    private Calendar created;
+    private Date created;
     private User user;
 
     public Base() {
-        if (this.created == null) {
-            this.created = Calendar.getInstance();
-        }
+
+    }
+
+    public Base(Date calendar) {
+        this.created = calendar;
         FirebaseUser u = FirebaseAuth.getInstance().getCurrentUser();
         String email = u.getEmail();
         String name = u.getDisplayName();
@@ -27,11 +30,11 @@ public class Base {
         this.user = new User(name, "", email, photo);
     }
 
-    public Calendar getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(Calendar created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 

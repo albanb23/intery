@@ -55,7 +55,7 @@ class SignInActivity : AppCompatActivity() {
                             val defaultCalendar = Calendar(
                                 nameEditText.text.toString() + "-" + emailEditTextSignIn.text.toString(),
                                 nameEditText.text.toString(),
-                                "",
+                                "Default",
                                 "-4590167", true
                             )
                             db.collection("calendars").document(defaultCalendar.id)
