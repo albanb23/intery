@@ -166,6 +166,6 @@
 
     </LinearLayout>
 
-    <include layout="@layout/activity_options"></include>
+    <include layout="@layout/activity_options" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

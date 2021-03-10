@@ -69,15 +69,6 @@ class WalletAdapter(options: FirestoreRecyclerOptions<Transaction>
         return ViewHolder(view)
     }
 
-//    override fun onBindViewHolder(holder: WalletAdapter.ViewHolder, position: Int) {
-//        val transaction = transactions[position]
-//        holder.bind(transaction, transactions)
-//    }
-
-//    override fun getItemCount(): Int {
-//        return transactions.size
-//    }
-
     fun setOnItemClickListener(clickListener: ClickListener) {
         this.clickListener = clickListener
     }
@@ -87,7 +78,6 @@ class WalletAdapter(options: FirestoreRecyclerOptions<Transaction>
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, model: Transaction) {
-//        val transaction = transactions[position]
         holder.bind(model)
     }
 }

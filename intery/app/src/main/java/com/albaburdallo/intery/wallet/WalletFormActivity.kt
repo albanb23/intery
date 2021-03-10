@@ -93,7 +93,7 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                             }
                             if (authEmail != null) {
                                 db.collection("common").document(authEmail)
-                                    .set(hashMapOf("money" to total.toString(), "currency" to "$"))
+                                    .set(hashMapOf("money" to (Math.round(total * 100.0) / 100.0).toString(), "currency" to "$"))
                             }
                         db.collection("wallet").document(transactionId).delete()
                         showWallet()
@@ -310,23 +310,34 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                                                 total += transaction.money
                                             }
                                             db.collection("common").document(authEmail)
-                                                .set(hashMapOf("money" to total.toString(), "currency" to "$"))
+                                                .set(hashMapOf("money" to (Math.round(total * 100.0) / 100.0).toString(), "currency" to "$"))
+                                            db.collection("wallet").document(transaction.id).set(transaction)
                                         } else {
                                             db.collection("wallet").document(transactionId).get().addOnSuccessListener {
-                                                if ((it.get("money") as Double)!=money.toString().toDouble() || (it.get("expenditure") as Boolean)!=isExpenditure) {
+                                                val current = it.get("money") as Double
+                                                val modified = money.toString().toDouble()
+                                                //si se cambia solo la cantidad
+                                                if (modified - current!=0.0) {
                                                     if (isExpenditure) {
-                                                        total -= transaction.money
+                                                        total -= (modified - current)
                                                     } else if (isIncome) {
-                                                        total += transaction.money
+                                                        total += (modified - current)
+                                                    }
+                                                }
+                                                //si se cambia de gasto a ingreso
+                                                if (it.get("expenditure") as Boolean != isExpenditure) {
+                                                    if (isExpenditure) {
+                                                        total -= (current + modified)
+                                                    } else if (isIncome) {
+                                                        total += (current + modified)
                                                     }
                                                 }
                                                 db.collection("common").document(authEmail)
-                                                    .set(hashMapOf("money" to total.toString(), "currency" to "$"))
+                                                    .set(hashMapOf("money" to (Math.round(total * 100.0) / 100.0).toString(), "currency" to "$"))
+                                                db.collection("wallet").document(transaction.id).set(transaction)
                                             }
                                         }
                                 }
-
-                                db.collection("wallet").document(transaction.id).set(transaction)
                                 transactions.add(transaction)
                                 showWallet()
                             }

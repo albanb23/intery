@@ -51,6 +51,7 @@ class WalletActivity : AppCompatActivity(){
 
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
         closeWalletImageView.setOnClickListener { showHome() }
+        graphImageView.setOnClickListener { showChart() }
 
         if (authEmail != null) {
             db.collection("common").document(authEmail).get().addOnSuccessListener {
@@ -164,7 +165,6 @@ class WalletActivity : AppCompatActivity(){
             }
         }
 
-
         nav_view.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.tasks_item -> {
@@ -235,17 +235,9 @@ class WalletActivity : AppCompatActivity(){
         startActivity(homeIntent)
     }
 
-//    override fun onStart() {
-//        super.onStart()
-//        adapter!!.startListening()
-//    }
-//
-//    override fun onStop() {
-//        super.onStop()
-//
-//        if (adapter != null) {
-//            adapter!!.stopListening()
-//        }
-//    }
+    private fun showChart() {
+        val chartIntent = Intent(this, ChartActivity::class.java).apply { }
+        startActivity(chartIntent)
+    }
 
 }

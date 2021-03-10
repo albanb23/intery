@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.intery.NoActionBar">
-        <activity android:name=".wallet.WalletFormActivity"></activity>
+        <activity android:name=".wallet.ChartActivity"></activity>
+        <activity android:name=".wallet.WalletFormActivity" />
         <activity android:name=".task.CalendarActivity" />
         <activity android:name=".task.TaskFormActivity" />
         <activity android:name=".habit.HabitActivity" />
