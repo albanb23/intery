@@ -71,7 +71,7 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                 quantityEditText.setText(quantity.toString())
                 conceptEditText.setText(it.get("concept") as String)
                 date = (it.get("date") as Timestamp).toDate()
-                dateEditText.setText(formatDate(date))
+                dateEditText.text = formatDate(date)
                 notesEditText.setText(it.get("notes") as String)
                 if (isExpenditure) {
                     toggleGroup.check(R.id.expenditureBut)

@@ -15,11 +15,12 @@
             android:id="@+id/chartBackImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
             android:paddingLeft="16dp"
+            android:paddingTop="16dp"
             app:srcCompat="@drawable/ic_back" />
 
         <LinearLayout
+            android:id="@+id/monthSelector"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -37,12 +38,12 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/date_items"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_weight="1"
+                android:orientation="horizontal"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/horizontal_picker_item" />
 
@@ -54,6 +55,113 @@
                 android:background="@drawable/ic_arrow"
                 android:rotation="180" />
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/barchartLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="32dp"
+            android:paddingTop="32dp"
+            android:paddingRight="32dp">
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/barChart"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:background="@color/layout_background"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/savingsLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="32dp"
+            android:paddingStart="32dp">
+
+            <TextView
+                android:id="@+id/totalSavings"
+                style="@style/text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/totalSavings"/>
+
+            <TextView
+                android:id="@+id/totalNoSavings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/text"
+                android:visibility="gone"
+                android:text="@string/totalNoSavings"/>
+
+            <TextView
+                android:id="@+id/moneySavings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/text"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingTop="32dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/totalSpentMoney"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$0.0"
+                    android:textSize="30sp"
+                    android:layout_gravity="center"
+                    style="@style/text"/>
+
+                <TextView
+                    android:id="@+id/totalSpent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/totalSpent"
+                    style="@style/text"/>
+            </LinearLayout>
+
+            <Space
+                android:layout_width="32dp"
+                android:layout_height="0dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/totalReceivedMoney"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="30sp"
+                    android:layout_gravity="center"
+                    android:text="$0.0"
+                    style="@style/text"/>
+
+                <TextView
+                    android:id="@+id/totalReceived"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/totalReceived"
+                    android:layout_gravity="center"
+                    style="@style/text"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
     </LinearLayout>
 
     <include layout="@layout/activity_options" />

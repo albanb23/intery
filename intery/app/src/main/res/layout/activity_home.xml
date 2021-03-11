@@ -40,133 +40,175 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/walletLayout"
+
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="24dp"
-                    android:background="@drawable/layout_background">
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:paddingRight="10dp">
 
-                    <TextView
-                        android:id="@+id/currencyHomeTextView"
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/floatingCreateTransaction"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        style="@style/title"
-                        android:paddingStart="24dp"
-                        android:text="$"
-                        android:textSize="35sp">
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:clickable="true"
+                        android:backgroundTint="@color/yellow"
+                        app:tint="@color/white"
+                        android:focusable="true"
+                        app:srcCompat="@drawable/ic_plus"
+                        android:tint="@color/white"
+                        />
 
-                    </TextView>
+                    <LinearLayout
+                        android:id="@+id/walletLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="24dp"
+                        android:background="@drawable/layout_background">
 
-                    <TextView
-                        android:id="@+id/moneyHomeTextView"
-                        style="@style/title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:paddingStart="8dp"
-                        android:text="0"
-                        android:textSize="35sp" />
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/currencyHomeTextView"
+                            style="@style/title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:paddingStart="24dp"
+                            android:text="$"
+                            android:textSize="35sp">
 
-                <LinearLayout
-                    android:id="@+id/taskFrame"
+                        </TextView>
+
+                        <TextView
+                            android:id="@+id/moneyHomeTextView"
+                            style="@style/title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:paddingStart="8dp"
+                            android:text="0"
+                            android:textSize="35sp" />
+
+                    </LinearLayout>
+                </FrameLayout>
+
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:background="@drawable/layout_background"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:paddingRight="10dp">
 
-                    <TextView
-                        android:id="@+id/todayTextView"
-                        style="@style/title"
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/floatingCreateTask"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:backgroundTint="@color/yellow"
+                        android:clickable="true"
+                        app:tint="@color/white"
+                        android:focusable="true"
+                        android:elevation="0dp"
+                        app:srcCompat="@drawable/ic_plus"
+                        android:tint="@color/white"/>
+
+                    <LinearLayout
+                        android:id="@+id/taskFrame"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingStart="8dp"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:text="TextView" />
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:background="@drawable/layout_background"
+                        android:orientation="vertical">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/todayTaskList"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        <TextView
+                            android:id="@+id/todayTextView"
+                            style="@style/title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:text="TextView" />
 
-                    <TextView
-                        android:id="@+id/noTasksForTodayTextView"
-                        style="@style/text"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/noTasksForToday"
-                        android:textColor="@color/gray"
-                        android:textSize="16dp" />
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/todayTaskList"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
 
-                    <TextView
-                        android:id="@+id/tomorrowTextView"
-                        style="@style/title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="8dp"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:text="TextView" />
+                        <TextView
+                            android:id="@+id/noTasksForTodayTextView"
+                            style="@style/text"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/noTasksForToday"
+                            android:textColor="@color/gray"
+                            android:textSize="16dp" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/tomorrowTaskList"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        <TextView
+                            android:id="@+id/tomorrowTextView"
+                            style="@style/title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:text="TextView" />
 
-                    <TextView
-                        android:id="@+id/noTasksForTomorrowTextView"
-                        style="@style/text"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/noTasksForToday"
-                        android:textColor="@color/gray"
-                        android:textSize="16dp" />
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/tomorrowTaskList"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
 
-                    <TextView
-                        android:id="@+id/nextDayTextView"
-                        style="@style/title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="8dp"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:text="TextView" />
+                        <TextView
+                            android:id="@+id/noTasksForTomorrowTextView"
+                            style="@style/text"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/noTasksForToday"
+                            android:textColor="@color/gray"
+                            android:textSize="16dp" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/nextDayTaskList"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        <TextView
+                            android:id="@+id/nextDayTextView"
+                            style="@style/title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:text="TextView" />
 
-                    <TextView
-                        android:id="@+id/noTasksForNextDayTextView"
-                        style="@style/text"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/noTasksForToday"
-                        android:textColor="@color/gray"
-                        android:textSize="16dp" />
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/nextDayTaskList"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
 
-                    <TextView
-                        android:id="@+id/seeMoreTextView"
-                        style="@style/text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="right"
-                        android:paddingRight="8dp"
-                        android:text="@string/seeMore"
-                        android:textColor="@color/gray" />
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/noTasksForNextDayTextView"
+                            style="@style/text"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/noTasksForToday"
+                            android:textColor="@color/gray"
+                            android:textSize="16dp" />
+
+                        <TextView
+                            android:id="@+id/seeMoreTextView"
+                            style="@style/text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:paddingRight="8dp"
+                            android:text="@string/seeMore"
+                            android:textColor="@color/gray" />
+                    </LinearLayout>
+                </FrameLayout>
 
                 <LinearLayout
                     android:id="@+id/habitLayout"

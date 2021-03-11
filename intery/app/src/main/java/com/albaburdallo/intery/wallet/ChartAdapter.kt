@@ -23,7 +23,9 @@ private val onClick: ((LocalDate) -> Unit)?) : RecyclerView.Adapter<ChartAdapter
         @RequiresApi(Build.VERSION_CODES.O)
         fun bind(date: LocalDate, position: Int) {
             if (position in 1 until (itemCount - 1)) {
-                val month = date.month.getDisplayName(TextStyle.FULL, Locale.US)
+                val month = date.month.getDisplayName(TextStyle.FULL,
+                    context?.resources?.configuration?.locales?.get(0)
+                )
                 val year = date.year.toString()
                 monthLabel.text = month
                 yearLabel.text = year

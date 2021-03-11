@@ -81,4 +81,8 @@
     <string name="createSection"><b><i>Create section</i></b></string>
     <string name="validateEntity">You must select an entity</string>
     <string name="validateSection">You must select a section</string>
+    <string name="totalSavings">This month you have saved: </string>
+    <string name="totalNoSavings">This month you have spent: </string>
+    <string name="totalSpent">Total spent</string>
+    <string name="totalReceived">Total received</string>
 </resources>

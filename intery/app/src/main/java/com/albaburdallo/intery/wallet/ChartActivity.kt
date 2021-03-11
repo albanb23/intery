@@ -2,12 +2,15 @@ package com.albaburdallo.intery.wallet
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,12 +19,25 @@ import com.albaburdallo.intery.LoginActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.habit.HabitActivity
 import com.albaburdallo.intery.task.TaskActivity
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.collection.LLRBNode
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_chart.*
 import kotlinx.android.synthetic.main.activity_options.*
+import java.sql.Timestamp
 import java.time.LocalDate
+import java.time.ZoneId
+import java.util.*
 
 class ChartActivity : AppCompatActivity() {
+
+    private val db = FirebaseFirestore.getInstance()
+    private val authEmail = FirebaseAuth.getInstance().currentUser?.email;
 
     private lateinit var dateList: RecyclerView
     private lateinit var adapter: ChartAdapter
@@ -32,7 +48,8 @@ class ChartActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(
-            R.layout.activity_chart)
+            R.layout.activity_chart
+        )
         val date_list = findViewById<RecyclerView>(R.id.date_items)
 
         layoutManager = LinearLayoutManager(this)
@@ -54,6 +71,7 @@ class ChartActivity : AppCompatActivity() {
                     scrollToDate(previousDate)
                 }
             }
+            graph()
         }
 
         increment_date.setOnClickListener {
@@ -64,16 +82,18 @@ class ChartActivity : AppCompatActivity() {
                     scrollToDate(nextDate)
                 }
             }
+            graph()
         }
 
-        date_list.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+        date_list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (recyclerView.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
                     val offset = (date_list.width / date_list.width - 1) / 2
                     val position = layoutManager.findFirstCompletelyVisibleItemPosition() + offset
                     if (position in 0 until mainViewModel.dates.size &&
-                        mainViewModel.dates[position] != mainViewModel.selectedDate.value) {
+                        mainViewModel.dates[position] != mainViewModel.selectedDate.value
+                    ) {
                         when (position) {
                             0 -> {
                                 mainViewModel.setSelectedDate(mainViewModel.dates[1])
@@ -83,14 +103,18 @@ class ChartActivity : AppCompatActivity() {
                                 mainViewModel.setSelectedDate(mainViewModel.dates[position - 1])
                                 scrollToDate(mainViewModel.dates[position - 1])
                             }
-                            else -> mainViewModel.setSelectedDate(mainViewModel.dates[position])
+                            else -> {
+                                mainViewModel.setSelectedDate(mainViewModel.dates[position])
+                            }
                         }
                     }
                 }
+                graph()
             }
         })
 
         setup()
+        graph()
     }
 
     private fun setup() {
@@ -133,14 +157,98 @@ class ChartActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
+    private fun graph(){
+        db.collection("wallet").whereEqualTo("expenditure", true).get().addOnSuccessListener { documents ->
+            val barchart = findViewById<BarChart>(R.id.barChart)
+            var entries = arrayListOf<BarEntry>()
+            val currDate = mainViewModel.selectedDate.value
+
+            var moneyExp = 0.0
+            var moneyInc = 0.0
+            for (document in documents) {
+                val user = document.get("user") as HashMap<*, *>
+                val date = (document.get("date") as com.google.firebase.Timestamp).toDate()
+                val localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                if (user["email"]==authEmail && (localDate.monthValue==currDate?.monthValue && localDate.year== currDate.year)) {
+                    moneyExp += document.get("money") as Double
+                }
+            }
+
+            db.collection("wallet").whereEqualTo("income", true).get().addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val user = document.get("user") as HashMap<*, *>
+                    val date = (document.get("date") as com.google.firebase.Timestamp).toDate()
+                    val localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                    if (user["email"]==authEmail && (localDate.monthValue==currDate?.monthValue && localDate.year==currDate?.year)) {
+                        moneyInc+=document.get("money") as Double
+                    }
+                }
+                val expBarEntry = BarEntry(moneyExp.toFloat(), 0)
+                val incBarEntry = BarEntry(moneyInc.toFloat(), 1)
+                entries.add(expBarEntry)
+                entries.add(incBarEntry)
+
+                val barDataSet = BarDataSet(entries, "")
+                val colors: MutableList<Int> = arrayListOf(ContextCompat.getColor(this,R.color.red),
+                    ContextCompat.getColor(this, R.color.green))
+                barDataSet.colors = colors
+                val labels = arrayListOf<String>()
+                labels.add("")
+                labels.add("")
+                val data = BarData(labels, barDataSet)
+                barchart.data = data
+                barchart.setDescription("")
+                barchart.axisLeft.setDrawGridLines(false)
+                barchart.axisRight.setDrawGridLines(false)
+                barchart.axisLeft.setDrawLabels(false)
+                barchart.axisRight.setDrawLabels(false)
+                barchart.xAxis.isEnabled = false
+                barchart.axisLeft.isEnabled = false
+                barchart.axisRight.isEnabled = false
+                barchart.legend.isEnabled = false
+                barchart.xAxis.setDrawLabels(false)
+                var max = 0.0
+                var totalSav = 0.0
+                if (moneyExp>moneyInc) {
+                    max = moneyExp + 10.0
+                    totalSavings.visibility = View.GONE
+                    totalNoSavings.visibility = View.VISIBLE
+                    totalSav = moneyExp - moneyInc
+                } else {
+                    max = moneyInc + 10.0
+                    totalNoSavings.visibility = View.GONE
+                    totalSavings.visibility = View.VISIBLE
+                    totalSav = moneyInc - moneyExp
+                }
+                println("======================="+max)
+                barchart.axisLeft.setAxisMaxValue(max.toFloat())
+                barchart.axisLeft.setAxisMinValue(0f)
+                barchart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+                barDataSet.setDrawValues(false)
+                barchart.fitScreen()
+
+                barchart.animateY(5000)
+
+                db.collection("common").document(authEmail?:"").get().addOnSuccessListener {
+                    val curr = it.get("currency") as String
+                    moneySavings.text = " " + curr + " " + (Math.round(totalSav * 100.0) / 100.0)
+                    totalSpentMoney.text = curr + " " + moneyExp
+                    totalReceivedMoney.text = curr + " " + moneyInc
+                }
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun initializeSelectedDate() {
         if (mainViewModel.selectedDate.value == null) {
-            val now = mainViewModel.dates[mainViewModel.dates.size-2]
+            val now = mainViewModel.dates[mainViewModel.dates.size - 2]
             mainViewModel.setSelectedDate(now)
             scrollToDate(now)
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun scrollToDate(date: LocalDate) {
         val date_list = findViewById<RecyclerView>(R.id.date_items)
         val date_item = findViewById<LinearLayout>(R.id.date_item)
@@ -148,7 +256,10 @@ class ChartActivity : AppCompatActivity() {
 
         if (width>0){
             val dateWidth = date_item.width
-            layoutManager.scrollToPositionWithOffset(mainViewModel.dates.indexOf(date), width/2-dateWidth/2)
+            layoutManager.scrollToPositionWithOffset(
+                mainViewModel.dates.indexOf(date),
+                width / 2 - dateWidth / 2
+            )
         } else {
             val vto = date_list.viewTreeObserver
             vto.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -162,6 +273,7 @@ class ChartActivity : AppCompatActivity() {
                 }
             })
         }
+        graph()
     }
 
     private fun showLogin() {

@@ -15,6 +15,7 @@
     <color name="layout_background">#FAF7F4</color>
     <color name="gray">#979797</color>
     <color name="gray_back">#FAF7F4</color>
+    <color name="green">#B9F5A9</color>
 
     <array name="colors">
         <item name="red">#FF9AA2</item>
