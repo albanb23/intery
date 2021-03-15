@@ -107,5 +107,6 @@
             android:text="@string/create_task" />
     </LinearLayout>
 
+    <include layout="@layout/loading_layout"></include>
     <include layout="@layout/activity_options"></include>
 </androidx.drawerlayout.widget.DrawerLayout>

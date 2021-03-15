@@ -142,8 +142,11 @@ class LoginActivity : AppCompatActivity() {
                                 db.collection("users").document(account.email.toString()).set(user)
 
                                 var firstTime = true
-                                db.collection("calendars").get().addOnSuccessListener { documents ->
-                                        for (document in documents) {
+                                db.collection("calendars").addSnapshotListener { value, error ->
+                                    if (error != null) {
+                                        return@addSnapshotListener
+                                    }
+                                        for (document in value!!) {
                                             val userCalendar = document.get("user") as HashMap<*,*>
                                             if (userCalendar["email"] == user.email) {
                                                 firstTime = false

@@ -12,15 +12,15 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp" />
 
-    <TextView
-        android:id="@+id/calendarDraw"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/calendar"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:text="calendar"
-        android:textAlignment="center" />
+        <TextView
+            android:id="@+id/calendarDraw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/calendar"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="calendar"
+            android:textAlignment="center" />
 
     <LinearLayout
         android:layout_width="match_parent"

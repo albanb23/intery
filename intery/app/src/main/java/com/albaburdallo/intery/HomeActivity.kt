@@ -3,14 +3,17 @@ package com.albaburdallo.intery
 import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieDrawable
 import com.albaburdallo.intery.habit.HabitActivity
 import com.albaburdallo.intery.model.entities.Task
 import com.albaburdallo.intery.model.entities.Transaction
@@ -22,10 +25,12 @@ import com.albaburdallo.intery.wallet.WalletFormActivity
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_home.taskFrame
 import kotlinx.android.synthetic.main.activity_options.*
 import kotlinx.android.synthetic.main.activity_task.*
+import kotlinx.android.synthetic.main.loading_layout.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -40,6 +45,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var tomorrowTaskList: RecyclerView
     private lateinit var nextDayTaskList: RecyclerView
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -47,6 +53,10 @@ class HomeActivity : AppCompatActivity() {
 
         val bundle = intent.extras
         val email = bundle?.getString("email")
+
+        loadingLottie.setAnimation(R.raw.loading)
+        loadingLottie.playAnimation()
+        loadingLottie.repeatCount = LottieDrawable.INFINITE
 
         setup()
 
@@ -56,17 +66,22 @@ class HomeActivity : AppCompatActivity() {
         prefs.apply()
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun setup() {
         val authEmail = FirebaseAuth.getInstance().currentUser?.email;
 
         floatingCreateTask.setOnClickListener { showTaskForm(null, "create") }
         floatingCreateTransaction.setOnClickListener { showWalletForm(null, "create") }
 
-        db.collection("common").document(authEmail ?: "").get().addOnSuccessListener {
-            if (it.get("money")!=null && it.get("currency")!=null) {
-                moneyHomeTextView.text = it.get("money") as String
-                currencyHomeTextView.text = it.get("currency") as String
+        db.collection("common").document(authEmail ?: "").addSnapshotListener { value, error ->
+            if (error != null) {
+                return@addSnapshotListener
             }
+            if (value!!.get("money")!=null && value.get("currency")!=null) {
+                moneyHomeTextView.text = value.get("money") as String
+                currencyHomeTextView.text = value.get("currency") as String
+            }
+            loadingLayout.visibility = View.GONE
         }
 
         todayTasks = arrayListOf()
@@ -77,7 +92,7 @@ class HomeActivity : AppCompatActivity() {
         nextDayTaskList = findViewById(R.id.nextDayTaskList)
 
         val pattern = "EEEE, dd MMMM"
-        val simpleDateFormat = SimpleDateFormat(pattern)
+        val simpleDateFormat = SimpleDateFormat(pattern,  this.resources?.configuration?.locales?.get(0))
         val cal = Calendar.getInstance()
         val today = simpleDateFormat.format(cal.time)
         cal.add(Calendar.DATE, 1)
@@ -88,8 +103,12 @@ class HomeActivity : AppCompatActivity() {
         tomorrowTextView.text = tomorrow
         nextDayTextView.text = nextDay
 
-        db.collection("tasks").whereEqualTo("done", false).get().addOnSuccessListener { documents ->
-            for (document in documents) {
+        var query = db.collection("tasks").whereEqualTo("done", false)
+        query.orderBy("created", Query.Direction.DESCENDING).addSnapshotListener { value, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+            for (document in value!!) {
                 val user = document.get("user") as HashMap<String, String>
                 if (user["email"] == authEmail) {
                     val name = document.get("name") as String
@@ -193,6 +212,7 @@ class HomeActivity : AppCompatActivity() {
                 noTasksForNextDayTextView.visibility = View.GONE
                 adapter.notifyDataSetChanged()
             }
+            loadingLayout.visibility = View.GONE
         }
 
         nav_view.setNavigationItemSelectedListener {
@@ -226,7 +246,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
         optionsImage.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START);
+            drawerLayout.openDrawer(GravityCompat.START)
         }
 
         walletLayout.setOnClickListener {
@@ -234,6 +254,9 @@ class HomeActivity : AppCompatActivity() {
         }
 
         taskFrame.setOnClickListener {
+            val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
+            prefs.putString("calendar", null)
+            prefs.apply()
             showTask()
         }
 

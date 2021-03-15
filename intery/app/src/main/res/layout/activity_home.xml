@@ -227,5 +227,6 @@
     </LinearLayout>
 
     <include layout="@layout/activity_options"></include>
+    <include layout="@layout/loading_layout"></include>
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.DrawableCompat
@@ -32,10 +33,10 @@ class TaskAdapter(val tasks: MutableList<Task>): RecyclerView.Adapter<TaskAdapte
         )
         private val showAll = prefs.getBoolean("showAll", false)
 
-        private val taskName = itemView.findViewById<View>(R.id.taskNameList) as TextView
-        private val taskDate = itemView.findViewById<View>(R.id.dateTaskList) as TextView
+        private val taskName = itemView.findViewById<TextView>(R.id.taskNameList)
+        private val taskDate = itemView.findViewById<TextView>(R.id.dateTaskList)
         private val radioButton = itemView.findViewById<CheckBox>(R.id.taskRadioButton)
-        private val caldraw = itemView.findViewById<View>(R.id.calendarDraw) as TextView
+        private val caldraw = itemView.findViewById<TextView>(R.id.calendarDraw)
         val task: Task? = null
 
         init {
@@ -47,8 +48,12 @@ class TaskAdapter(val tasks: MutableList<Task>): RecyclerView.Adapter<TaskAdapte
             val unwrappedDrawable = AppCompatResources.getDrawable(context, R.drawable.calendar)
             val calendarDrawable = DrawableCompat.wrap(unwrappedDrawable!!)
             DrawableCompat.setTint(calendarDrawable, Integer.parseInt(task.calendar.color))
-            caldraw.text = task.calendar.name
             caldraw.background = calendarDrawable
+            if (task.calendar.name.length > 10) {
+                (task.calendar.name.substring(0, 10) + "...").also { caldraw.text = it }
+            } else {
+                caldraw.text = task.calendar.name
+            }
 
             radioButton.setOnCheckedChangeListener { buttonView, isChecked ->
                 task.isDone = isChecked

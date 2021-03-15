@@ -41,8 +41,13 @@ class TaskActivity : AppCompatActivity() {
         setContentView(R.layout.activity_task)
         this.getSupportActionBar()?.hide()
 
+    }
+
+    override fun onStart() {
+        super.onStart()
         //Guardado de datos
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
+        val prefsEdit = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
 
         calendarId = prefs.getString("calendar", "").toString()
         val index = calendarId.indexOf("-")
@@ -55,8 +60,11 @@ class TaskActivity : AppCompatActivity() {
 
             val query = db.collection("calendars")
 
-            query.document(calendarId).get().addOnSuccessListener {
-                if (!(it.get("def") as Boolean)) {
+            query.document(calendarId).addSnapshotListener(this) { value, error ->
+                if (error != null){
+                    return@addSnapshotListener
+                }
+                if (value!!.get("def")==null || value.get("def")=="" || (!(value.get("def") as Boolean))) {
                     trashCalendarImageView.visibility = View.VISIBLE
                 }
             }
@@ -67,8 +75,11 @@ class TaskActivity : AppCompatActivity() {
                     .setCancelable(false)
                     .setPositiveButton(this.resources.getString(R.string.yes)) { dialog, id ->
                         //se borran todas las tareas del calendario
-                        db.collection("tasks").get().addOnSuccessListener { documents ->
-                            for(document in documents) {
+                        db.collection("tasks").addSnapshotListener(this) { value, error ->
+                            if (error != null) {
+                                return@addSnapshotListener
+                            }
+                            for(document in value!!) {
                                 val cal = document.get("calendar") as HashMap<*, *>
                                 if (cal["id"] == calendarId) {
                                     db.collection("tasks").document(document.id).delete()
@@ -76,11 +87,10 @@ class TaskActivity : AppCompatActivity() {
                             }
                         }
                         //se borra el calendario
-                            query.document(calendarId).delete()
-                            val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
-                            prefs.putString("calendar", null)
-                            prefs.apply()
-                            showCalendar()
+                        query.document(calendarId).delete()
+                        prefsEdit.putString("calendar", null)
+                        prefsEdit.apply()
+                        showCalendar()
                     }
                     .setNegativeButton(this.resources.getString(R.string.no)) { dialog, id ->
                         dialog.dismiss()
@@ -90,12 +100,6 @@ class TaskActivity : AppCompatActivity() {
             }
         }
         showAll = prefs.getBoolean("showAll", false)
-
-        setup()
-    }
-
-    private fun setup() {
-        val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
 
         taskList = findViewById(R.id.taskList)
         createTaskButton = findViewById(R.id.createTaskButton)
@@ -115,14 +119,14 @@ class TaskActivity : AppCompatActivity() {
         }
 
         eyeClosedIcon.setOnClickListener {
-            prefs.putBoolean("showAll", true)
-            prefs.apply()
+            prefsEdit.putBoolean("showAll", true)
+            prefsEdit.apply()
             restartView()
         }
 
         eyeOpenIcon.setOnClickListener {
-            prefs.putBoolean("showAll", false)
-            prefs.apply()
+            prefsEdit.putBoolean("showAll", false)
+            prefsEdit.apply()
             restartView()
         }
 
@@ -132,86 +136,86 @@ class TaskActivity : AppCompatActivity() {
             db.collection("tasks").whereEqualTo("done", false)
         }
 
-        taskcoll.get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    val user = document.get("user") as HashMap<String, String>
-                    if (user["email"] == authEmail) {
-                        val name = document.get("name") as String
-                        val startDate = document.get("startDate") as Timestamp
-                        val endDate = document.get("endDate") as? Timestamp
-                        val startTime = document.get("startTime") as? Timestamp
-                        val endTime = document.get("endTime") as? Timestamp
-                        val allday = document.get("allDay") as Boolean
-                        val notifyme = document.get("notifyMe") as Boolean
-                        val notes = document.get("notes") as String
-                        val done = document.get("done") as Boolean
-                        val id  = document.get("id") as String
-                        val calendar = document.get("calendar") as HashMap<String, String>
-                        if (endDate != null && startTime != null && endTime != null) {
-                            tasks.add(
-                                Task(
-                                    id,
-                                    name,
-                                    startDate.toDate(),
-                                    startTime.toDate(),
-                                    endDate.toDate(),
-                                    endTime.toDate(),
-                                    allday,
-                                    notifyme,
-                                    notes,
-                                    done,
-                                    com.albaburdallo.intery.model.entities.Calendar(calendar["id"], calendar["name"],calendar["description"],calendar["color"])
-                                )
-                            )
-                        } else {
-                            tasks.add(
-                                Task(
-                                    id,
-                                    name,
-                                    startDate.toDate(),
-                                    allday,
-                                    notifyme,
-                                    notes,
-                                    done,
-                                    com.albaburdallo.intery.model.entities.Calendar(calendar["id"], calendar["name"],calendar["description"],calendar["color"])
-                                )
-                            )
-                        }
-                    }
-                }
-
-                taskList.layoutManager = LinearLayoutManager(this)
-                adapter = TaskAdapter(tasks)
-                taskList.adapter = adapter
-                adapter.setOnItemClickListener(object: TaskAdapter.ClickListener {
-                    override fun onItemClick(v: View, position: Int) {
-                        val task = tasks[position]
-                        showTaskForm(task, "edit")
-                    }
-                })
-
-                if (tasks.isEmpty()) {
-                    noTasksTextView.visibility = View.VISIBLE
-                    adapter.notifyDataSetChanged()
+        taskcoll = taskcoll.orderBy("created", Query.Direction.DESCENDING)
+        taskcoll.whereEqualTo("user.email", authEmail).addSnapshotListener(this) { value, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+            for (document in value!!) {
+                val name = document.get("name") as String
+                val startDate = document.get("startDate") as Timestamp
+                val endDate = document.get("endDate") as? Timestamp
+                val startTime = document.get("startTime") as? Timestamp
+                val endTime = document.get("endTime") as? Timestamp
+                val allday = document.get("allDay") as Boolean
+                val notifyme = document.get("notifyMe") as Boolean
+                val notes = document.get("notes") as String
+                val done = document.get("done") as Boolean
+                val id  = document.get("id") as String
+                val calendar = document.get("calendar") as HashMap<String, String>
+                if (endDate != null && startTime != null && endTime != null) {
+                    tasks.add(
+                        Task(
+                            id,
+                            name,
+                            startDate.toDate(),
+                            startTime.toDate(),
+                            endDate.toDate(),
+                            endTime.toDate(),
+                            allday,
+                            notifyme,
+                            notes,
+                            done,
+                            com.albaburdallo.intery.model.entities.Calendar(calendar["id"], calendar["name"],calendar["description"],calendar["color"])
+                        )
+                    )
                 } else {
-                    noTasksTextView.visibility = View.GONE
-                    adapter.notifyDataSetChanged()
+                    tasks.add(
+                        Task(
+                            id,
+                            name,
+                            startDate.toDate(),
+                            allday,
+                            notifyme,
+                            notes,
+                            done,
+                            com.albaburdallo.intery.model.entities.Calendar(calendar["id"], calendar["name"],calendar["description"],calendar["color"])
+                        )
+                    )
                 }
-
-                //para que salgan solo las task del calendario
-                val borrar = arrayListOf<Task>()
-                for (t in tasks) {
-                    if(calendarId!="" && calendarId!=t.calendar.id) {
-                        borrar.add(t)
-                    }
-                }
-                tasks.removeAll(borrar)
             }
 
+            taskList.layoutManager = LinearLayoutManager(this)
+            adapter = TaskAdapter(tasks)
+            taskList.adapter = adapter
+            adapter.setOnItemClickListener(object: TaskAdapter.ClickListener {
+                override fun onItemClick(v: View, position: Int) {
+                    val task = tasks[position]
+                    showTaskForm(task, "edit")
+                }
+            })
+
+            if (tasks.isEmpty()) {
+                noTasksTextView.visibility = View.VISIBLE
+                adapter.notifyDataSetChanged()
+            } else {
+                noTasksTextView.visibility = View.GONE
+                adapter.notifyDataSetChanged()
+            }
+
+            //para que salgan solo las task del calendario
+            val borrar = arrayListOf<Task>()
+            for (t in tasks) {
+                if(calendarId!="" && calendarId!=t.calendar.id) {
+                    borrar.add(t)
+                }
+            }
+            tasks.removeAll(borrar)
+        }
+
         createTaskButton.setOnClickListener {
-            prefs.putString("taskid", null)
-            prefs.apply()
+            prefsEdit.putString("taskid", null)
+            prefsEdit.apply()
             var task: Task? = null
             showTaskForm(task, "create")
         }
@@ -261,8 +265,8 @@ class TaskActivity : AppCompatActivity() {
         bookmarkIcon.setOnClickListener {
             showCalendar()
         }
-
     }
+
 
     private fun restartView() {
         val intent = Intent(this, TaskActivity::class.java)

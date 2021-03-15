@@ -123,5 +123,6 @@
         </LinearLayout>
     </LinearLayout>
 
+    <include layout="@layout/loading_layout"></include>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -149,23 +149,27 @@
 
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/walletList"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
             <TextView
                 android:id="@+id/noTransactionsTextView"
                 style="@style/text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:visibility="gone"
                 android:text="@string/noTransactions"
                 android:textSize="16dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/walletList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+
         </LinearLayout>
 
     </LinearLayout>
 
     <include layout="@layout/activity_options" />
+    <include layout="@layout/loading_layout"></include>
 
 </androidx.drawerlayout.widget.DrawerLayout>

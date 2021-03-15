@@ -25,7 +25,7 @@ import kotlin.collections.HashMap
 
 class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     TimePickerDialog.OnTimeSetListener {
-//    private lateinit var adapter: TaskAdapter
+    //    private lateinit var adapter: TaskAdapter
     private lateinit var tasks: ArrayList<Task>
     private lateinit var calendars: ArrayList<String>
     private val db = FirebaseFirestore.getInstance()
@@ -60,27 +60,32 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_form)
         this.getSupportActionBar()?.hide()
+
+    }
+
+    override fun onStart() {
+        super.onStart()
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
         calendarId = prefs.getString("calendar", "").toString()
 
         taskid = intent.extras?.getString("taskid") ?: ""
 
         if (taskid != "") {
-            db.collection("tasks").document(taskid).get().addOnSuccessListener {
-                taskNameEditText.setText(it.get("name") as? String)
-                startDateInput.text = formatDate((it.get("startDate") as Timestamp).toDate())
-                start = (it.get("startDate") as Timestamp).toDate()
-                if (it.get("startTime") != null && it.get("endDate") != null && it.get("endTime") != null) {
-                    startTimeInput.text = formatTime((it.get("startTime") as Timestamp).toDate())
-                    startTime = (it.get("startTime") as Timestamp).toDate()
-                    endDateInput.text = formatDate((it.get("endDate") as Timestamp).toDate())
-                    end = (it.get("endDate") as Timestamp).toDate()
-                    endTimeInput.text = formatTime((it.get("endTime") as Timestamp).toDate())
-                    endTime = (it.get("endTime") as Timestamp).toDate()
+            db.collection("tasks").document(taskid).get().addOnSuccessListener {value ->
+                taskNameEditText.setText(value!!.get("name") as? String)
+                startDateInput.text = formatDate((value.get("startDate") as Timestamp).toDate())
+                start = (value.get("startDate") as Timestamp).toDate()
+                if (value.get("startTime") != null && value.get("endDate") != null && value.get("endTime") != null) {
+                    startTimeInput.text = formatTime((value.get("startTime") as Timestamp).toDate())
+                    startTime = (value.get("startTime") as Timestamp).toDate()
+                    endDateInput.text = formatDate((value.get("endDate") as Timestamp).toDate())
+                    end = (value.get("endDate") as Timestamp).toDate()
+                    endTimeInput.text = formatTime((value.get("endTime") as Timestamp).toDate())
+                    endTime = (value.get("endTime") as Timestamp).toDate()
                 }
-                allDayCheckBox.isChecked = it.get("allDay") as Boolean
-                remindMeCheckBox.isChecked = it.get("notifyMe") as Boolean
-                notesEditText.setText(it.get("notes") as? String)
+                allDayCheckBox.isChecked = value.get("allDay") as Boolean
+                remindMeCheckBox.isChecked = value.get("notifyMe") as Boolean
+                notesEditText.setText(value.get("notes") as? String)
             }
 
             trashImageView.setOnClickListener {
@@ -109,8 +114,12 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
 
-        db.collection("calendars").orderBy("created").get().addOnSuccessListener { documents ->
-            for (document in documents) {
+        db.collection("calendars").orderBy("created").addSnapshotListener(this) { value, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+            calendars.clear()
+            for (document in value!!) {
                 val user = document.get("user") as HashMap<*, *>
                 if (user["email"] == authEmail) {
                     val calendarName = document.get("name") as String
@@ -120,8 +129,8 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
             adapter.notifyDataSetChanged()
 
             if (taskid != "") {
-                db.collection("tasks").document(taskid).get().addOnSuccessListener {
-                    val cal = it.get("calendar") as HashMap<*, *>
+                db.collection("tasks").document(taskid).get().addOnSuccessListener {value ->
+                    val cal = value!!.get("calendar") as HashMap<*, *>
                     for (calendar in calendars) {
                         if (calendar == cal["name"]) {
                             spinner.setSelection(calendars.indexOf(calendar))
@@ -143,11 +152,6 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
             }
         }
 
-        setup()
-
-    }
-
-    private fun setup() {
         tasks = arrayListOf()
 
         backImageView.setOnClickListener { onBackPressed() }
@@ -232,9 +236,13 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         val remindMe = remindMeCheckBox.isChecked
         val calendarTitle = calendarSelect.selectedItem.toString()
         var calendar: com.albaburdallo.intery.model.entities.Calendar? = null
-        db.collection("calendars").whereEqualTo("name", calendarTitle).get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
+        db.collection("calendars").whereEqualTo("name", calendarTitle)
+            .addSnapshotListener(this) { value, error ->
+                if (error != null) {
+                    return@addSnapshotListener
+                }
+
+                for (document in value!!) {
                     val user = document.get("user") as HashMap<*, *>
                     if (user["email"] == authEmail) {
                         calendar = com.albaburdallo.intery.model.entities.Calendar(
@@ -244,10 +252,23 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                             document.get("color") as String
                         )
                     }
-                    var id = taskid
-                    if (taskid=="") {
-                        id = name + "-" +  authEmail
+                }
+                val idList = arrayListOf<Int>()
+                db.collection("tasks").orderBy("id", Query.Direction.DESCENDING).get().addOnSuccessListener {value ->
+                    for (document in value!!) {
+                        val documentId = document.get("id") as String
+                        val subId = documentId.substring(0, documentId.indexOf("-"))
+                        idList.add(subId.toInt())
                     }
+                    var id = taskid
+                    if (id == "") {
+                        var int = 1
+                        if (idList.isNotEmpty()) {
+                            int = idList[0] + 1
+                        }
+                        id = int.toString() + "-" + name + "-" + authEmail
+                    }
+
                     if (!TextUtils.isEmpty(name)) {
                         if (end != null && startTime != null && endTime != null) {
                             task = Task(
@@ -284,9 +305,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                             ).show()
                         } else {
                             db.collection("tasks").document(task.id).set(task as Task)
-//                            taskid = ""
                             tasks.add(task as Task)
-//                            adapter.notifyDataSetChanged()
                             showList()
                         }
                     }

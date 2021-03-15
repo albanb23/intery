@@ -10,6 +10,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieDrawable
 import com.albaburdallo.intery.HomeActivity
 import com.albaburdallo.intery.LoginActivity
 import com.albaburdallo.intery.R
@@ -30,6 +31,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.android.synthetic.main.activity_options.*
 import kotlinx.android.synthetic.main.activity_wallet.*
 import kotlinx.android.synthetic.main.activity_wallet.view.*
+import kotlinx.android.synthetic.main.loading_layout.*
 import java.util.HashMap
 
 class WalletActivity : AppCompatActivity(){
@@ -38,33 +40,40 @@ class WalletActivity : AppCompatActivity(){
 
     private lateinit var walletList: RecyclerView
     private lateinit var adapter: WalletAdapter
-    private lateinit var transactions: MutableList<Transaction>
     private val authEmail = FirebaseAuth.getInstance().currentUser?.email;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wallet)
-        setup()
+//        loadingLottie.setAnimation(R.raw.loading)
+//        loadingLottie.playAnimation()
+//        loadingLottie.repeatCount = LottieDrawable.INFINITE
     }
 
-    private fun setup() {
 
+    override fun onStart() {
+        super.onStart()
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
         closeWalletImageView.setOnClickListener { showHome() }
         graphImageView.setOnClickListener { showChart() }
 
         if (authEmail != null) {
-            db.collection("common").document(authEmail).get().addOnSuccessListener {
-                if (it.get("money")!=null && it.get("currency")!=null) {
-                    moneyTextNumber.setText(it.get("money") as String)
-                    prefs.putString("totalMoney",it.get("money") as String)
-                    prefs.apply()
-                    currencyTextView.text = it.get("currency") as String
+            db.collection("common").document(authEmail).addSnapshotListener(this) { value, error ->
+                if (error != null) {
+                    return@addSnapshotListener
                 }
+                if (value!!.get("money")!=null && value.get("currency")!=null) {
+                    moneyTextNumber.setText(value.get("money") as String)
+                    prefs.putString("totalMoney",value.get("money") as String)
+                    prefs.apply()
+                    currencyTextView.text = value.get("currency") as String
+                }
+                loadingLayout.visibility = View.GONE
             }
         }
 
         moneyTextNumber.doAfterTextChanged { text ->
+            loadingLayout.visibility = View.VISIBLE
             if (authEmail != null) {
                 db.collection("common").document(authEmail).set(
                     hashMapOf("money" to text.toString(), "currency" to "$")
@@ -72,33 +81,18 @@ class WalletActivity : AppCompatActivity(){
                 prefs.putString("totalMoney",text.toString())
                 prefs.apply()
             }
+            loadingLayout.visibility = View.GONE
         }
 
         walletList = findViewById(R.id.walletList)
-        transactions = arrayListOf()
 
-        val query = db.collection("wallet").orderBy("date", Query.Direction.DESCENDING)
+        var query = db.collection("wallet").orderBy("date", Query.Direction.DESCENDING)
 
-        query.get().addOnSuccessListener { documents ->
-            for (document in documents) {
-                val user = document.get("user") as HashMap<*, *>
-                if (user["email"] == authEmail) {
-                    val id = document.get("id") as String
-                    val isExpenditure = document.get("expenditure") as Boolean
-                    val isIncome = document.get("income") as Boolean
-                    val concept = document.get("concept") as String
-                    val money = document.get("money") as Double
-                    val date = document.get("date") as Timestamp
-                    val notes = document.get("notes") as String
-                    val entity = document.get("entity") as HashMap<String, String>
-                    val section = document.get("section") as HashMap<String, String>
-                    transactions.add(Transaction(id, isExpenditure, isIncome, concept, money,
-                        date.toDate(), notes, Entity(entity["id"], entity["name"]),
-                        Section(section["id"], section["name"])
-                    ))
-                }
+        query = query.whereEqualTo("user.email", authEmail)
+        query.addSnapshotListener(this) { documents, e ->
+            if (e != null) {
+                return@addSnapshotListener
             }
-
             val options = FirestoreRecyclerOptions.Builder<Transaction>().setQuery(query, Transaction::class.java).build()
             walletList.layoutManager = LinearLayoutManager(this)
             adapter = WalletAdapter(options)
@@ -106,11 +100,15 @@ class WalletActivity : AppCompatActivity(){
             //setonclicklistener
             adapter.setOnItemClickListener(object: WalletAdapter.ClickListener{
                 override fun onItemCLick(v: View, position: Int) {
-                    val transaction = transactions[position]
+                    val transaction = adapter.getItem(position)
                     showWalletForm(transaction, "edit")
                 }
             })
             adapter.startListening()
+            if (adapter.itemCount==0) {
+                noTransactionsTextView.visibility = View.VISIBLE
+            }
+            loadingLayout.visibility = View.GONE
         }
 
         addTransactionButton.setOnClickListener {
@@ -121,19 +119,6 @@ class WalletActivity : AppCompatActivity(){
         }
 
         toggleGroupMain.addOnButtonCheckedListener { group, checkedId, isChecked ->
-            val incomes = arrayListOf<Transaction>()
-            val expenditures = arrayListOf<Transaction>()
-            val all = arrayListOf<Transaction>()
-            for (transaction in transactions) {
-                if (transaction.income) {
-                    incomes.add(transaction)
-                    all.add(transaction)
-                } else if (transaction.expenditure) {
-                    expenditures.add(transaction)
-                    all.add(transaction)
-                }
-            }
-            var exp = false
             when(checkedId) {
                 R.id.expendituresButton -> {
                     if (isChecked) {

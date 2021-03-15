@@ -33,6 +33,7 @@ import java.sql.Timestamp
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
+import kotlin.math.roundToInt
 
 class ChartActivity : AppCompatActivity() {
 
@@ -158,14 +159,17 @@ class ChartActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun graph(){
-        db.collection("wallet").whereEqualTo("expenditure", true).get().addOnSuccessListener { documents ->
+        db.collection("wallet").whereEqualTo("expenditure", true).addSnapshotListener { value, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
             val barchart = findViewById<BarChart>(R.id.barChart)
             var entries = arrayListOf<BarEntry>()
             val currDate = mainViewModel.selectedDate.value
 
             var moneyExp = 0.0
             var moneyInc = 0.0
-            for (document in documents) {
+            for (document in value!!) {
                 val user = document.get("user") as HashMap<*, *>
                 val date = (document.get("date") as com.google.firebase.Timestamp).toDate()
                 val localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
@@ -174,12 +178,15 @@ class ChartActivity : AppCompatActivity() {
                 }
             }
 
-            db.collection("wallet").whereEqualTo("income", true).get().addOnSuccessListener { documents ->
-                for (document in documents) {
+            db.collection("wallet").whereEqualTo("income", true).addSnapshotListener { value, error ->
+                if (error != null) {
+                    return@addSnapshotListener
+                }
+                for (document in value!!) {
                     val user = document.get("user") as HashMap<*, *>
                     val date = (document.get("date") as com.google.firebase.Timestamp).toDate()
                     val localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                    if (user["email"]==authEmail && (localDate.monthValue==currDate?.monthValue && localDate.year==currDate?.year)) {
+                    if (user["email"]==authEmail && (localDate.monthValue==currDate?.monthValue && localDate.year== currDate.year)) {
                         moneyInc+=document.get("money") as Double
                     }
                 }
@@ -229,11 +236,14 @@ class ChartActivity : AppCompatActivity() {
 
                 barchart.animateY(5000)
 
-                db.collection("common").document(authEmail?:"").get().addOnSuccessListener {
-                    val curr = it.get("currency") as String
-                    moneySavings.text = " " + curr + " " + (Math.round(totalSav * 100.0) / 100.0)
-                    totalSpentMoney.text = curr + " " + moneyExp
-                    totalReceivedMoney.text = curr + " " + moneyInc
+                db.collection("common").document(authEmail?:"").addSnapshotListener { value, error ->
+                    if (error != null) {
+                        return@addSnapshotListener
+                    }
+                    val curr = value!!.get("currency") as String
+                    (" " + curr + " " + ((totalSav * 100.0).roundToInt() / 100.0)).also { moneySavings.text = it }
+                    ("$curr $moneyExp").also { totalSpentMoney.text = it }
+                    ("$curr $moneyInc").also { totalReceivedMoney.text = it }
                 }
             }
         }

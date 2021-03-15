@@ -33,10 +33,10 @@ class CalendarActivity : AppCompatActivity(), AddCalendarFragment.CalendarCallba
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar)
-        setup()
     }
 
-    private fun setup() {
+    override fun onStart() {
+        super.onStart()
 
         calendarBackImage.setOnClickListener { showTasks() }
 
@@ -44,16 +44,17 @@ class CalendarActivity : AppCompatActivity(), AddCalendarFragment.CalendarCallba
         createCalendarButton = findViewById(R.id.createCalendarButton)
         calendars = arrayListOf()
 
-        db.collection("calendars").get().addOnSuccessListener { documents ->
-            for (document in documents) {
-                val user = document.get("user") as HashMap<*, *>
-                if (user["email"] == authEmail) {
+        db.collection("calendars").whereEqualTo("user.email", authEmail).addSnapshotListener(this) { value, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+            calendars.clear()
+            for (document in value!!) {
                     val id = document.get("id") as String
                     val title = document.get("name") as String
                     val color = document.get("color") as String
                     val description = document.get("description") as String
                     calendars.add(Calendar(id, title, description, color))
-                }
             }
 
             calendarList.layoutManager = LinearLayoutManager(this)
@@ -90,12 +91,11 @@ class CalendarActivity : AppCompatActivity(), AddCalendarFragment.CalendarCallba
 
     override fun onCalendarAdded(calendar: Calendar) {
         val query = db.collection("calendars")
-        query.get().addOnSuccessListener { documents ->
+        query.whereEqualTo("user.email", authEmail).get().addOnSuccessListener { value ->
             var exists = false
-            for (document in documents) {
-                val user = document.get("user") as HashMap<*, *>
+            for (document in value!!) {
                 val calendarName = document.get("name") as String
-                if (authEmail == user["email"] && calendarName == calendar.name) {
+                if (calendarName == calendar.name) {
                     exists = true
                     break
                 }
@@ -104,7 +104,6 @@ class CalendarActivity : AppCompatActivity(), AddCalendarFragment.CalendarCallba
                 calendars.add(calendar)
                 query.document(calendar.id).set(calendar as Calendar)
                 adapter.notifyDataSetChanged()
-//                showList()
             } else {
                 Toast.makeText(this, R.string.exisitingCalendar, Toast.LENGTH_LONG).show()
             }

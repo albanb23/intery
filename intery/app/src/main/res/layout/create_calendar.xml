@@ -82,4 +82,6 @@
             android:background="@drawable/ic_input"
             android:hint="@string/calendarDescription" />
     </LinearLayout>
+
+    <include layout="@layout/loading_layout"></include>
 </androidx.constraintlayout.widget.ConstraintLayout>

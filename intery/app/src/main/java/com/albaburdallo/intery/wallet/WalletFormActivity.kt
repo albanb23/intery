@@ -9,20 +9,24 @@ import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
+import com.airbnb.lottie.LottieDrawable
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.model.entities.Entity
 import com.albaburdallo.intery.model.entities.Section
 import com.albaburdallo.intery.model.entities.Transaction
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
 import kotlinx.android.synthetic.main.activity_wallet.*
 import kotlinx.android.synthetic.main.activity_wallet_form.*
 import kotlinx.android.synthetic.main.activity_wallet_form.toggleGroup
+import kotlinx.android.synthetic.main.loading_layout.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 
 class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
@@ -50,10 +54,19 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wallet_form)
         this.supportActionBar?.hide()
-        transactionId = intent.extras?.getString("transactionId") ?: ""
-        val form = intent.extras?.getString("form") ?: ""
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        loadingLottie.setAnimation(R.raw.loading)
+        loadingLottie.playAnimation()
+        loadingLottie.repeatCount = LottieDrawable.INFINITE
+
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
+        transactionId = intent.extras?.getString("transactionId") ?: ""
         totalMoney = prefs.getString("totalMoney", "0.0").toString()
+        val form = intent.extras?.getString("form") ?: ""
 
         backImageView.setOnClickListener { onBackPressed() }
 
@@ -64,15 +77,15 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         }
 
         if (transactionId != "") {
-            db.collection("wallet").document(transactionId).get().addOnSuccessListener {
-                val isExpenditure = it.get("expenditure") as Boolean
-                val isIncome = it.get("income") as Boolean
-                val quantity = it.get("money") as Double
+            db.collection("wallet").document(transactionId).get().addOnSuccessListener {value ->
+                val isExpenditure = value!!.get("expenditure") as Boolean
+                val isIncome = value!!.get("income") as Boolean
+                val quantity = value!!.get("money") as Double
                 quantityEditText.setText(quantity.toString())
-                conceptEditText.setText(it.get("concept") as String)
-                date = (it.get("date") as Timestamp).toDate()
+                conceptEditText.setText(value!!.get("concept") as String)
+                date = (value!!.get("date") as Timestamp).toDate()
                 dateEditText.text = formatDate(date)
-                notesEditText.setText(it.get("notes") as String)
+                notesEditText.setText(value!!.get("notes") as String)
                 if (isExpenditure) {
                     toggleGroup.check(R.id.expenditureBut)
                 } else {
@@ -80,30 +93,37 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                 }
 
 
-            trashImageView.setOnClickListener {
-                val builder = AlertDialog.Builder(this)
-                builder.setMessage(this.resources.getString(R.string.delete))
-                    .setCancelable(false)
-                    .setPositiveButton(this.resources.getString(R.string.yes)) { dialog, id ->
+                trashImageView.setOnClickListener {
+                    val builder = AlertDialog.Builder(this)
+                    builder.setMessage(this.resources.getString(R.string.delete))
+                        .setCancelable(false)
+                        .setPositiveButton(this.resources.getString(R.string.yes)) { dialog, id ->
                             var total = totalMoney.toDouble()
                             if (isExpenditure) {
-                                total +=quantity
+                                total += quantity
                             } else {
-                                total -=quantity
+                                total -= quantity
                             }
                             if (authEmail != null) {
                                 db.collection("common").document(authEmail)
-                                    .set(hashMapOf("money" to (Math.round(total * 100.0) / 100.0).toString(), "currency" to "$"))
+                                    .set(
+                                        hashMapOf(
+                                            "money" to (Math.round(total * 100.0) / 100.0).toString(),
+                                            "currency" to "$"
+                                        )
+                                    )
                             }
-                        db.collection("wallet").document(transactionId).delete()
-                        showWallet()
-                    }
-                    .setNegativeButton(this.resources.getString(R.string.no)) { dialog, id ->
-                        dialog.dismiss()
-                    }
-                val alert = builder.create()
-                alert.show()
-            }
+                            db.collection("wallet").document(transactionId).delete()
+                            showWallet()
+                        }
+                        .setNegativeButton(this.resources.getString(R.string.no)) { dialog, id ->
+                            dialog.dismiss()
+                        }
+                    val alert = builder.create()
+                    alert.show()
+                    loadingLayout.visibility = View.GONE
+                }
+                loadingLayout.visibility = View.GONE
             }
         }
 
@@ -118,10 +138,15 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         entityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         entitySpinner.adapter = entityAdapter
 
-        entities.add(0, this.resources.getString(R.string.selectEntity))
-        entities.add(entities.size, this.resources.getString(R.string.addEntity))
-        db.collection("entities").orderBy("created").get().addOnSuccessListener { documents ->
-            for (document in documents) {
+
+        db.collection("entities").orderBy("created").addSnapshotListener { value, error ->
+            if (error != null){
+                return@addSnapshotListener
+            }
+            entities.clear()
+            entities.add(0, this.resources.getString(R.string.selectEntity))
+            entities.add(entities.size, this.resources.getString(R.string.addEntity))
+            for (document in value!!) {
                 val user = document.get("user") as HashMap<*, *>
                 if (user["email"] == authEmail) {
                     val entityName = document.get("name") as String
@@ -141,10 +166,14 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             sectionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             sectionSpinner.adapter = sectionAdapter
 
-            sections.add(0, this.resources.getString(R.string.selectSection))
-            sections.add(sections.size, this.resources.getString(R.string.addSection))
-            db.collection("sections").orderBy("created").get().addOnSuccessListener { documents ->
-                for (document in documents) {
+            db.collection("sections").orderBy("created").addSnapshotListener { value, error ->
+                if (error != null){
+                    return@addSnapshotListener
+                }
+                sections.clear()
+                sections.add(0, this.resources.getString(R.string.selectSection))
+                sections.add(sections.size, this.resources.getString(R.string.addSection))
+                for (document in value!!) {
                     val user = document.get("user") as HashMap<*, *>
                     if (user["email"] == authEmail) {
                         val sectionName = document.get("name") as String
@@ -154,22 +183,22 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                 sectionAdapter.notifyDataSetChanged()
 
                 if (transactionId != "") {
-                    db.collection("wallet").document(transactionId).get().addOnSuccessListener {
-                        val ent = it.get("entity") as HashMap<*, *>
-                        val sec = it.get("section") as HashMap<*, *>
-                        for (entity in entities) {
-                            if (entity == ent["name"]) {
-                                entitySpinner.setSelection(entities.indexOf(entity))
-                                break
+                    db.collection("wallet").document(transactionId).get().addOnSuccessListener {value ->
+                            val ent = value!!.get("entity") as HashMap<*, *>
+                            val sec = value!!.get("section") as HashMap<*, *>
+                            for (entity in entities) {
+                                if (entity == ent["name"]) {
+                                    entitySpinner.setSelection(entities.indexOf(entity))
+                                    break
+                                }
+                            }
+                            for (section in sections) {
+                                if (section == sec["name"]) {
+                                    sectionSpinner.setSelection(sections.indexOf(section))
+                                    break
+                                }
                             }
                         }
-                        for (section in sections) {
-                            if (section == sec["name"]) {
-                                sectionSpinner.setSelection(sections.indexOf(section))
-                                break
-                            }
-                        }
-                    }
                 }
 
                 entitySpinner.onItemSelectedListener = object : OnItemSelectedListener {
@@ -210,10 +239,6 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             }
         }
 
-        setup()
-    }
-
-    private fun setup() {
         transactions = arrayListOf()
         dateEditText.setOnClickListener {
             val calendar = Calendar.getInstance()
@@ -245,9 +270,11 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         val notes = notesEditText.text
         val entityName = entitySpinner.selectedItem.toString()
         var entity: Entity? = null
-        db.collection("entities").whereEqualTo("name", entityName).get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
+        db.collection("entities").whereEqualTo("name", entityName).addSnapshotListener { value, error ->
+            if (error != null){
+                return@addSnapshotListener
+            }
+                for (document in value!!) {
                     val user = document.get("user") as HashMap<*, *>
                     if (user["email"] == authEmail) {
                         entity = Entity(
@@ -259,9 +286,11 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
                 val sectionName = sectionSpinner.selectedItem.toString()
                 var section: Section? = null
-                db.collection("sections").whereEqualTo("name", sectionName).get()
-                    .addOnSuccessListener { documents ->
-                        for (document in documents) {
+                db.collection("sections").whereEqualTo("name", sectionName).addSnapshotListener { value, error ->
+                    if (error != null){
+                        return@addSnapshotListener
+                    }
+                        for (document in value!!) {
                             val user = document.get("user") as HashMap<*, *>
                             if (user["email"] == authEmail) {
                                 section = Section(
@@ -271,16 +300,15 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                             }
                         }
 
-                        var id = transactionId
                         val idList = arrayListOf<Int>()
-                        db.collection("wallet").orderBy("id", Query.Direction.DESCENDING).get()
-                            .addOnSuccessListener { documents ->
-                                for (document in documents) {
+                        db.collection("wallet").orderBy("id", Query.Direction.DESCENDING).get().addOnSuccessListener {value ->
+                                for (document in value!!) {
                                     val documentId = document.get("id") as String
                                     val subId = documentId.substring(0, documentId.indexOf("-"))
                                     idList.add(subId.toInt())
                                 }
 
+                                var id = transactionId
                                 if (id == "") {
                                     var int = 1
                                     if (idList.isNotEmpty()) {
@@ -303,21 +331,27 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
                                 if (authEmail != null) {
                                     var total = totalMoney.toDouble()
-                                        if (transactionId=="") {
-                                            if (isExpenditure) {
-                                                total -= transaction.money
-                                            } else if (isIncome) {
-                                                total += transaction.money
-                                            }
-                                            db.collection("common").document(authEmail)
-                                                .set(hashMapOf("money" to (Math.round(total * 100.0) / 100.0).toString(), "currency" to "$"))
-                                            db.collection("wallet").document(transaction.id).set(transaction)
-                                        } else {
-                                            db.collection("wallet").document(transactionId).get().addOnSuccessListener {
-                                                val current = it.get("money") as Double
+                                    if (transactionId == "") {
+                                        if (isExpenditure) {
+                                            total -= transaction.money
+                                        } else if (isIncome) {
+                                            total += transaction.money
+                                        }
+                                        db.collection("common").document(authEmail)
+                                            .set(
+                                                hashMapOf(
+                                                    "money" to (Math.round(total * 100.0) / 100.0).toString(),
+                                                    "currency" to "$"
+                                                )
+                                            )
+                                        db.collection("wallet").document(transaction.id)
+                                            .set(transaction)
+                                    } else {
+                                       db.collection("wallet").document(transactionId).get().addOnSuccessListener {value ->
+                                                val current = value!!.get("money") as Double
                                                 val modified = money.toString().toDouble()
                                                 //si se cambia solo la cantidad
-                                                if (modified - current!=0.0) {
+                                                if (modified - current != 0.0) {
                                                     if (isExpenditure) {
                                                         total -= (modified - current)
                                                     } else if (isIncome) {
@@ -325,7 +359,7 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                                                     }
                                                 }
                                                 //si se cambia de gasto a ingreso
-                                                if (it.get("expenditure") as Boolean != isExpenditure) {
+                                                if (value.get("expenditure") as Boolean != isExpenditure) {
                                                     if (isExpenditure) {
                                                         total -= (current + modified)
                                                     } else if (isIncome) {
@@ -333,10 +367,16 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                                                     }
                                                 }
                                                 db.collection("common").document(authEmail)
-                                                    .set(hashMapOf("money" to (Math.round(total * 100.0) / 100.0).toString(), "currency" to "$"))
-                                                db.collection("wallet").document(transaction.id).set(transaction)
+                                                    .set(
+                                                        hashMapOf(
+                                                            "money" to ((total * 100.0).roundToInt() / 100.0).toString(),
+                                                            "currency" to "$"
+                                                        )
+                                                    )
+                                                db.collection("wallet").document(transaction.id)
+                                                    .set(transaction)
                                             }
-                                        }
+                                    }
                                 }
                                 transactions.add(transaction)
                                 showWallet()
@@ -350,9 +390,11 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         res =
             quantityEditText.validator().nonEmpty().addErrorCallback { quantityEditText.error = it }
                 .check()
-                    && conceptEditText.validator().nonEmpty().addErrorCallback { conceptEditText.error = it }
+                    && conceptEditText.validator().nonEmpty()
+                .addErrorCallback { conceptEditText.error = it }
                 .check()
-                    && dateEditText.validator().nonEmpty().addErrorCallback { dateEditText.error = it }
+                    && dateEditText.validator().nonEmpty()
+                .addErrorCallback { dateEditText.error = it }
                 .check()
         if (sectionSpinner.selectedItem == resources.getString(R.string.selectSection)) {
             Toast.makeText(
@@ -376,12 +418,11 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     override fun onEntityAdded(entity: Entity) {
         val query = db.collection("entities")
-        query.get().addOnSuccessListener { documents ->
+        query.whereEqualTo("user.email", authEmail).get().addOnSuccessListener {value ->
             var exists = false
-            for (document in documents) {
-                val user = document.get("user") as HashMap<*, *>
+            for (document in value!!) {
                 val entityName = document.get("name") as String
-                if (authEmail == user["email"] && entityName == entity.name) {
+                if (entityName == entity.name) {
                     exists = true
                     break
                 }
@@ -403,12 +444,11 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     override fun onSectionAdded(section: Section) {
         val query = db.collection("sections")
-        query.get().addOnSuccessListener { documents ->
+        query.whereEqualTo("user.email", authEmail).get().addOnSuccessListener {value ->
             var exists = false
-            for (document in documents) {
-                val user = document.get("user") as HashMap<*, *>
+            for (document in value!!) {
                 val sectionName = document.get("name") as String
-                if (authEmail == user["email"] && sectionName == section.name) {
+                if (sectionName == section.name) {
                     exists = true
                     break
                 }

@@ -42,4 +42,6 @@
             android:maxLength="10"
             android:hint="@string/calendarTitle"  />
     </LinearLayout>
+
+    <include layout="@layout/loading_layout"></include>
 </androidx.constraintlayout.widget.ConstraintLayout>
