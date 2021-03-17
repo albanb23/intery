@@ -85,4 +85,15 @@
     <string name="totalNoSavings">This month you have spent: </string>
     <string name="totalSpent">Total spent</string>
     <string name="totalReceived">Total received</string>
+    <string name="totalZero">Total money cannot be less than 0</string>
+    <string name="fiveMinutes">5 minutes before</string>
+    <string name="halfHour">30 minutes before</string>
+    <string name="oneHour">1 hour before</string>
+    <string name="atTheMoment">At the moment</string>
+    <string name="oneDay">1 day before</string>
+    <string name="inFiveMinutes">In 5 minutes</string>
+    <string name="inThrirtyMinutes">In 30 minutes</string>
+    <string name="inOneHour">In 1 hour</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
 </resources>

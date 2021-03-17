@@ -1,13 +1,9 @@
-package com.albaburdallo.intery.model.entities;
+package com.albaburdallo.intery.util.entities;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Base {
 

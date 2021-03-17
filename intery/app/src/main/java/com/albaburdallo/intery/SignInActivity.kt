@@ -5,11 +5,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.albaburdallo.intery.model.entities.Calendar
-import com.albaburdallo.intery.model.entities.User
+import com.albaburdallo.intery.util.entities.Calendar
+import com.albaburdallo.intery.util.entities.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
 import kotlinx.android.synthetic.main.activity_sign_in.*
 
@@ -60,6 +59,9 @@ class SignInActivity : AppCompatActivity() {
                             )
                             db.collection("calendars").document(defaultCalendar.id)
                                 .set(defaultCalendar)
+                            db.collection("common").document(user.email).set(
+                                hashMapOf("money" to "0.0", "currency" to "$")
+                            )
                             showLogin()
                         } else {
                             showAlert()

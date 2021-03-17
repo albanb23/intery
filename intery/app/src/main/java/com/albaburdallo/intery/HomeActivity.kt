@@ -2,21 +2,18 @@ package com.albaburdallo.intery
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieDrawable
 import com.albaburdallo.intery.habit.HabitActivity
-import com.albaburdallo.intery.model.entities.Task
-import com.albaburdallo.intery.model.entities.Transaction
+import com.albaburdallo.intery.util.entities.Task
+import com.albaburdallo.intery.util.entities.Transaction
 import com.albaburdallo.intery.task.TaskActivity
 import com.albaburdallo.intery.task.TaskAdapter
 import com.albaburdallo.intery.task.TaskFormActivity
@@ -122,6 +119,7 @@ class HomeActivity : AppCompatActivity() {
                     val done = document.get("done") as Boolean
                     val id = document.get("id") as String
                     val calendar = document.get("calendar") as HashMap<String, String>
+                    val whenNotification  = document.get("when") as String
                     val task: Task = if (endDate != null && startTime != null && endTime != null) {
                         Task(
                             id,
@@ -134,22 +132,24 @@ class HomeActivity : AppCompatActivity() {
                             notifyme,
                             notes,
                             done,
-                            com.albaburdallo.intery.model.entities.Calendar(
+                            com.albaburdallo.intery.util.entities.Calendar(
                                 calendar["id"],
                                 calendar["name"],
                                 calendar["description"],
                                 calendar["color"]
-                            )
+                            ),
+                            whenNotification
                         )
                     } else {
                         Task(
                             id, name, startDate.toDate(), allday, notifyme, notes, done,
-                            com.albaburdallo.intery.model.entities.Calendar(
+                            com.albaburdallo.intery.util.entities.Calendar(
                                 calendar["id"],
                                 calendar["name"],
                                 calendar["description"],
                                 calendar["color"]
-                            )
+                            ),
+                            whenNotification
                         )
                     }
                     if (simpleDateFormat.format(task.startDate.time) == today) {

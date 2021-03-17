@@ -2,13 +2,12 @@ package com.albaburdallo.intery.wallet
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import com.albaburdallo.intery.R
-import com.albaburdallo.intery.model.entities.Section
+import com.albaburdallo.intery.util.entities.Section
 import com.google.firebase.auth.FirebaseAuth
 import java.lang.IllegalStateException
 

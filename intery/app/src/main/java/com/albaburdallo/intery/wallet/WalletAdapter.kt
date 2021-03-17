@@ -8,11 +8,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.R
-import com.albaburdallo.intery.model.entities.Transaction
+import com.albaburdallo.intery.util.entities.Transaction
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
-import org.w3c.dom.Text
 import java.text.SimpleDateFormat
 import java.util.*
 

@@ -2,24 +2,20 @@ package com.albaburdallo.intery.task
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.ListView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.R
-import com.albaburdallo.intery.model.entities.Calendar
+import com.albaburdallo.intery.util.entities.Calendar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_calendar.*
 import kotlinx.android.synthetic.main.activity_task.*
 import kotlinx.android.synthetic.main.activity_task_form.*
-import kotlinx.android.synthetic.main.activity_task_form.backImageView
-import java.util.HashMap
 
 class CalendarActivity : AppCompatActivity(), AddCalendarFragment.CalendarCallbackListener {
     private val db = FirebaseFirestore.getInstance()

@@ -2,8 +2,6 @@ package com.albaburdallo.intery.wallet
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.DialogInterface
-import android.content.Entity
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.EditText
@@ -27,7 +25,7 @@ class AddEntityFragment: DialogFragment() {
                         dialogView.findViewById<EditText>(R.id.entityNameEditText) as EditText
                     val id =
                         entityName.text.toString() + "-" + FirebaseAuth.getInstance().currentUser?.email
-                    val entity = com.albaburdallo.intery.model.entities.Entity(
+                    val entity = com.albaburdallo.intery.util.entities.Entity(
                         id,
                         entityName.text.toString()
                     )
@@ -40,13 +38,13 @@ class AddEntityFragment: DialogFragment() {
         }?: throw IllegalStateException("Activity cannot be null")
     }
 
-    private fun addEntity(entity: com.albaburdallo.intery.model.entities.Entity) {
+    private fun addEntity(entity: com.albaburdallo.intery.util.entities.Entity) {
         if(!TextUtils.isEmpty(entity.name) && activity is EntityCallBackListener) {
             (activity as EntityCallBackListener).onEntityAdded(entity)
         }
     }
 
     interface EntityCallBackListener {
-        fun onEntityAdded(entity: com.albaburdallo.intery.model.entities.Entity)
+        fun onEntityAdded(entity: com.albaburdallo.intery.util.entities.Entity)
     }
 }

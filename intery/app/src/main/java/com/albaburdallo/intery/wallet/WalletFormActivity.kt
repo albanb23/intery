@@ -11,12 +11,11 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.lottie.LottieDrawable
 import com.albaburdallo.intery.R
-import com.albaburdallo.intery.model.entities.Entity
-import com.albaburdallo.intery.model.entities.Section
-import com.albaburdallo.intery.model.entities.Transaction
+import com.albaburdallo.intery.util.entities.Entity
+import com.albaburdallo.intery.util.entities.Section
+import com.albaburdallo.intery.util.entities.Transaction
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
@@ -184,21 +183,21 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
                 if (transactionId != "") {
                     db.collection("wallet").document(transactionId).get().addOnSuccessListener {value ->
-                            val ent = value!!.get("entity") as HashMap<*, *>
-                            val sec = value!!.get("section") as HashMap<*, *>
-                            for (entity in entities) {
-                                if (entity == ent["name"]) {
-                                    entitySpinner.setSelection(entities.indexOf(entity))
-                                    break
-                                }
-                            }
-                            for (section in sections) {
-                                if (section == sec["name"]) {
-                                    sectionSpinner.setSelection(sections.indexOf(section))
-                                    break
-                                }
+                        val ent = value!!.get("entity") as HashMap<*, *>
+                        val sec = value!!.get("section") as HashMap<*, *>
+                        for (entity in entities) {
+                            if (entity == ent["name"]) {
+                                entitySpinner.setSelection(entities.indexOf(entity))
+                                break
                             }
                         }
+                        for (section in sections) {
+                            if (section == sec["name"]) {
+                                sectionSpinner.setSelection(sections.indexOf(section))
+                                break
+                            }
+                        }
+                    }
                 }
 
                 entitySpinner.onItemSelectedListener = object : OnItemSelectedListener {
@@ -274,115 +273,123 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             if (error != null){
                 return@addSnapshotListener
             }
+            for (document in value!!) {
+                val user = document.get("user") as HashMap<*, *>
+                if (user["email"] == authEmail) {
+                    entity = Entity(
+                        document.get("id") as String,
+                        document.get("name") as String
+                    )
+                }
+            }
+
+            val sectionName = sectionSpinner.selectedItem.toString()
+            var section: Section? = null
+            db.collection("sections").whereEqualTo("name", sectionName).addSnapshotListener { value, error ->
+                if (error != null){
+                    return@addSnapshotListener
+                }
                 for (document in value!!) {
                     val user = document.get("user") as HashMap<*, *>
                     if (user["email"] == authEmail) {
-                        entity = Entity(
+                        section = Section(
                             document.get("id") as String,
                             document.get("name") as String
                         )
                     }
                 }
 
-                val sectionName = sectionSpinner.selectedItem.toString()
-                var section: Section? = null
-                db.collection("sections").whereEqualTo("name", sectionName).addSnapshotListener { value, error ->
-                    if (error != null){
-                        return@addSnapshotListener
+                val idList = arrayListOf<Int>()
+                db.collection("wallet").orderBy("id", Query.Direction.DESCENDING).get().addOnSuccessListener {value ->
+                    for (document in value!!) {
+                        val documentId = document.get("id") as String
+                        val subId = documentId.substring(0, documentId.indexOf("-"))
+                        idList.add(subId.toInt())
                     }
-                        for (document in value!!) {
-                            val user = document.get("user") as HashMap<*, *>
-                            if (user["email"] == authEmail) {
-                                section = Section(
-                                    document.get("id") as String,
-                                    document.get("name") as String
-                                )
+
+                    var id = transactionId
+                    if (id == "") {
+                        var int = 1
+                        if (idList.isNotEmpty()) {
+                            int = idList[0] + 1
+                        }
+                        id = int.toString() + "-" + concept.toString() + "-" + authEmail
+                    }
+
+                    transaction = Transaction(
+                        id,
+                        isExpenditure,
+                        isIncome,
+                        concept.toString(),
+                        money.toString().toDouble(),
+                        date,
+                        notes.toString(),
+                        entity,
+                        section
+                    )
+
+                    if (authEmail != null) {
+                        var total = totalMoney.toDouble()
+                        if (transactionId == "") {
+                            if (isExpenditure) {
+                                total -= transaction.money
+                            } else if (isIncome) {
+                                total += transaction.money
+                            }
+                            if (total>=0) {
+                                db.collection("common").document(authEmail)
+                                    .set(
+                                        hashMapOf(
+                                            "money" to (Math.round(total * 100.0) / 100.0).toString(),
+                                            "currency" to "$"
+                                        )
+                                    )
+                                db.collection("wallet").document(transaction.id)
+                                    .set(transaction)
+                            } else {
+                                Toast.makeText(this, resources.getString(R.string.totalZero),Toast.LENGTH_LONG).show()
+                            }
+                        } else {
+                            db.collection("wallet").document(transactionId).get().addOnSuccessListener {value ->
+                                val current = value!!.get("money") as Double
+                                val modified = money.toString().toDouble()
+                                //si se cambia solo la cantidad
+                                if (modified - current != 0.0) {
+                                    if (isExpenditure) {
+                                        total -= (modified - current)
+                                    } else if (isIncome) {
+                                        total += (modified - current)
+                                    }
+                                }
+                                //si se cambia de gasto a ingreso
+                                if (value.get("expenditure") as Boolean != isExpenditure) {
+                                    if (isExpenditure) {
+                                        total -= (current + modified)
+                                    } else if (isIncome) {
+                                        total += (current + modified)
+                                    }
+                                }
+                                if (total>0) {
+                                    db.collection("common").document(authEmail)
+                                        .set(
+                                            hashMapOf(
+                                                "money" to ((total * 100.0).roundToInt() / 100.0).toString(),
+                                                "currency" to "$"
+                                            )
+                                        )
+                                    db.collection("wallet").document(transaction.id)
+                                        .set(transaction)
+                                } else {
+                                    Toast.makeText(this, resources.getString(R.string.totalZero),Toast.LENGTH_LONG).show()
+                                }
                             }
                         }
-
-                        val idList = arrayListOf<Int>()
-                        db.collection("wallet").orderBy("id", Query.Direction.DESCENDING).get().addOnSuccessListener {value ->
-                                for (document in value!!) {
-                                    val documentId = document.get("id") as String
-                                    val subId = documentId.substring(0, documentId.indexOf("-"))
-                                    idList.add(subId.toInt())
-                                }
-
-                                var id = transactionId
-                                if (id == "") {
-                                    var int = 1
-                                    if (idList.isNotEmpty()) {
-                                        int = idList[0] + 1
-                                    }
-                                    id = int.toString() + "-" + concept.toString() + "-" + authEmail
-                                }
-
-                                transaction = Transaction(
-                                    id,
-                                    isExpenditure,
-                                    isIncome,
-                                    concept.toString(),
-                                    money.toString().toDouble(),
-                                    date,
-                                    notes.toString(),
-                                    entity,
-                                    section
-                                )
-
-                                if (authEmail != null) {
-                                    var total = totalMoney.toDouble()
-                                    if (transactionId == "") {
-                                        if (isExpenditure) {
-                                            total -= transaction.money
-                                        } else if (isIncome) {
-                                            total += transaction.money
-                                        }
-                                        db.collection("common").document(authEmail)
-                                            .set(
-                                                hashMapOf(
-                                                    "money" to (Math.round(total * 100.0) / 100.0).toString(),
-                                                    "currency" to "$"
-                                                )
-                                            )
-                                        db.collection("wallet").document(transaction.id)
-                                            .set(transaction)
-                                    } else {
-                                       db.collection("wallet").document(transactionId).get().addOnSuccessListener {value ->
-                                                val current = value!!.get("money") as Double
-                                                val modified = money.toString().toDouble()
-                                                //si se cambia solo la cantidad
-                                                if (modified - current != 0.0) {
-                                                    if (isExpenditure) {
-                                                        total -= (modified - current)
-                                                    } else if (isIncome) {
-                                                        total += (modified - current)
-                                                    }
-                                                }
-                                                //si se cambia de gasto a ingreso
-                                                if (value.get("expenditure") as Boolean != isExpenditure) {
-                                                    if (isExpenditure) {
-                                                        total -= (current + modified)
-                                                    } else if (isIncome) {
-                                                        total += (current + modified)
-                                                    }
-                                                }
-                                                db.collection("common").document(authEmail)
-                                                    .set(
-                                                        hashMapOf(
-                                                            "money" to ((total * 100.0).roundToInt() / 100.0).toString(),
-                                                            "currency" to "$"
-                                                        )
-                                                    )
-                                                db.collection("wallet").document(transaction.id)
-                                                    .set(transaction)
-                                            }
-                                    }
-                                }
-                                transactions.add(transaction)
-                                showWallet()
-                            }
                     }
+                    transactions.add(transaction)
+                    showWallet()
+                }
             }
+        }
     }
 
     private fun validateForm(): Boolean {

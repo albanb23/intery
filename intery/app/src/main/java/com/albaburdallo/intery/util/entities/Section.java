@@ -1,4 +1,4 @@
-package com.albaburdallo.intery.model.entities;
+package com.albaburdallo.intery.util.entities;
 
 public class Section extends Base {
 

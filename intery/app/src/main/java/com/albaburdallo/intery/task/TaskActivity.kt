@@ -13,9 +13,8 @@ import com.albaburdallo.intery.HomeActivity
 import com.albaburdallo.intery.LoginActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.habit.HabitActivity
-import com.albaburdallo.intery.model.entities.Task
+import com.albaburdallo.intery.util.entities.Task
 import com.albaburdallo.intery.wallet.WalletActivity
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -152,6 +151,7 @@ class TaskActivity : AppCompatActivity() {
                 val notes = document.get("notes") as String
                 val done = document.get("done") as Boolean
                 val id  = document.get("id") as String
+                val whenNotification  = document.get("when") as String
                 val calendar = document.get("calendar") as HashMap<String, String>
                 if (endDate != null && startTime != null && endTime != null) {
                     tasks.add(
@@ -166,7 +166,8 @@ class TaskActivity : AppCompatActivity() {
                             notifyme,
                             notes,
                             done,
-                            com.albaburdallo.intery.model.entities.Calendar(calendar["id"], calendar["name"],calendar["description"],calendar["color"])
+                            com.albaburdallo.intery.util.entities.Calendar(calendar["id"], calendar["name"],calendar["description"],calendar["color"]),
+                            whenNotification
                         )
                     )
                 } else {
@@ -179,7 +180,8 @@ class TaskActivity : AppCompatActivity() {
                             notifyme,
                             notes,
                             done,
-                            com.albaburdallo.intery.model.entities.Calendar(calendar["id"], calendar["name"],calendar["description"],calendar["color"])
+                            com.albaburdallo.intery.util.entities.Calendar(calendar["id"], calendar["name"],calendar["description"],calendar["color"]),
+                            whenNotification
                         )
                     )
                 }

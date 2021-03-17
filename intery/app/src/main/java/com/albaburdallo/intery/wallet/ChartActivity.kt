@@ -227,8 +227,6 @@ class ChartActivity : AppCompatActivity() {
                     totalSavings.visibility = View.VISIBLE
                     totalSav = moneyInc - moneyExp
                 }
-                println("======================="+max)
-                barchart.axisLeft.setAxisMaxValue(max.toFloat())
                 barchart.axisLeft.setAxisMinValue(0f)
                 barchart.xAxis.position = XAxis.XAxisPosition.BOTTOM
                 barDataSet.setDrawValues(false)
@@ -277,8 +275,8 @@ class ChartActivity : AppCompatActivity() {
                     date_list.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     width = date_list.width
                     resources?.getDimensionPixelSize(R.dimen.date_item_width)?.let { dateWidth ->
-//                        layoutManager.scrollToPositionWithOffset(mainViewModel.dates.indexOf(date), width / 2 - dateWidth / 2)
-                        layoutManager.scrollToPosition(mainViewModel.dates.indexOf(date))
+                        layoutManager.scrollToPositionWithOffset(mainViewModel.dates.indexOf(date), width / 2 - dateWidth / 2)
+//                        layoutManager.scrollToPosition(mainViewModel.dates.indexOf(date))
                     }
                 }
             })

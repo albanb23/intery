@@ -33,7 +33,7 @@
     <string name="taskDate">Fecha</string>
     <string name="taskTime">Hora</string>
     <string name="taskAllDay">Todo el día</string>
-    <string name="taskRemindMe">Recuerdame</string>
+    <string name="taskRemindMe">Recuérdame</string>
     <string name="taskNotes">Notas</string>
     <string name="taskDateValidation">La fecha de comienzo debe de ser anterior a la fecha de fin</string>
     <string name="tasksOption"><b><i>Tareas</i></b></string>
@@ -85,4 +85,15 @@
     <string name="totalNoSavings">Este mes has gastado: </string>
     <string name="totalSpent">Total gastado</string>
     <string name="totalReceived">Total recibido</string>
+    <string name="totalZero">El total no puede ser menor que 0</string>
+    <string name="fiveMinutes">5 minutos antes</string>
+    <string name="halfHour">30 minutos antes</string>
+    <string name="oneHour">1 hora antes</string>
+    <string name="atTheMoment">En el momento</string>
+    <string name="oneDay">1 día antes</string>
+    <string name="inFiveMinutes">En 5 minutos</string>
+    <string name="inThrirtyMinutes">En 30 minutes</string>
+    <string name="inOneHour">En 1 hora</string>
+    <string name="today">Hoy</string>
+    <string name="tomorrow">Mañana</string>
 </resources>

@@ -2,24 +2,16 @@ package com.albaburdallo.intery.task
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.albaburdallo.intery.R
-import com.albaburdallo.intery.model.entities.Calendar
+import com.albaburdallo.intery.util.entities.Calendar
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import dev.sasikanth.colorsheet.ColorSheet
-import kotlinx.android.synthetic.main.create_calendar.*
 
 
 class AddCalendarFragment: DialogFragment() {

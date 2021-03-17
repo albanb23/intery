@@ -1,26 +1,18 @@
 package com.albaburdallo.intery.task
 
 import android.content.Context
-import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.R
-import com.albaburdallo.intery.model.entities.Calendar
-import com.albaburdallo.intery.model.entities.Task
+import com.albaburdallo.intery.util.entities.Calendar
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.create_calendar.view.*
 import java.util.HashMap
 
 class CalendarAdapter(val calendars: MutableList<Calendar>) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {

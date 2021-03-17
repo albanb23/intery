@@ -108,19 +108,6 @@
                     android:layout_height="16dp" />
 
                 <EditText
-                    android:id="@+id/quantityEditText"
-                    style="@style/input"
-                    android:layout_width="match_parent"
-                    android:layout_height="46dp"
-                    android:background="@drawable/ic_input"
-                    android:hint="@string/transactionQuantity"
-                    android:inputType="numberDecimal" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="16dp" />
-
-                <EditText
                     android:id="@+id/conceptEditText"
                     style="@style/input"
                     android:layout_width="match_parent"
@@ -128,6 +115,19 @@
                     android:background="@drawable/ic_input"
                     android:hint="@string/transactionConcept"
                     android:inputType="text" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp" />
+
+                <EditText
+                    android:id="@+id/quantityEditText"
+                    style="@style/input"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="@drawable/ic_input"
+                    android:hint="@string/transactionQuantity"
+                    android:inputType="numberDecimal" />
 
                 <Space
                     android:layout_width="match_parent"

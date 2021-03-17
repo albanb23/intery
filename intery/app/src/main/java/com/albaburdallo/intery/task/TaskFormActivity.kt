@@ -1,17 +1,24 @@
 package com.albaburdallo.intery.task
 
-import android.app.AlertDialog
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.annotation.SuppressLint
+import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import android.text.TextUtils
 import android.view.View
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.AlarmManagerCompat
+import androidx.core.content.ContextCompat
 import com.albaburdallo.intery.R
-import com.albaburdallo.intery.model.entities.Task
+import com.albaburdallo.intery.util.entities.Task
+import com.albaburdallo.intery.util.notifications.AlarmReceiver
+import com.albaburdallo.intery.util.notifications.cancelNotifications
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,7 +27,6 @@ import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
 import kotlinx.android.synthetic.main.activity_task_form.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.HashMap
 
 
 class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
@@ -71,7 +77,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         taskid = intent.extras?.getString("taskid") ?: ""
 
         if (taskid != "") {
-            db.collection("tasks").document(taskid).get().addOnSuccessListener {value ->
+            db.collection("tasks").document(taskid).get().addOnSuccessListener { value ->
                 taskNameEditText.setText(value!!.get("name") as? String)
                 startDateInput.text = formatDate((value.get("startDate") as Timestamp).toDate())
                 start = (value.get("startDate") as Timestamp).toDate()
@@ -128,9 +134,32 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
             }
             adapter.notifyDataSetChanged()
 
+            //notifications
+            val notifications = arrayListOf<String>()
+            notifications.add(resources.getString(R.string.atTheMoment))
+            notifications.add(resources.getString(R.string.fiveMinutes))
+            notifications.add(resources.getString(R.string.halfHour))
+            notifications.add(resources.getString(R.string.oneHour))
+            notifications.add(resources.getString(R.string.oneDay))
+            val notificationSpinner = findViewById<Spinner>(R.id.whenSelect)
+            val notificationsAdapter:ArrayAdapter<String> = ArrayAdapter<String>(
+                applicationContext,
+                android.R.layout.simple_spinner_item,
+                notifications
+            )
+            notificationsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            notificationSpinner.adapter = notificationsAdapter
+
             if (taskid != "") {
-                db.collection("tasks").document(taskid).get().addOnSuccessListener {value ->
+                db.collection("tasks").document(taskid).get().addOnSuccessListener { value ->
                     val cal = value!!.get("calendar") as HashMap<*, *>
+                    when(value.get("when") as String) {
+                        "0" -> notificationSpinner.setSelection(0)
+                        "5" -> notificationSpinner.setSelection(1)
+                        "30" -> notificationSpinner.setSelection(2)
+                        "60" -> notificationSpinner.setSelection(3)
+                        "1" -> notificationSpinner.setSelection(4)
+                    }
                     for (calendar in calendars) {
                         if (calendar == cal["name"]) {
                             spinner.setSelection(calendars.indexOf(calendar))
@@ -149,6 +178,14 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                 } else {
                     spinner.setSelection(0)
                 }
+            }
+        }
+
+        remindMeCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                whenSelect.visibility = View.VISIBLE
+            } else {
+                whenSelect.visibility = View.GONE
             }
         }
 
@@ -229,13 +266,32 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
 
     }
 
+
     private fun addTask() {
         val name = taskNameEditText.text.toString()
         val notes = notesEditText.text.toString()
         val allDay = allDayCheckBox.isChecked
         val remindMe = remindMeCheckBox.isChecked
+        var whenNotification = ""
+        when(whenSelect.selectedItem) {
+            resources.getString(R.string.fiveMinutes) -> {
+                whenNotification = "5"
+            }
+            resources.getString(R.string.halfHour) -> {
+                whenNotification = "30"
+            }
+            resources.getString(R.string.oneHour) -> {
+                whenNotification = "60"
+            }
+            resources.getString(R.string.atTheMoment) -> {
+                whenNotification = "0"
+            }
+            resources.getString(R.string.oneDay) -> {
+                whenNotification = "1"
+            }
+        }
         val calendarTitle = calendarSelect.selectedItem.toString()
-        var calendar: com.albaburdallo.intery.model.entities.Calendar? = null
+        var calendar: com.albaburdallo.intery.util.entities.Calendar? = null
         db.collection("calendars").whereEqualTo("name", calendarTitle)
             .addSnapshotListener(this) { value, error ->
                 if (error != null) {
@@ -245,7 +301,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                 for (document in value!!) {
                     val user = document.get("user") as HashMap<*, *>
                     if (user["email"] == authEmail) {
-                        calendar = com.albaburdallo.intery.model.entities.Calendar(
+                        calendar = com.albaburdallo.intery.util.entities.Calendar(
                             document.get("id") as String,
                             document.get("name") as String,
                             document.get("description") as String,
@@ -254,7 +310,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                     }
                 }
                 val idList = arrayListOf<Int>()
-                db.collection("tasks").orderBy("id", Query.Direction.DESCENDING).get().addOnSuccessListener {value ->
+                db.collection("tasks").orderBy("id", Query.Direction.DESCENDING).get().addOnSuccessListener { value ->
                     for (document in value!!) {
                         val documentId = document.get("id") as String
                         val subId = documentId.substring(0, documentId.indexOf("-"))
@@ -282,7 +338,8 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                                 remindMe,
                                 notes,
                                 false,
-                                calendar
+                                calendar,
+                                whenNotification
                             )
                         } else {
                             task = Task(
@@ -293,7 +350,8 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                                 remindMe,
                                 notes,
                                 false,
-                                calendar
+                                calendar,
+                                whenNotification
                             )
                         }
 
@@ -304,11 +362,12 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                                 Toast.LENGTH_LONG
                             ).show()
                         } else {
-                            db.collection("tasks").document(task.id).set(task as Task)
-                            tasks.add(task as Task)
+                            db.collection("tasks").document(task.id).set(task)
+                            tasks.add(task)
                             showList()
                         }
                     }
+                    notification(task)
                 }
             }
     }
@@ -405,6 +464,93 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         val index = res.indexOf(" ") + 1
         res = res.substring(index)
         return res
+    }
+
+    private fun createChannel(channelId: String, channelName: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                channelId, channelName,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+
+            notificationChannel.enableLights(true)
+            notificationChannel.lightColor = Color.RED
+            notificationChannel.enableVibration(true)
+            notificationChannel.description = "La tarea!!!"
+
+            val notificationManager = getSystemService(NotificationManager::class.java) as NotificationManager
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+    }
+
+    private fun notification(task: Task) {
+        val cal = Calendar.getInstance()
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        cal.time = sdf.parse(startDateInput.text.toString())
+        val startTime = Calendar.getInstance()
+        startTime.time = task.startTime
+
+        var notificationDate = cal
+        if (task.startTime!=null) {
+            notificationDate.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY))
+            notificationDate.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE))
+            notificationDate.set(Calendar.SECOND, 0)
+        }
+
+        val notificationTitle = task.name
+        var whenNotification = ""
+        var timeBefore = 0L
+        when(task.`when`) {
+            "5" -> {
+                whenNotification = resources.getString(R.string.inFiveMinutes)
+                timeBefore = 300000
+            }
+            "30" -> {
+                whenNotification = resources.getString(R.string.inThrirtyMinutes)
+                timeBefore = 1800000
+            }
+            "60" -> {
+                whenNotification = resources.getString(R.string.inOneHour)
+                timeBefore = 3600000
+            }
+            "0" -> {
+                whenNotification = resources.getString(R.string.today)
+                timeBefore = 0
+            }
+            "1" -> {
+                whenNotification = resources.getString(R.string.tomorrow)
+                timeBefore = 86400000
+            }
+        }
+        val notificationBody = whenNotification + ", " + formatTime(notificationDate.time)
+
+        createChannel("intery_channel", "Intery")
+        val currentDate = Calendar.getInstance()
+        val diff = (notificationDate.time.time - currentDate.time.time) - timeBefore
+        println("diff===================" + diff)
+        val notificationManager = ContextCompat.getSystemService(
+            applicationContext,
+            NotificationManager::class.java
+        ) as NotificationManager
+            if (task.notifyMe) {
+                val notifyIntent = Intent(this, AlarmReceiver::class.java)
+                notifyIntent.putExtra("messageBody", notificationBody)
+                notifyIntent.putExtra("title", notificationTitle)
+                val notifyPendingIntent = PendingIntent.getBroadcast(
+                    this,
+                    0,
+                    notifyIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                alarmManager.set(
+                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    SystemClock.elapsedRealtime() + diff,
+                    notifyPendingIntent
+                )
+            } else {
+                notificationManager.cancelNotifications()
+            }
     }
 
 }

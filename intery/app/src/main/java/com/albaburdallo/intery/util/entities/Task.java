@@ -1,4 +1,4 @@
-package com.albaburdallo.intery.model.entities;
+package com.albaburdallo.intery.util.entities;
 
 import java.util.Date;
 
@@ -13,6 +13,7 @@ public class Task extends Base {
     private Boolean allDay;
     private Boolean notifyMe;
     private String notes;
+    private String when;
     //calendario
     private Calendar calendar;
 
@@ -20,7 +21,7 @@ public class Task extends Base {
 
     }
 
-    public Task(String id, String name, Date startDate, Boolean allDay, Boolean notifyMe, String notes, Boolean done, Calendar calendar) {
+    public Task(String id, String name, Date startDate, Boolean allDay, Boolean notifyMe, String notes, Boolean done, Calendar calendar, String when) {
         super(java.util.Calendar.getInstance().getTime());
         this.id = id;
         this.name = name;
@@ -30,9 +31,10 @@ public class Task extends Base {
         this.notes = notes;
         this.done = done;
         this.calendar = calendar;
+        this.when = when;
     }
 
-    public Task(String id, String name, Date startDate, Date startTime, Date endDate, Date endTime, Boolean allDay, Boolean notifyMe, String notes, Boolean done, Calendar calendar) {
+    public Task(String id, String name, Date startDate, Date startTime, Date endDate, Date endTime, Boolean allDay, Boolean notifyMe, String notes, Boolean done, Calendar calendar, String when) {
         super(java.util.Calendar.getInstance().getTime());
         this.id = id;
         this.name = name;
@@ -45,6 +47,7 @@ public class Task extends Base {
         this.notes = notes;
         this.done = done;
         this.calendar = calendar;
+        this.when = when;
     }
 
     public String getName() {
@@ -133,6 +136,14 @@ public class Task extends Base {
 
     public void setCalendar(Calendar calendar) {
         this.calendar = calendar;
+    }
+
+    public String getWhen() {
+        return when;
+    }
+
+    public void setWhen(String when) {
+        this.when = when;
     }
 
     @Override

@@ -8,8 +8,8 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import com.albaburdallo.intery.model.entities.Calendar
-import com.albaburdallo.intery.model.entities.User
+import com.albaburdallo.intery.util.entities.Calendar
+import com.albaburdallo.intery.util.entities.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -17,7 +17,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.inputsLinearLayout
 
@@ -164,6 +163,9 @@ class LoginActivity : AppCompatActivity() {
 
                                             db.collection("calendars").document(defaultCalendar.id)
                                                 .set(defaultCalendar)
+                                            db.collection("common").document(user.email).set(
+                                                hashMapOf("money" to "0.0", "currency" to "$")
+                                            )
                                         }
                                     }
                                 showHome(account.email ?: "")

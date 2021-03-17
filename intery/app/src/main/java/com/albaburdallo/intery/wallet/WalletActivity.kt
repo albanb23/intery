@@ -5,34 +5,23 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.airbnb.lottie.LottieDrawable
 import com.albaburdallo.intery.HomeActivity
 import com.albaburdallo.intery.LoginActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.habit.HabitActivity
-import com.albaburdallo.intery.model.entities.Entity
-import com.albaburdallo.intery.model.entities.Section
-import com.albaburdallo.intery.model.entities.Transaction
+import com.albaburdallo.intery.util.entities.Transaction
 import com.albaburdallo.intery.task.TaskActivity
-import com.albaburdallo.intery.task.TaskFormActivity
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.android.gms.tasks.Task
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.android.synthetic.main.activity_options.*
 import kotlinx.android.synthetic.main.activity_wallet.*
 import kotlinx.android.synthetic.main.activity_wallet.view.*
 import kotlinx.android.synthetic.main.loading_layout.*
-import java.util.HashMap
 
 class WalletActivity : AppCompatActivity(){
 
@@ -105,8 +94,10 @@ class WalletActivity : AppCompatActivity(){
                 }
             })
             adapter.startListening()
-            if (adapter.itemCount==0) {
-                noTransactionsTextView.visibility = View.VISIBLE
+            query.addSnapshotListener { value, error ->
+                if (value!!.isEmpty) {
+                    noTransactionsTextView.visibility = View.VISIBLE
+                }
             }
             loadingLayout.visibility = View.GONE
         }
