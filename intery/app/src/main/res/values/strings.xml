@@ -96,4 +96,6 @@
     <string name="inOneHour">In 1 hour</string>
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
+    <string name="snooze">Snooze</string>
+    <string name="done">Done</string>
 </resources>

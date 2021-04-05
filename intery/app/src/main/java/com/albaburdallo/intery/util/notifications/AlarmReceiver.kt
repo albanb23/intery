@@ -17,6 +17,7 @@ class AlarmReceiver: BroadcastReceiver() {
 
         val title = intent?.extras?.getString("title")
         val messageBody = intent?.extras?.getString("messageBody")
-        notificationManager.sendNotification(title?:"", messageBody?:"", context)
+        val taskId = intent?.extras?.getString("taskId")
+        notificationManager.sendNotification(taskId?:"", title?:"", messageBody?:"", context)
     }
 }

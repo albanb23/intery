@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.intery.NoActionBar">
-        <activity android:name=".wallet.ChartActivity"></activity>
+        <activity android:name=".task.CalendarViewActivity"></activity>
+        <activity android:name=".wallet.ChartActivity" />
         <activity android:name=".wallet.WalletFormActivity" />
         <activity android:name=".task.CalendarActivity" />
         <activity android:name=".task.TaskFormActivity" />
@@ -29,16 +30,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <receiver
             android:name=".util.notifications.AlarmReceiver"
             android:enabled="true"
-            android:exported="false">
-        </receiver>
+            android:exported="false"></receiver>
         <receiver
             android:name=".util.notifications.SnoozeReceiver"
             android:enabled="true"
-            android:exported="false">
-        </receiver>
+            android:exported="false"></receiver>
+        <receiver
+            android:name=".util.notifications.DoneReceiver"
+            android:enabled="true"
+            android:exported="false"></receiver>
     </application>
 
 </manifest>

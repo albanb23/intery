@@ -6,6 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".habit.HabitActivity">
 
-    <include layout="@layout/activity_options"></include>
-    <include layout="@layout/loading_layout"></include>
+    <include layout="@layout/loading_layout" />
+    <include layout="@layout/activity_options"/>
 </androidx.drawerlayout.widget.DrawerLayout>

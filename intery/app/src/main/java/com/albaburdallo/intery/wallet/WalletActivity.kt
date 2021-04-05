@@ -57,12 +57,13 @@ class WalletActivity : AppCompatActivity(){
                     prefs.apply()
                     currencyTextView.text = value.get("currency") as String
                 }
-                loadingLayout.visibility = View.GONE
+//                loadingLayout.visibility = View.GONE
             }
         }
 
+        moneyTextNumber.setSelection(moneyTextNumber.length())
         moneyTextNumber.doAfterTextChanged { text ->
-            loadingLayout.visibility = View.VISIBLE
+//            loadingLayout.visibility = View.VISIBLE
             if (authEmail != null) {
                 db.collection("common").document(authEmail).set(
                     hashMapOf("money" to text.toString(), "currency" to "$")
@@ -70,7 +71,8 @@ class WalletActivity : AppCompatActivity(){
                 prefs.putString("totalMoney",text.toString())
                 prefs.apply()
             }
-            loadingLayout.visibility = View.GONE
+            moneyTextNumber.setSelection(moneyTextNumber.length())
+//            loadingLayout.visibility = View.GONE
         }
 
         walletList = findViewById(R.id.walletList)
@@ -94,12 +96,12 @@ class WalletActivity : AppCompatActivity(){
                 }
             })
             adapter.startListening()
-            query.addSnapshotListener { value, error ->
-                if (value!!.isEmpty) {
-                    noTransactionsTextView.visibility = View.VISIBLE
-                }
-            }
-            loadingLayout.visibility = View.GONE
+//            query.addSnapshotListener { value, error ->
+//                if (value!!.isEmpty) {
+//                    noTransactionsTextView.visibility = View.VISIBLE
+//                }
+//            }
+//            loadingLayout.visibility = View.GONE
         }
 
         addTransactionButton.setOnClickListener {
@@ -165,8 +167,7 @@ class WalletActivity : AppCompatActivity(){
             }
         }
 
-        logOutButton.setOnClickListener{
-            //Borrado de datos
+        logOutButton.setOnClickListener {
             val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
             prefs.clear()
             prefs.apply()

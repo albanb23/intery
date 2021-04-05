@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.CheckBox
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -17,6 +18,7 @@ import com.albaburdallo.intery.util.entities.Transaction
 import com.albaburdallo.intery.task.TaskActivity
 import com.albaburdallo.intery.task.TaskAdapter
 import com.albaburdallo.intery.task.TaskFormActivity
+import com.albaburdallo.intery.task.TaskHomeAdapter
 import com.albaburdallo.intery.wallet.WalletActivity
 import com.albaburdallo.intery.wallet.WalletFormActivity
 import com.google.firebase.Timestamp
@@ -28,6 +30,7 @@ import kotlinx.android.synthetic.main.activity_home.taskFrame
 import kotlinx.android.synthetic.main.activity_options.*
 import kotlinx.android.synthetic.main.activity_task.*
 import kotlinx.android.synthetic.main.loading_layout.*
+import kotlinx.android.synthetic.main.task_list.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -37,7 +40,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var todayTasks: MutableList<Task>
     private lateinit var tomorrowTasks: MutableList<Task>
     private lateinit var nextDayTasks: MutableList<Task>
-    private lateinit var adapter: TaskAdapter
+    private lateinit var adapter: TaskHomeAdapter
     private lateinit var todayTaskList: RecyclerView
     private lateinit var tomorrowTaskList: RecyclerView
     private lateinit var nextDayTaskList: RecyclerView
@@ -65,7 +68,7 @@ class HomeActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun setup() {
-        val authEmail = FirebaseAuth.getInstance().currentUser?.email;
+        val authEmail = FirebaseAuth.getInstance().currentUser?.email
 
         floatingCreateTask.setOnClickListener { showTaskForm(null, "create") }
         floatingCreateTransaction.setOnClickListener { showWalletForm(null, "create") }
@@ -100,7 +103,7 @@ class HomeActivity : AppCompatActivity() {
         tomorrowTextView.text = tomorrow
         nextDayTextView.text = nextDay
 
-        var query = db.collection("tasks").whereEqualTo("done", false)
+        val query = db.collection("tasks").whereEqualTo("done", false)
         query.orderBy("created", Query.Direction.DESCENDING).addSnapshotListener { value, error ->
             if (error != null) {
                 return@addSnapshotListener
@@ -165,9 +168,9 @@ class HomeActivity : AppCompatActivity() {
             //today
             todayTaskList.layoutManager = LinearLayoutManager(this)
             adapter = if (todayTasks.size>3) {
-                TaskAdapter(todayTasks.subList(0, 3))
+                TaskHomeAdapter(todayTasks.subList(0, 3))
             } else {
-                TaskAdapter(todayTasks)
+                TaskHomeAdapter(todayTasks)
             }
             todayTaskList.adapter = adapter
             todayTaskList.isEnabled = false
@@ -182,9 +185,9 @@ class HomeActivity : AppCompatActivity() {
             //tomorrow
             tomorrowTaskList.layoutManager = LinearLayoutManager(this)
             adapter = if (tomorrowTasks.size>2) {
-                TaskAdapter(tomorrowTasks.subList(0, 2))
+                TaskHomeAdapter(tomorrowTasks.subList(0, 2))
             } else {
-                TaskAdapter(tomorrowTasks)
+                TaskHomeAdapter(tomorrowTasks)
             }
             tomorrowTaskList.adapter = adapter
             tomorrowTaskList.isEnabled = false
@@ -199,9 +202,9 @@ class HomeActivity : AppCompatActivity() {
             //nextday
             nextDayTaskList.layoutManager = LinearLayoutManager(this)
             adapter = if(nextDayTasks.size>1) {
-                TaskAdapter(nextDayTasks.subList(0, 1))
+                TaskHomeAdapter(nextDayTasks.subList(0, 1))
             } else {
-                TaskAdapter(nextDayTasks)
+                TaskHomeAdapter(nextDayTasks)
             }
             nextDayTaskList.adapter = adapter
             nextDayTaskList.isEnabled = false

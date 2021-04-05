@@ -72,6 +72,7 @@
                         <TextView
                             android:id="@+id/currencyHomeTextView"
                             style="@style/title"
+                            android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:gravity="center_vertical"
@@ -84,6 +85,7 @@
                         <TextView
                             android:id="@+id/moneyHomeTextView"
                             style="@style/title"
+                            android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:gravity="center_vertical"
@@ -131,6 +133,7 @@
                             android:paddingStart="8dp"
                             android:paddingTop="8dp"
                             android:paddingBottom="8dp"
+                            android:textStyle="bold"
                             android:text="TextView" />
 
                         <androidx.recyclerview.widget.RecyclerView
@@ -151,6 +154,7 @@
                         <TextView
                             android:id="@+id/tomorrowTextView"
                             style="@style/title"
+                            android:textStyle="bold"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingStart="8dp"
@@ -176,6 +180,7 @@
                         <TextView
                             android:id="@+id/nextDayTextView"
                             style="@style/title"
+                            android:textStyle="bold"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingStart="8dp"
@@ -226,7 +231,7 @@
 
     </LinearLayout>
 
-    <include layout="@layout/activity_options"></include>
-    <include layout="@layout/loading_layout"></include>
+    <include layout="@layout/loading_layout" />
+    <include layout="@layout/activity_options"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

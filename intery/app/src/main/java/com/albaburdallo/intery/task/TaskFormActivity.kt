@@ -1,6 +1,5 @@
 package com.albaburdallo.intery.task
 
-import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -11,9 +10,7 @@ import android.os.SystemClock
 import android.text.TextUtils
 import android.view.View
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.AlarmManagerCompat
 import androidx.core.content.ContextCompat
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.util.entities.Task
@@ -486,16 +483,17 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
     private fun notification(task: Task) {
         val cal = Calendar.getInstance()
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        cal.time = sdf.parse(startDateInput.text.toString())
+        cal.time = sdf.parse(startDateInput.text.toString())!!
         val startTime = Calendar.getInstance()
-        startTime.time = task.startTime
-
-        var notificationDate = cal
-        if (task.startTime!=null) {
-            notificationDate.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY))
-            notificationDate.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE))
-            notificationDate.set(Calendar.SECOND, 0)
+        if (task.startTime != null) {
+            startTime.time = task.startTime
+        } else {
+            startTime.time = cal.time
         }
+
+        cal.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY))
+        cal.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE))
+        cal.set(Calendar.SECOND, 0)
 
         val notificationTitle = task.name
         var whenNotification = ""
@@ -522,20 +520,22 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                 timeBefore = 86400000
             }
         }
-        val notificationBody = whenNotification + ", " + formatTime(notificationDate.time)
+        val notificationBody = whenNotification + ", " + formatTime(cal.time)
 
         createChannel("intery_channel", "Intery")
         val currentDate = Calendar.getInstance()
-        val diff = (notificationDate.time.time - currentDate.time.time) - timeBefore
-        println("diff===================" + diff)
+        val diff = (cal.time.time - currentDate.time.time) - timeBefore
         val notificationManager = ContextCompat.getSystemService(
             applicationContext,
             NotificationManager::class.java
         ) as NotificationManager
             if (task.notifyMe) {
+                val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
+                prefs.putString("taskName", task.name)
                 val notifyIntent = Intent(this, AlarmReceiver::class.java)
                 notifyIntent.putExtra("messageBody", notificationBody)
                 notifyIntent.putExtra("title", notificationTitle)
+                notifyIntent.putExtra("taskId", task.id)
                 val notifyPendingIntent = PendingIntent.getBroadcast(
                     this,
                     0,

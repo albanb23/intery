@@ -3,7 +3,9 @@ package com.albaburdallo.intery.task
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +16,7 @@ import com.albaburdallo.intery.LoginActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.habit.HabitActivity
 import com.albaburdallo.intery.util.entities.Task
+import com.albaburdallo.intery.util.notifications.DoneReceiver
 import com.albaburdallo.intery.wallet.WalletActivity
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -21,10 +24,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_options.*
 import kotlinx.android.synthetic.main.activity_task.*
-import kotlin.collections.HashMap
 
 
-class TaskActivity : AppCompatActivity() {
+open class TaskActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
 
     private lateinit var taskList: RecyclerView
@@ -38,8 +40,6 @@ class TaskActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task)
-        this.getSupportActionBar()?.hide()
-
     }
 
     override fun onStart() {
@@ -98,6 +98,9 @@ class TaskActivity : AppCompatActivity() {
                 alert.show()
             }
         }
+
+        calendarIcon.setOnClickListener { showCalendarView() }
+
         showAll = prefs.getBoolean("showAll", false)
 
         taskList = findViewById(R.id.taskList)
@@ -166,7 +169,12 @@ class TaskActivity : AppCompatActivity() {
                             notifyme,
                             notes,
                             done,
-                            com.albaburdallo.intery.util.entities.Calendar(calendar["id"], calendar["name"],calendar["description"],calendar["color"]),
+                            com.albaburdallo.intery.util.entities.Calendar(
+                                calendar["id"],
+                                calendar["name"],
+                                calendar["description"],
+                                calendar["color"]
+                            ),
                             whenNotification
                         )
                     )
@@ -180,7 +188,12 @@ class TaskActivity : AppCompatActivity() {
                             notifyme,
                             notes,
                             done,
-                            com.albaburdallo.intery.util.entities.Calendar(calendar["id"], calendar["name"],calendar["description"],calendar["color"]),
+                            com.albaburdallo.intery.util.entities.Calendar(
+                                calendar["id"],
+                                calendar["name"],
+                                calendar["description"],
+                                calendar["color"]
+                            ),
                             whenNotification
                         )
                     )
@@ -190,7 +203,7 @@ class TaskActivity : AppCompatActivity() {
             taskList.layoutManager = LinearLayoutManager(this)
             adapter = TaskAdapter(tasks)
             taskList.adapter = adapter
-            adapter.setOnItemClickListener(object: TaskAdapter.ClickListener {
+            adapter.setOnItemClickListener(object : TaskAdapter.ClickListener {
                 override fun onItemClick(v: View, position: Int) {
                     val task = tasks[position]
                     showTaskForm(task, "edit")
@@ -269,7 +282,6 @@ class TaskActivity : AppCompatActivity() {
         }
     }
 
-
     private fun restartView() {
         val intent = Intent(this, TaskActivity::class.java)
         finish()
@@ -315,6 +327,11 @@ class TaskActivity : AppCompatActivity() {
     private fun showCalendar() {
         val calendarIntent = Intent(this, CalendarActivity::class.java).apply { }
         startActivity(calendarIntent)
+    }
+
+    private fun showCalendarView() {
+        val calendarviewIntent = Intent(this, CalendarViewActivity::class.java).apply { }
+        startActivity(calendarviewIntent)
     }
 
 }

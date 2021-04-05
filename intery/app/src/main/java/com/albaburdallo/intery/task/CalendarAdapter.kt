@@ -15,7 +15,7 @@ import com.albaburdallo.intery.util.entities.Calendar
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.HashMap
 
-class CalendarAdapter(val calendars: MutableList<Calendar>) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
+class CalendarAdapter(private val calendars: MutableList<Calendar>) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
 
     private var clickListener: ClickListener? = null
 

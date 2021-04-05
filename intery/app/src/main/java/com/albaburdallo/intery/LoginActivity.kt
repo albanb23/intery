@@ -30,6 +30,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         this.supportActionBar?.hide()
 
+//        db.clearPersistence()
         //Analytics event
         val analytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(this)
         val bundle = Bundle()
