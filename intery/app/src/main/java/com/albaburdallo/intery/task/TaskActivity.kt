@@ -33,7 +33,6 @@ open class TaskActivity : AppCompatActivity() {
     private lateinit var createTaskButton: Button
     private lateinit var adapter: TaskAdapter
     private lateinit var tasks: MutableList<Task>
-    private lateinit var taskid: String
     private var showAll = false
     private var calendarId: String = ""
 
@@ -106,7 +105,7 @@ open class TaskActivity : AppCompatActivity() {
         taskList = findViewById(R.id.taskList)
         createTaskButton = findViewById(R.id.createTaskButton)
         tasks = arrayListOf()
-        val authEmail = FirebaseAuth.getInstance().currentUser?.email;
+        val authEmail = FirebaseAuth.getInstance().currentUser?.email
 
         if (calendarId=="") {
             if (showAll) {

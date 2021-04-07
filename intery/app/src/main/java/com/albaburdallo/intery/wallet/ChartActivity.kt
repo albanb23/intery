@@ -40,8 +40,6 @@ class ChartActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
     private val authEmail = FirebaseAuth.getInstance().currentUser?.email;
 
-    private lateinit var dateList: RecyclerView
-    private lateinit var adapter: ChartAdapter
     private lateinit var mainViewModel: ChartViewModel
     private lateinit var layoutManager: LinearLayoutManager
 

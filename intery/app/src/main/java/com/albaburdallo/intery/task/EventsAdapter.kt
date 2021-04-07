@@ -1,5 +1,6 @@
 package com.albaburdallo.intery.task
 
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,15 @@ class EventsAdapter(): RecyclerView.Adapter<EventsAdapter.EventsViewHolder>() {
         }
 
         fun bind(task: Task) {
+            itemView.calendarDayText.gravity = Gravity.START
             itemView.calendarDayText.text = task.name
+            itemView.calendarDayNotesText.visibility = View.VISIBLE
+            itemView.calendarDayNotesText.text = task.notes
+            itemView.calendarDot1.visibility = View.INVISIBLE
+            itemView.calendarDot2.visibility = View.INVISIBLE
+            itemView.calendarDot3.visibility = View.INVISIBLE
+            itemView.calendarPlusText.visibility = View.INVISIBLE
+
         }
     }
 
