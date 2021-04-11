@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="8dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+    <ImageView
+            android:id="@+id/dotCalendarImageView"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/ic_circle" />
+
+        <TextView
+            android:id="@+id/taskNameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/text"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            android:textSize="16sp"
+            android:text="task" />
+
+        <TextView
+            android:id="@+id/taskTimeTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/text"
+            android:textColor="@color/gray"
+            android:text="12:00 - 13:00"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/taskNotesTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/text"
+        android:paddingTop="6dp"
+        android:textColor="@color/gray"
+        android:text="notes"/>
+
+</LinearLayout>

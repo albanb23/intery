@@ -66,7 +66,7 @@ class CalendarAdapter(private val calendars: MutableList<Calendar>) : RecyclerVi
 
         override fun onClick(v: View?) {
             if (v!=null){
-                clickListener?.onItemClick(v, adapterPosition)
+                clickListener?.onItemClick(v, absoluteAdapterPosition)
             }
         }
     }

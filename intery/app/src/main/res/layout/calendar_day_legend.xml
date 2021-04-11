@@ -14,6 +14,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="SUN"
+        android:textAllCaps="true"
         android:paddingBottom="20dp"
         android:textColor="@color/black"
         android:textSize="14sp" />
@@ -25,6 +26,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="MON"
+        android:textAllCaps="true"
         android:paddingBottom="20dp"
         android:textColor="@color/black"
         android:textSize="14sp" />
@@ -36,6 +38,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="TUE"
+        android:textAllCaps="true"
         android:paddingBottom="20dp"
         android:textColor="@color/black"
         android:textSize="14sp" />
@@ -46,6 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
+        android:textAllCaps="true"
         android:text="WED"
         android:paddingBottom="20dp"
         android:textColor="@color/black"
@@ -58,6 +62,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="THU"
+        android:textAllCaps="true"
         android:paddingBottom="20dp"
         android:textColor="@color/black"
         android:textSize="14sp" />
@@ -70,6 +75,7 @@
         android:gravity="center"
         android:text="FRI"
         android:paddingBottom="20dp"
+        android:textAllCaps="true"
         android:textColor="@color/black"
         android:textSize="14sp" />
 
@@ -79,6 +85,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
+        android:textAllCaps="true"
         android:text="SAT"
         android:paddingBottom="20dp"
         android:textColor="@color/black"

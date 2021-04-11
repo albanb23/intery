@@ -48,7 +48,6 @@ open class TaskActivity : AppCompatActivity() {
         val prefsEdit = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
 
         calendarId = prefs.getString("calendar", "").toString()
-        val index = calendarId.indexOf("-")
         if (calendarId != "") {
             showAll = true
             eyeClosedIcon.visibility = View.GONE

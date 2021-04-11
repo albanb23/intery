@@ -5,12 +5,12 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.view.children
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.R
@@ -27,7 +27,6 @@ import com.kizitonwose.calendarview.ui.ViewContainer
 import kotlinx.android.synthetic.main.activity_calendar_view.*
 import kotlinx.android.synthetic.main.calendar_day_layout.view.*
 import kotlinx.android.synthetic.main.calendar_day_legend.view.*
-import java.text.DateFormatSymbols
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -44,6 +43,7 @@ class CalendarViewActivity : AppCompatActivity() {
 
     private val events = mutableMapOf<LocalDate, List<Task>>()
     private lateinit var eventsAdapter: EventsAdapter
+    private lateinit var eventsItemAdapter: EventsItemAdapter
     private var selectedDate: LocalDate? = null
     private val today = LocalDate.now()
     private lateinit var layoutManager: LinearLayoutManager
@@ -126,14 +126,20 @@ class CalendarViewActivity : AppCompatActivity() {
                 val date = task.startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
                 events[date] = events[date].orEmpty().plus(task)
             }
-
         }
 
         eventsAdapter = EventsAdapter()
-        layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        eventsItemAdapter = EventsItemAdapter(this)
+        layoutManager = LinearLayoutManager(this)
         calendarRecyclerView.layoutManager = layoutManager
-        calendarRecyclerView.adapter = eventsAdapter
-//        calendarRecyclerView.addItemDecoration()
+        calendarRecyclerView.adapter = eventsItemAdapter
+
+        eventsItemAdapter.setOnItemClickListener(object: CalendarAdapter.ClickListener{
+            override fun onItemClick(v: View, position: Int) {
+                val task = events[selectedDate]?.get(position)
+                showTaskForm(task, "edit")
+            }
+        })
 
         val daysOfWeek = daysOfWeekFromLocale()
         val currentMonth = YearMonth.now()
@@ -167,28 +173,12 @@ class CalendarViewActivity : AppCompatActivity() {
                 val dot2view = container.view.calendarDot2
                 val dot3view = container.view.calendarDot3
                 val plusText = container.view.calendarPlusText
-                val calendarDayNotesText = container.view.calendarDayNotesText
 
-                textView.gravity = Gravity.CENTER
                 textView.text = day.date.dayOfMonth.toString()
 
                 if (day.owner == DayOwner.THIS_MONTH) {
                     textView.visibility = View.VISIBLE
-                    calendarDayNotesText.visibility = View.GONE
-                    when(day.date) {
-                        today -> {
-                            textView.setTextColor(ContextCompat.getColor(this@CalendarViewActivity, R.color.yellow))
-//                            textView.setBackgroundResource(R.drawable.calendar_selected)
-                        }
-                        selectedDate -> {
-                            textView.setTextColor(ContextCompat.getColor(this@CalendarViewActivity, R.color.white))
-                            textView.setBackgroundResource(R.drawable.calendar_selected)
-                        }
-                        else -> {
-                            textView.setTextColor(ContextCompat.getColor(this@CalendarViewActivity, R.color.black))
-                            textView.background = null
-                        }
-                    }
+
                     if (events[day.date].orEmpty().size >= 4) {
                         dot1view.visibility = View.VISIBLE
                         dot1view.drawable.setTint(events[day.date]!![0].calendar.color.toInt())
@@ -218,18 +208,28 @@ class CalendarViewActivity : AppCompatActivity() {
                         dot2view.visibility = View.GONE
                         dot1view.visibility = View.VISIBLE
                         dot1view.drawable.setTint(events[day.date]!![0].calendar.color.toInt())
-                    } else {
-                        plusText.visibility = View.GONE
-                        dot3view.visibility = View.GONE
-                        dot2view.visibility = View.GONE
-                        dot1view.visibility = View.GONE
+                    }
+
+                    when(day.date) {
+                        today -> {
+                            textView.setTextColor(ContextCompat.getColor(this@CalendarViewActivity, R.color.yellow))
+//                            textView.setBackgroundResource(R.drawable.calendar_selected)
+                        }
+                        selectedDate -> {
+                            textView.setTextColor(ContextCompat.getColor(this@CalendarViewActivity, R.color.white))
+                            textView.setBackgroundResource(R.drawable.calendar_selected)
+                        }
+                        else -> {
+                            textView.setTextColor(ContextCompat.getColor(this@CalendarViewActivity, R.color.black))
+                            textView.background = null
+                        }
                     }
                 } else {
-                    textView.visibility = View.INVISIBLE
-                    dot1view.visibility = View.INVISIBLE
-                    dot2view.visibility = View.INVISIBLE
-                    dot3view.visibility = View.INVISIBLE
-                    plusText.visibility = View.INVISIBLE
+                    textView.visibility = View.GONE
+                    dot1view.visibility = View.GONE
+                    dot2view.visibility = View.GONE
+                    dot3view.visibility = View.GONE
+                    plusText.visibility = View.GONE
                 }
             }
         }
@@ -248,8 +248,7 @@ class CalendarViewActivity : AppCompatActivity() {
                 if (container.legendLayout.tag == null) {
                     container.legendLayout.tag = month.yearMonth
                     container.legendLayout.children.map { it as TextView }.forEachIndexed { index, textView ->
-                        textView.text = daysOfWeek[index].getDisplayName(TextStyle.SHORT, Locale.getDefault()).first().toString().capitalize()
-                        textView.setTextColor(ContextCompat.getColor(this@CalendarViewActivity, R.color.black))
+                        textView.text = daysOfWeek[index].getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault()).toString().replace(".", "")
                     }
                 }
             }
@@ -300,6 +299,11 @@ class CalendarViewActivity : AppCompatActivity() {
 
     private fun updateAdapterForDate(date: LocalDate) {
         eventsAdapter.apply {
+            events.clear()
+            events.addAll(this@CalendarViewActivity.events[date].orEmpty())
+            notifyDataSetChanged()
+        }
+        eventsItemAdapter.apply {
             events.clear()
             events.addAll(this@CalendarViewActivity.events[date].orEmpty())
             notifyDataSetChanged()
