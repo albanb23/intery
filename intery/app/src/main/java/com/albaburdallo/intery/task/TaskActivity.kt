@@ -8,22 +8,26 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.HomeActivity
 import com.albaburdallo.intery.LoginActivity
+import com.albaburdallo.intery.ProfileActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.habit.HabitActivity
 import com.albaburdallo.intery.util.entities.Task
-import com.albaburdallo.intery.util.notifications.DoneReceiver
 import com.albaburdallo.intery.wallet.WalletActivity
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import kotlinx.android.synthetic.main.activity_options.*
+import com.squareup.picasso.Picasso
+import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.activity_task.*
+import kotlinx.android.synthetic.main.nav_header.*
+import kotlinx.android.synthetic.main.options.*
 
 
 open class TaskActivity : AppCompatActivity() {
@@ -278,6 +282,22 @@ open class TaskActivity : AppCompatActivity() {
         bookmarkIcon.setOnClickListener {
             showCalendar()
         }
+
+        db.collection("users").document(authEmail!!).get().addOnSuccessListener {
+            var photo = it.get("photo") as String
+            if (photo == "") {
+                photo = ""
+            }
+            Picasso.get().load(photo).transform(CropCircleTransformation()).into(profilePicImage)
+        }
+
+        val header = nav_view.getHeaderView(0)
+        val profilePicImage = header.findViewById<ImageView>(R.id.profilePicImage)
+        profilePicImage.setOnClickListener {
+            if (authEmail != null) {
+                showProfile(authEmail)
+            }
+        }
     }
 
     private fun restartView() {
@@ -330,6 +350,14 @@ open class TaskActivity : AppCompatActivity() {
     private fun showCalendarView() {
         val calendarviewIntent = Intent(this, CalendarViewActivity::class.java).apply { }
         startActivity(calendarviewIntent)
+    }
+
+    private fun showProfile(email: String) {
+        val profileIntent = Intent(this, ProfileActivity::class.java)
+        if (email != null) {
+            profileIntent.putExtra("userEmail", email)
+        }
+        startActivity(profileIntent)
     }
 
 }

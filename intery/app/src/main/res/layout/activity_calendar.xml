@@ -73,5 +73,5 @@
     </LinearLayout>
 
     <include layout="@layout/loading_layout"></include>
-    <include layout="@layout/activity_options"></include>
+    <include layout="@layout/options"></include>
 </androidx.drawerlayout.widget.DrawerLayout>

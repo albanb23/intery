@@ -202,7 +202,7 @@
             android:text="@string/save"  />
     </LinearLayout>
 
-    <include layout="@layout/activity_options" />
+    <include layout="@layout/options" />
     <include layout="@layout/loading_layout"></include>
 
 </androidx.drawerlayout.widget.DrawerLayout>

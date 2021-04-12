@@ -2,11 +2,11 @@ package com.albaburdallo.intery.wallet
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
+import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -14,8 +14,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.albaburdallo.intery.HomeActivity
 import com.albaburdallo.intery.LoginActivity
+import com.albaburdallo.intery.ProfileActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.habit.HabitActivity
 import com.albaburdallo.intery.task.TaskActivity
@@ -25,10 +25,12 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.collection.LLRBNode
 import com.google.firebase.firestore.FirebaseFirestore
+import com.squareup.picasso.Picasso
+import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.activity_chart.*
-import kotlinx.android.synthetic.main.activity_options.*
+import kotlinx.android.synthetic.main.nav_header.*
+import kotlinx.android.synthetic.main.options.*
 import java.sql.Timestamp
 import java.time.LocalDate
 import java.time.ZoneId
@@ -152,6 +154,22 @@ class ChartActivity : AppCompatActivity() {
             FirebaseAuth.getInstance().signOut()
             //onBackPressed() //para volver a la pantalla anterior
             showLogin()
+        }
+
+        db.collection("users").document(authEmail!!).get().addOnSuccessListener {
+            var photo = it.get("photo") as String
+            if (photo == "") {
+                photo = ""
+            }
+            Picasso.get().load(photo).transform(CropCircleTransformation()).into(profilePicImage)
+        }
+
+        val header = nav_view.getHeaderView(0)
+        val profilePicImage = header.findViewById<ImageView>(R.id.profilePicImage)
+        profilePicImage.setOnClickListener {
+            if (authEmail != null) {
+                showProfile(authEmail)
+            }
         }
     }
 
@@ -302,8 +320,11 @@ class ChartActivity : AppCompatActivity() {
         startActivity(habitIntent)
     }
 
-    private fun showHome() {
-        val homeIntent = Intent(this, HomeActivity::class.java).apply { }
-        startActivity(homeIntent)
+    private fun showProfile(email: String) {
+        val profileIntent = Intent(this, ProfileActivity::class.java)
+        if (email != null) {
+            profileIntent.putExtra("userEmail", email)
+        }
+        startActivity(profileIntent)
     }
 }

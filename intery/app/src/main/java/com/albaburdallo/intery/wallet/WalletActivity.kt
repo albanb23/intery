@@ -5,11 +5,13 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.HomeActivity
 import com.albaburdallo.intery.LoginActivity
+import com.albaburdallo.intery.ProfileActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.habit.HabitActivity
 import com.albaburdallo.intery.util.entities.Transaction
@@ -18,10 +20,13 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import kotlinx.android.synthetic.main.activity_options.*
+import com.squareup.picasso.Picasso
+import jp.wasabeef.picasso.transformations.CropCircleTransformation
+import kotlinx.android.synthetic.main.options.*
 import kotlinx.android.synthetic.main.activity_wallet.*
 import kotlinx.android.synthetic.main.activity_wallet.view.*
 import kotlinx.android.synthetic.main.loading_layout.*
+import kotlinx.android.synthetic.main.nav_header.*
 
 class WalletActivity : AppCompatActivity(){
 
@@ -176,6 +181,22 @@ class WalletActivity : AppCompatActivity(){
             //onBackPressed() //para volver a la pantalla anterior
             showLogin()
         }
+
+        db.collection("users").document(authEmail!!).get().addOnSuccessListener {
+            var photo = it.get("photo") as String
+            if (photo == "") {
+                photo = ""
+            }
+            Picasso.get().load(photo).transform(CropCircleTransformation()).into(profilePicImage)
+        }
+
+        val header = nav_view.getHeaderView(0)
+        val profilePicImage = header.findViewById<ImageView>(R.id.profilePicImage)
+        profilePicImage.setOnClickListener {
+            if (authEmail != null) {
+                showProfile(authEmail)
+            }
+        }
     }
 
     private fun showWalletForm(transaction: Transaction?, form: String) {
@@ -215,6 +236,14 @@ class WalletActivity : AppCompatActivity(){
     private fun showChart() {
         val chartIntent = Intent(this, ChartActivity::class.java).apply { }
         startActivity(chartIntent)
+    }
+
+    private fun showProfile(email: String) {
+        val profileIntent = Intent(this, ProfileActivity::class.java)
+        if (email != null) {
+            profileIntent.putExtra("userEmail", email)
+        }
+        startActivity(profileIntent)
     }
 
 }

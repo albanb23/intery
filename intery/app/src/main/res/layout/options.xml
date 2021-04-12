@@ -3,7 +3,6 @@
 <com.google.android.material.navigation.NavigationView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_view"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
@@ -11,8 +10,8 @@
     app:menu="@menu/nav_items"
     app:itemTextAppearance="@style/item"
     app:itemTextColor="@color/white"
-    app:headerLayout="@layout/nav_header"
     android:layout_gravity="start"
+    app:headerLayout="@layout/nav_header"
     android:fitsSystemWindows="true">
 
     <TextView

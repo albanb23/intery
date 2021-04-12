@@ -2,35 +2,43 @@ package com.albaburdallo.intery
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.icu.number.NumberFormatter.with
+import android.icu.number.NumberRangeFormatter.with
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.widget.CheckBox
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.airbnb.lottie.LottieDrawable
 import com.albaburdallo.intery.habit.HabitActivity
-import com.albaburdallo.intery.util.entities.Task
-import com.albaburdallo.intery.util.entities.Transaction
 import com.albaburdallo.intery.task.TaskActivity
-import com.albaburdallo.intery.task.TaskAdapter
 import com.albaburdallo.intery.task.TaskFormActivity
 import com.albaburdallo.intery.task.TaskHomeAdapter
+import com.albaburdallo.intery.util.entities.Task
+import com.albaburdallo.intery.util.entities.Transaction
 import com.albaburdallo.intery.wallet.WalletActivity
 import com.albaburdallo.intery.wallet.WalletFormActivity
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.squareup.picasso.Picasso
+import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_home.taskFrame
-import kotlinx.android.synthetic.main.activity_options.*
 import kotlinx.android.synthetic.main.activity_task.*
 import kotlinx.android.synthetic.main.loading_layout.*
+import kotlinx.android.synthetic.main.nav_header.*
+import kotlinx.android.synthetic.main.options.*
 import kotlinx.android.synthetic.main.task_list.*
+import java.io.IOException
+import java.net.MalformedURLException
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -53,10 +61,6 @@ class HomeActivity : AppCompatActivity() {
 
         val bundle = intent.extras
         val email = bundle?.getString("email")
-
-        loadingLottie.setAnimation(R.raw.loading)
-        loadingLottie.playAnimation()
-        loadingLottie.repeatCount = LottieDrawable.INFINITE
 
         setup()
 
@@ -81,7 +85,6 @@ class HomeActivity : AppCompatActivity() {
                 moneyHomeTextView.text = value.get("money") as String
                 currencyHomeTextView.text = value.get("currency") as String
             }
-            loadingLayout.visibility = View.GONE
         }
 
         todayTasks = arrayListOf()
@@ -92,7 +95,11 @@ class HomeActivity : AppCompatActivity() {
         nextDayTaskList = findViewById(R.id.nextDayTaskList)
 
         val pattern = "EEEE, dd MMMM"
-        val simpleDateFormat = SimpleDateFormat(pattern,  this.resources?.configuration?.locales?.get(0))
+        val simpleDateFormat = SimpleDateFormat(
+            pattern, this.resources?.configuration?.locales?.get(
+                0
+            )
+        )
         val cal = Calendar.getInstance()
         val today = simpleDateFormat.format(cal.time)
         cal.add(Calendar.DATE, 1)
@@ -215,7 +222,6 @@ class HomeActivity : AppCompatActivity() {
                 noTasksForNextDayTextView.visibility = View.GONE
                 adapter.notifyDataSetChanged()
             }
-            loadingLayout.visibility = View.GONE
         }
 
         nav_view.setNavigationItemSelectedListener {
@@ -278,6 +284,27 @@ class HomeActivity : AppCompatActivity() {
             showLogin()
         }
 
+        db.collection("users").document(authEmail!!).get().addOnSuccessListener {
+            var photo = it.get("photo") as String
+            if (photo == "") {
+                photo = ""
+            }
+            Picasso.get().load(photo).transform(CropCircleTransformation()).into(profilePicImage)
+        }
+
+        val header = nav_view.getHeaderView(0)
+        val profilePicImage = header.findViewById<ImageView>(R.id.profilePicImage)
+        profilePicImage
+        profilePicImage.setOnClickListener {
+            showProfile(authEmail)
+        }
+
+    }
+
+    @Throws(MalformedURLException::class, IOException::class)
+    fun drawableFromUrl(url: String?): Bitmap? {
+        val url = URL(url)
+       return BitmapFactory.decodeStream(url.openConnection().getInputStream())
     }
 
     private fun showLogin() {
@@ -318,7 +345,13 @@ class HomeActivity : AppCompatActivity() {
         startActivity(walletFormIntent)
     }
 
-
+    private fun showProfile(email: String) {
+        val profileIntent = Intent(this, ProfileActivity::class.java)
+        if (email != null) {
+            profileIntent.putExtra("userEmail", email)
+        }
+        startActivity(profileIntent)
+    }
 
 
 }
