@@ -98,4 +98,13 @@
     <string name="tomorrow">Tomorrow</string>
     <string name="snooze">Snooze</string>
     <string name="done">Done</string>
+    <string name="editProfile">Edit profile</string>
+    <string name="changePassword">Change password</string>
+    <string name="oldPassword">Old password</string>
+    <string name="newPassword">New password</string>
+    <string name="repeatNewPassword">Repeat new password</string>
+    <string name="passUpdated">Password updated</string>
+    <string name="forgotPass">Forgot password?</string>
+    <string name="resetEmail">An email were sent to restart your password</string>
+    <string name="oldPassNotValid">Your old password is not correct</string>
 </resources>

@@ -255,7 +255,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         }
 
 //        adapter = TaskAdapter(this, tasks)
-        saveTaskButton.setOnClickListener { i ->
+        saveTaskButton.setOnClickListener {
             if (validateForm()) {
                 addTask()
             }

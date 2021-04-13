@@ -98,4 +98,13 @@
     <string name="tomorrow">Mañana</string>
     <string name="snooze">Descartar</string>
     <string name="done">Hecho</string>
+    <string name="editProfile">Editar perfil</string>
+    <string name="changePassword">Cambiar contraseña</string>
+    <string name="oldPassword">Contraseña antigua</string>
+    <string name="newPassword">Nueva contraseña</string>
+    <string name="repeatNewPassword">Repita nueva contraseña</string>
+    <string name="passUpdated">Contraseña actualizada</string>
+    <string name="forgotPass">¿Olvidó su contraseña?</string>
+    <string name="resetEmail">Se envió un email para restaurar su contraseña</string>
+    <string name="oldPassNotValid">Su contraseña antigua no es correcta</string>
 </resources>

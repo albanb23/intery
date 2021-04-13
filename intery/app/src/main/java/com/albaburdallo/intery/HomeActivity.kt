@@ -288,8 +288,10 @@ class HomeActivity : AppCompatActivity() {
             var photo = it.get("photo") as String
             if (photo == "") {
                 photo = ""
+            } else {
+                Picasso.get().load(photo).transform(CropCircleTransformation()).into(profilePicImage)
             }
-            Picasso.get().load(photo).transform(CropCircleTransformation()).into(profilePicImage)
+
         }
 
         val header = nav_view.getHeaderView(0)

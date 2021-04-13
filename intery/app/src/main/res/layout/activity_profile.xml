@@ -6,4 +6,228 @@
     android:layout_height="match_parent"
     tools:context=".ProfileActivity">
 
+    <ImageView
+        android:id="@+id/backProfileImage"
+        android:layout_width="47dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_back" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/profileScrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="59dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/profileTitleTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/title"
+                android:textAlignment="center"
+                android:text="@string/editProfile"
+                android:textStyle="bold"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="24dp" />
+
+            <ImageView
+                android:id="@+id/editProfileImageView"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                app:srcCompat="@drawable/ic_circle" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="24dp" />
+
+            <TextView
+                android:id="@+id/profileNameTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/text"
+                android:paddingBottom="6dp"
+                android:text="@string/name"/>
+
+            <EditText
+                android:id="@+id/profileNameEditText"
+                style="@style/input"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:background="@drawable/ic_input"
+                android:ems="10"
+                android:inputType="textPersonName"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <TextView
+                android:id="@+id/profileSurnameTextView"
+                style="@style/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="6dp"
+                android:text="@string/surname" />
+
+            <EditText
+                android:id="@+id/profileSurnameEditText"
+                style="@style/input"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:background="@drawable/ic_input"
+                android:ems="10"
+                android:inputType="textPersonName" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="24dp" />
+
+            <TextView
+                android:id="@+id/profileEmailTextView"
+                style="@style/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="6dp"
+                android:text="@string/email" />
+
+            <EditText
+                android:id="@+id/profileEmailEditText"
+                style="@style/input"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:background="@drawable/ic_input"
+                android:ems="10"
+                android:focusable="false"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="24dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/text"
+                android:textStyle="bold|italic"
+                android:textColor="@color/red"
+                android:textSize="18dp"
+                android:text="@string/changePassword"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <TextView
+                android:id="@+id/profileOldPassTextView"
+                style="@style/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:paddingBottom="6dp"
+                android:text="@string/oldPassword" />
+
+            <EditText
+                android:id="@+id/profileOldPassEditText"
+                style="@style/input"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:background="@drawable/ic_input"
+                android:ems="10"
+                android:inputType="textPassword" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <TextView
+                android:id="@+id/forgotPassText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/forgotPass"
+                style="@style/text"
+                android:textColor="@color/gray"
+                android:textAlignment="textEnd"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <TextView
+                android:id="@+id/profileNewPassTextView"
+                style="@style/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="6dp"
+                android:textStyle="bold"
+                android:text="@string/newPassword" />
+
+            <EditText
+                android:id="@+id/profileNewPassEditText"
+                style="@style/input"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:background="@drawable/ic_input"
+                android:ems="10"
+                android:inputType="textPassword" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <TextView
+                android:id="@+id/profileRepeatNewPassTextView"
+                style="@style/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="6dp"
+                android:textStyle="bold"
+                android:text="@string/repeatNewPassword" />
+
+            <EditText
+                android:id="@+id/profileRepeatNewPassEditText"
+                style="@style/input"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:background="@drawable/ic_input"
+                android:ems="10"
+                android:inputType="textPassword" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="bottom|right"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/saveProfileButton"
+            style="@style/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp"
+            android:text="@string/save" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
