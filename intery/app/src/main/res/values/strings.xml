@@ -105,6 +105,8 @@
     <string name="repeatNewPassword">Repeat new password</string>
     <string name="passUpdated">Password updated</string>
     <string name="forgotPass">Forgot password?</string>
-    <string name="resetEmail">An email were sent to restart your password</string>
+    <string name="resetEmail">An email was sent to restart your password</string>
     <string name="oldPassNotValid">Your old password is not correct</string>
+    <string name="fileError">An error ocurred uploading the file</string>
+    <string name="upload">Upload</string>
 </resources>

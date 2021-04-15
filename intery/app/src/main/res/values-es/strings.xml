@@ -107,4 +107,6 @@
     <string name="forgotPass">¿Olvidó su contraseña?</string>
     <string name="resetEmail">Se envió un email para restaurar su contraseña</string>
     <string name="oldPassNotValid">Su contraseña antigua no es correcta</string>
+    <string name="fileError">Ha ocurrido un error subiendo el archivo</string>
+    <string name="upload">Subir</string>
 </resources>

@@ -46,7 +46,7 @@ class SignInActivity : AppCompatActivity() {
                             val user =
                                 User(
                                     nameEditText.text.toString(), surnameEditText.text.toString(),
-                                    emailEditTextSignIn.text.toString(), ""
+                                    emailEditTextSignIn.text.toString(), "https://assets.website-files.com/5e51c674258ffe10d286d30a/5e535d808becbf7162555033_peep-102.svg"
                                 )
                             db.collection("users").document(emailEditTextSignIn.text.toString())
                                 .set(user)
