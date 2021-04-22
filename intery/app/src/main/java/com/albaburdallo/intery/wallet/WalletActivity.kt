@@ -34,14 +34,11 @@ class WalletActivity : AppCompatActivity(){
 
     private lateinit var walletList: RecyclerView
     private lateinit var adapter: WalletAdapter
-    private val authEmail = FirebaseAuth.getInstance().currentUser?.email;
+    private val authEmail = FirebaseAuth.getInstance().currentUser?.email
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wallet)
-//        loadingLottie.setAnimation(R.raw.loading)
-//        loadingLottie.playAnimation()
-//        loadingLottie.repeatCount = LottieDrawable.INFINITE
     }
 
 
@@ -62,22 +59,17 @@ class WalletActivity : AppCompatActivity(){
                     prefs.apply()
                     currencyTextView.text = value.get("currency") as String
                 }
-//                loadingLayout.visibility = View.GONE
             }
         }
 
         moneyTextNumber.setSelection(moneyTextNumber.length())
         moneyTextNumber.doAfterTextChanged { text ->
-//            loadingLayout.visibility = View.VISIBLE
             if (authEmail != null) {
-                db.collection("common").document(authEmail).set(
-                    hashMapOf("money" to text.toString(), "currency" to "$")
-                )
+                db.collection("common").document(authEmail).update("money", text.toString())
                 prefs.putString("totalMoney",text.toString())
                 prefs.apply()
             }
             moneyTextNumber.setSelection(moneyTextNumber.length())
-//            loadingLayout.visibility = View.GONE
         }
 
         walletList = findViewById(R.id.walletList)
@@ -101,12 +93,6 @@ class WalletActivity : AppCompatActivity(){
                 }
             })
             adapter.startListening()
-//            query.addSnapshotListener { value, error ->
-//                if (value!!.isEmpty) {
-//                    noTransactionsTextView.visibility = View.VISIBLE
-//                }
-//            }
-//            loadingLayout.visibility = View.GONE
         }
 
         addTransactionButton.setOnClickListener {
@@ -194,9 +180,7 @@ class WalletActivity : AppCompatActivity(){
         val header = nav_view.getHeaderView(0)
         val profilePicImage = header.findViewById<ImageView>(R.id.profilePicImage)
         profilePicImage.setOnClickListener {
-            if (authEmail != null) {
-                showProfile(authEmail)
-            }
+            showProfile(authEmail)
         }
     }
 

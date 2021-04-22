@@ -11,6 +11,7 @@ import com.albaburdallo.intery.R
 import com.albaburdallo.intery.util.entities.Transaction
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,6 +30,7 @@ class WalletAdapter(options: FirestoreRecyclerOptions<Transaction>
         private val transactionName = itemView.findViewById<View>(R.id.transNameTextView) as TextView
         private val transactionDate = itemView.findViewById<View>(R.id.transDateTextView) as TextView
         private val transactionMoney = itemView.findViewById<View>(R.id.moneyTextView) as TextView
+        private val currency = itemView.findViewById<View>(R.id.walletCurrencyTextView)as TextView
 
         init {
             itemView.setOnClickListener(this)
@@ -46,6 +48,11 @@ class WalletAdapter(options: FirestoreRecyclerOptions<Transaction>
             }
             transactionName.text = transaction.concept
             transactionDate.text = formatDate(transaction.date)
+
+            db.collection("common").document(FirebaseAuth.getInstance().currentUser?.email.toString()).get().addOnSuccessListener {
+                val curr = it.get("currency") as String
+                currency.text = curr
+            }
 
         }
 

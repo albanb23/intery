@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
 import kotlinx.android.synthetic.main.activity_sign_in.*
+import java.util.*
 
 
 class SignInActivity : AppCompatActivity() {
@@ -20,7 +21,6 @@ class SignInActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
-        this.getSupportActionBar()?.hide()
 
         setup()
     }
@@ -46,7 +46,7 @@ class SignInActivity : AppCompatActivity() {
                             val user =
                                 User(
                                     nameEditText.text.toString(), surnameEditText.text.toString(),
-                                    emailEditTextSignIn.text.toString(), "https://assets.website-files.com/5e51c674258ffe10d286d30a/5e535d808becbf7162555033_peep-102.svg"
+                                    emailEditTextSignIn.text.toString(), ""
                                 )
                             db.collection("users").document(emailEditTextSignIn.text.toString())
                                 .set(user)
@@ -59,8 +59,13 @@ class SignInActivity : AppCompatActivity() {
                             )
                             db.collection("calendars").document(defaultCalendar.id)
                                 .set(defaultCalendar)
+                            val spanish = Locale("es", "ES")
+                            var currency = "$"
+                            if (Locale.getDefault()==spanish){
+                                currency = "€"
+                            }
                             db.collection("common").document(user.email).set(
-                                hashMapOf("money" to "0.0", "currency" to "$")
+                                hashMapOf("money" to "0.0", "currency" to currency)
                             )
                             showLogin()
                         } else {

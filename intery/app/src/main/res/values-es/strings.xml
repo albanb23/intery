@@ -109,4 +109,23 @@
     <string name="oldPassNotValid">Su contraseña antigua no es correcta</string>
     <string name="fileError">Ha ocurrido un error subiendo el archivo</string>
     <string name="upload">Subir</string>
+    <string name="cantEditEmail">El email no puede ser editado</string>
+    <string name="myHabits">Mis hábitos</string>
+    <string name="noHabits">Aún no hay hábitos</string>
+    <string name="newHabit">Nuevo hábito</string>
+    <string name="started">Empezó:</string>
+    <string name="habitName">Título</string>
+    <string name="habitDate">Fecha de fin</string>
+    <string name="habitReminder">Recordatorio</string>
+    <string name="habitNotes">Notas</string>
+    <string name="habitColor">Color:</string>
+    <string name="goal">Meta:</string>
+    <string name="habitRemind">Hora</string>
+    <string name="everyTwoDaysFreq">Cada dos días</string>
+    <string name="everyTwoWeeksFreq">Cada dos semanas</string>
+    <string name="everyMonthFreq">Todos los meses</string>
+    <string name="everyWeekFreq">Todas las semanas</string>
+    <string name="everyDayFreq">Todos los días</string>
+    <string name="everyThreeDaysFreq">Cada tres días</string>
+    <string name="habitDateValidator">La fecha de fin debe ser posterior a hoy</string>
 </resources>

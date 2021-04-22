@@ -2,18 +2,26 @@ package com.albaburdallo.intery.habit
 
 import android.content.Context
 import android.content.Intent
+import android.icu.number.IntegerWidth
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.albaburdallo.intery.HomeActivity
 import com.albaburdallo.intery.LoginActivity
 import com.albaburdallo.intery.ProfileActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.task.TaskActivity
+import com.albaburdallo.intery.util.entities.Habit
 import com.albaburdallo.intery.wallet.WalletActivity
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
+import kotlinx.android.synthetic.main.activity_habit.*
 import kotlinx.android.synthetic.main.nav_header.*
 import kotlinx.android.synthetic.main.options.*
 
@@ -21,14 +29,55 @@ class HabitActivity : AppCompatActivity() {
 
     private val db = FirebaseFirestore.getInstance()
     private val authEmail = FirebaseAuth.getInstance().currentUser?.email
+    private lateinit var habitList: RecyclerView
+    private lateinit var adapter: HabitAdapter
+    private lateinit var habits: MutableList<Habit>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_habit)
-        setup()
     }
 
-    private fun setup() {
+    override fun onStart() {
+        super.onStart()
+
+        habitsCloseImage.setOnClickListener { showHome() }
+
+        habitList = findViewById(R.id.habitsList)
+        habits = arrayListOf()
+
+        db.collection("habits").whereEqualTo("user.email", authEmail).addSnapshotListener { value, error ->
+            if (error!=null) {
+                return@addSnapshotListener
+            }
+
+            habits.clear()
+            for(document in value!!) {
+                val id = document.get("id") as String
+                val name = document.get("name") as String
+                val notes = document.get("description") as String
+                val startDate = document.get("startDate") as Timestamp
+                val endDate = document.get("endDate") as Timestamp
+                val color = document.get("color") as String
+                val notifyMe = document.get("notifyMe") as Boolean
+                val whenHabit = document.get("when") as Timestamp
+                val frequency = document.get("frequency") as Long
+                habits.add(Habit(id, name, notes, startDate.toDate(), endDate.toDate(), color, notifyMe, whenHabit.toDate(), frequency.toInt()))
+            }
+
+            habitList.layoutManager = LinearLayoutManager(this)
+            adapter = HabitAdapter(habits)
+            habitList.adapter = adapter
+            adapter.setOnItemClickListener(object: HabitAdapter.ClickListener{
+                override fun onItemClick(v: View, position: Int) {
+                    val habit = habits[position]
+                    showHabit(habit)
+                }
+
+            })
+        }
+
+        createHabitButton.setOnClickListener { showHabitForm(null, "create") }
 
         nav_view.setNavigationItemSelectedListener {
             when (it.itemId) {
@@ -67,9 +116,7 @@ class HabitActivity : AppCompatActivity() {
 
         db.collection("users").document(authEmail!!).get().addOnSuccessListener {
             var photo = it.get("photo") as String
-            if (photo == "") {
-                photo = ""
-            } else {
+            if (photo != "") {
                 Picasso.get().load(photo).transform(CropCircleTransformation()).into(profilePicImage)
             }
         }
@@ -83,9 +130,31 @@ class HabitActivity : AppCompatActivity() {
         }
     }
 
+    private fun showHabit(habit: Habit) {
+        val habitIntent = Intent(this, HabitShowActivity::class.java)
+        if (habit!=null) {
+            habitIntent.putExtra("habitId", habit.id.toString())
+        }
+        startActivity(habitIntent)
+    }
+
+    private fun showHabitForm(habit: Habit?, form: String) {
+        val habitIntent = Intent(this, HabitFormActivity::class.java)
+        if (habit!=null) {
+            habitIntent.putExtra("habitId", habit.id.toString())
+        }
+        habitIntent.putExtra("form", form)
+        startActivity(habitIntent)
+    }
+
     private fun showLogin() {
         val loginIntent = Intent(this, LoginActivity::class.java).apply { }
         startActivity(loginIntent)
+    }
+
+    private fun showHome() {
+        val homeIntent = Intent(this, HomeActivity::class.java).apply { }
+        startActivity(homeIntent)
     }
 
     private fun showWallet() {

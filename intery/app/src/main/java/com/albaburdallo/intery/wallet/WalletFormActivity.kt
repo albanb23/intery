@@ -78,13 +78,13 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         if (transactionId != "") {
             db.collection("wallet").document(transactionId).get().addOnSuccessListener {value ->
                 val isExpenditure = value!!.get("expenditure") as Boolean
-                val isIncome = value!!.get("income") as Boolean
-                val quantity = value!!.get("money") as Double
+                val isIncome = value.get("income") as Boolean
+                val quantity = value.get("money") as Double
                 quantityEditText.setText(quantity.toString())
-                conceptEditText.setText(value!!.get("concept") as String)
-                date = (value!!.get("date") as Timestamp).toDate()
+                conceptEditText.setText(value.get("concept") as String)
+                date = (value.get("date") as Timestamp).toDate()
                 dateEditText.text = formatDate(date)
-                notesEditText.setText(value!!.get("notes") as String)
+                notesEditText.setText(value.get("notes") as String)
                 if (isExpenditure) {
                     toggleGroup.check(R.id.expenditureBut)
                 } else {
@@ -105,12 +105,7 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                             }
                             if (authEmail != null) {
                                 db.collection("common").document(authEmail)
-                                    .set(
-                                        hashMapOf(
-                                            "money" to (Math.round(total * 100.0) / 100.0).toString(),
-                                            "currency" to "$"
-                                        )
-                                    )
+                                    .update("money", ((total * 100.0).roundToInt() / 100.0).toString())
                             }
                             db.collection("wallet").document(transactionId).delete()
                             showWallet()
@@ -157,7 +152,7 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             //section spinner
             val sectionSpinner: Spinner = findViewById(R.id.sectionSpinner)
             sections = arrayListOf()
-            sectionAdapter = ArrayAdapter<String>(
+            sectionAdapter = ArrayAdapter(
                 applicationContext,
                 android.R.layout.simple_spinner_item,
                 sections
@@ -184,7 +179,7 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                 if (transactionId != "") {
                     db.collection("wallet").document(transactionId).get().addOnSuccessListener {value ->
                         val ent = value!!.get("entity") as HashMap<*, *>
-                        val sec = value!!.get("section") as HashMap<*, *>
+                        val sec = value.get("section") as HashMap<*, *>
                         for (entity in entities) {
                             if (entity == ent["name"]) {
                                 entitySpinner.setSelection(entities.indexOf(entity))
@@ -336,19 +331,12 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                             } else if (isIncome) {
                                 total += transaction.money
                             }
-                            if (total>=0) {
-                                db.collection("common").document(authEmail)
-                                    .set(
-                                        hashMapOf(
-                                            "money" to (Math.round(total * 100.0) / 100.0).toString(),
-                                            "currency" to "$"
-                                        )
+                            db.collection("common").document(authEmail)
+                                .update(
+                                        "money", ((total * 100.0).roundToInt() / 100.0).toString()
                                     )
-                                db.collection("wallet").document(transaction.id)
-                                    .set(transaction)
-                            } else {
-                                Toast.makeText(this, resources.getString(R.string.totalZero),Toast.LENGTH_LONG).show()
-                            }
+                            db.collection("wallet").document(transaction.id)
+                                .set(transaction)
                         } else {
                             db.collection("wallet").document(transactionId).get().addOnSuccessListener {value ->
                                 val current = value!!.get("money") as Double
@@ -371,11 +359,8 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                                 }
                                 if (total>0) {
                                     db.collection("common").document(authEmail)
-                                        .set(
-                                            hashMapOf(
-                                                "money" to ((total * 100.0).roundToInt() / 100.0).toString(),
-                                                "currency" to "$"
-                                            )
+                                        .update(
+                                                "money",((total * 100.0).roundToInt() / 100.0).toString()
                                         )
                                     db.collection("wallet").document(transaction.id)
                                         .set(transaction)

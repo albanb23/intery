@@ -57,7 +57,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
     private var startTime: Date? = null
     private var endTime: Date? = null
     private lateinit var taskid: String
-    private val authEmail = FirebaseAuth.getInstance().currentUser?.email;
+    private val authEmail = FirebaseAuth.getInstance().currentUser?.email
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -371,7 +371,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
 
 
     private fun validateForm(): Boolean {
-        var res = true
+        var res: Boolean
         res =
             taskNameEditText.validator().nonEmpty().addErrorCallback { taskNameEditText.error = it }
                 .check()

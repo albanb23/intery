@@ -85,6 +85,14 @@ class ProfileActivity : AppCompatActivity() {
         editProfileImageView.setOnClickListener { launchGallery() }
 
         uploadImage.setOnClickListener { uploadImage() }
+
+        profileEmailEditText.setOnClickListener {
+            Toast.makeText(
+                this,
+                resources.getString(R.string.cantEditEmail),
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

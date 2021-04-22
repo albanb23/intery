@@ -109,4 +109,23 @@
     <string name="oldPassNotValid">Your old password is not correct</string>
     <string name="fileError">An error ocurred uploading the file</string>
     <string name="upload">Upload</string>
+    <string name="cantEditEmail">The email cannot be edited</string>
+    <string name="myHabits">My habits</string>
+    <string name="noHabits">No habits</string>
+    <string name="newHabit">New habit</string>
+    <string name="started">Started:</string>
+    <string name="habitName">Title</string>
+    <string name="habitDate">End date</string>
+    <string name="habitReminder">Reminder</string>
+    <string name="habitNotes">Notes</string>
+    <string name="habitColor">Color:</string>
+    <string name="goal">Goal:</string>
+    <string name="habitRemind">Time</string>
+    <string name="everyDayFreq">Every day</string>
+    <string name="everyTwoDaysFreq">Every two days</string>
+    <string name="everyWeekFreq">Every week</string>
+    <string name="everyTwoWeeksFreq">Every two weeks</string>
+    <string name="everyMonthFreq">Every month</string>
+    <string name="everyThreeDaysFreq">Every three days</string>
+    <string name="habitDateValidator">End date must be later than today</string>
 </resources>

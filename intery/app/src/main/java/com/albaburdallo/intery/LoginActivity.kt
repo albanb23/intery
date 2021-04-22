@@ -2,12 +2,12 @@ package com.albaburdallo.intery
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.albaburdallo.intery.util.entities.Calendar
 import com.albaburdallo.intery.util.entities.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_login.inputsLinearLayout
+import java.util.*
 
 class LoginActivity : AppCompatActivity() {
 
@@ -136,24 +136,28 @@ class LoginActivity : AppCompatActivity() {
                             if (it.isSuccessful) {
                                 val user =
                                     User(
-                                        account.displayName.toString(), "",
-                                        account.email.toString(), account.photoUrl.toString()
+                                        account.displayName.toString(),
+                                        "",
+                                        account.email.toString(),
+                                        account.photoUrl.toString()
                                     )
-                                db.collection("users").document(account.email.toString()).set(user)
-
                                 var firstTime = true
                                 db.collection("calendars").addSnapshotListener { value, error ->
                                     if (error != null) {
                                         return@addSnapshotListener
                                     }
                                         for (document in value!!) {
-                                            val userCalendar = document.get("user") as HashMap<*,*>
+                                            val userCalendar = document.get("user") as HashMap<*, *>
                                             if (userCalendar["email"] == user.email) {
                                                 firstTime = false
                                                 break
                                             }
                                         }
                                         if (firstTime) {
+                                            db.collection("users").document(account.email.toString()).set(
+                                                user
+                                            )
+
                                             val defaultCalendar = Calendar(
                                                 account.displayName + "-" + account.email,
                                                 account.displayName,
@@ -162,10 +166,16 @@ class LoginActivity : AppCompatActivity() {
                                                 true
                                             )
 
+                                            val spanish = Locale("es", "ES")
+                                            var currency = "$"
+                                            if (Locale.getDefault()==spanish){
+                                                currency = "€"
+                                            }
+
                                             db.collection("calendars").document(defaultCalendar.id)
                                                 .set(defaultCalendar)
                                             db.collection("common").document(user.email).set(
-                                                hashMapOf("money" to "0.0", "currency" to "$")
+                                                hashMapOf("money" to "0.0", "currency" to currency)
                                             )
                                         }
                                     }

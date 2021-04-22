@@ -296,17 +296,10 @@ class HomeActivity : AppCompatActivity() {
 
         val header = nav_view.getHeaderView(0)
         val profilePicImage = header.findViewById<ImageView>(R.id.profilePicImage)
-        profilePicImage
         profilePicImage.setOnClickListener {
             showProfile(authEmail)
         }
 
-    }
-
-    @Throws(MalformedURLException::class, IOException::class)
-    fun drawableFromUrl(url: String?): Bitmap? {
-        val url = URL(url)
-       return BitmapFactory.decodeStream(url.openConnection().getInputStream())
     }
 
     private fun showLogin() {

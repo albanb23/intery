@@ -211,7 +211,6 @@ class ChartActivity : AppCompatActivity() {
                 val incBarEntry = BarEntry(moneyInc.toFloat(), 1)
                 entries.add(expBarEntry)
                 entries.add(incBarEntry)
-
                 val barDataSet = BarDataSet(entries, "")
                 val colors: MutableList<Int> = arrayListOf(ContextCompat.getColor(this,R.color.red),
                     ContextCompat.getColor(this, R.color.green))
