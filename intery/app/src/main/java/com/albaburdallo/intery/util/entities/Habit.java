@@ -13,12 +13,14 @@ public class Habit extends Base{
     private Boolean notifyMe;
     private Date when;
     private Integer frequency;
+    private Integer progress;
+    private Date updated;
 
     public Habit() {
 
     }
 
-    public Habit(String id, String name, String description, Date startDate, Date endDate, String color, Boolean notifyMe, Date when, Integer frequency) {
+    public Habit(String id, String name, String description, Date startDate, Date endDate, String color, Boolean notifyMe, Date when, Integer frequency, Integer progress, Date updated) {
         super(java.util.Calendar.getInstance().getTime());
         this.id = id;
         this.name = name;
@@ -29,6 +31,49 @@ public class Habit extends Base{
         this.notifyMe = notifyMe;
         this.when = when;
         this.frequency = frequency;
+        this.progress = progress;
+        this.updated = updated;
+    }
+
+    public Habit(String id, String name, String description, Date startDate, String color, Boolean notifyMe, Date when, Integer frequency, Integer progress, Date updated) {
+        super(java.util.Calendar.getInstance().getTime());
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.startDate = startDate;
+        this.color = color;
+        this.notifyMe = notifyMe;
+        this.when = when;
+        this.frequency = frequency;
+        this.progress = progress;
+        this.updated = updated;
+    }
+
+    public Habit(String id, String name, String description, Date startDate, Date endDate, String color, Boolean notifyMe, Integer frequency, Integer progress, Date updated) {
+        super(java.util.Calendar.getInstance().getTime());
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.color = color;
+        this.notifyMe = notifyMe;
+        this.frequency = frequency;
+        this.progress = progress;
+        this.updated = updated;
+    }
+
+    public Habit(String id, String name, String description, Date startDate, String color, Boolean notifyMe, Integer frequency, Integer progress, Date updated) {
+        super(java.util.Calendar.getInstance().getTime());
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.startDate = startDate;
+        this.color = color;
+        this.notifyMe = notifyMe;
+        this.frequency = frequency;
+        this.progress = progress;
+        this.updated = updated;
     }
 
     public String getId() {
@@ -103,6 +148,22 @@ public class Habit extends Base{
         this.when = when;
     }
 
+    public Integer getProgress() {
+        return progress;
+    }
+
+    public void setProgress(Integer progress) {
+        this.progress = progress;
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
     @Override
     public String toString() {
         return "Habit{" +
@@ -115,6 +176,7 @@ public class Habit extends Base{
                 ", notifyMe=" + notifyMe +
                 ", when=" + when +
                 ", frequency=" + frequency +
+                ", progress=" + progress +
                 '}';
     }
 }

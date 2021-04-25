@@ -16,6 +16,7 @@ import com.albaburdallo.intery.util.entities.Habit
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class HabitAdapter(private val habits: MutableList<Habit>): RecyclerView.Adapter<HabitAdapter.ViewHolder>() {
 
@@ -40,29 +41,8 @@ class HabitAdapter(private val habits: MutableList<Habit>): RecyclerView.Adapter
             //cambiar color de la progress bar
 
             //progress bar
-            val handler = Handler()
-            var start = habit.startDate.time.toInt() //0%
-            val end = habit.endDate.time.toInt() // 100%
-            println("======start=======" + start)
-            println("======end=======" + end)
-
-            progressBar.min = start
-            progressBar.max = end
-
-            start = progressBar.progress
-            Thread {
-                while (start < end) {
-                    handler.post(Runnable {
-                        progressBar.progress = start
-                        println("porgress====" + start.toString() + "/" + progressBar.max)
-                    })
-                    try {
-                        Thread.sleep(100)
-                    } catch (e: InterruptedException) {
-                        e.printStackTrace()
-                    }
-                }
-            }.start()
+            progressBar.max = 100 //if end no es null
+            progressBar.progress = habit.progress
 
         }
 

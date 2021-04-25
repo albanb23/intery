@@ -128,4 +128,7 @@
     <string name="everyMonthFreq">Every month</string>
     <string name="everyThreeDaysFreq">Every three days</string>
     <string name="habitDateValidator">End date must be later than today</string>
+    <string name="editHabit">Edit habit</string>
+    <string name="editTask">Edit task</string>
+    <string name="editTransaction">Edit transaction</string>
 </resources>

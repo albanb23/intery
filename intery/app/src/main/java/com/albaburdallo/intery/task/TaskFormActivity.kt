@@ -193,8 +193,10 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         val form = intent.extras?.getString("form") ?: ""
         if (form == "edit") {
             trashImageView.visibility = View.VISIBLE
+            createTextView.text = resources.getString(R.string.editTask)
         } else {
             trashImageView.visibility = View.INVISIBLE
+            createTextView.text = resources.getString(R.string.create_task)
         }
 
         startDateInput.setOnClickListener {

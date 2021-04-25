@@ -4,12 +4,11 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import com.albaburdallo.intery.R
-import com.albaburdallo.intery.task.AddCalendarFragment
 import com.albaburdallo.intery.util.entities.Habit
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -18,9 +17,9 @@ import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
 import dev.sasikanth.colorsheet.ColorSheet
 import kotlinx.android.synthetic.main.activity_habit_form.*
 import kotlinx.android.synthetic.main.activity_task_form.*
+import kotlinx.android.synthetic.main.habit_list.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class HabitFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
@@ -65,8 +64,10 @@ class HabitFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
         val form = intent.extras?.getString("form") ?: ""
         if (form == "edit") {
             habitsTrashImageView.visibility = View.VISIBLE
+            createHabitText.text = resources.getString(R.string.editHabit)
         } else {
             habitsTrashImageView.visibility = View.INVISIBLE
+            createHabitText.text = resources.getString(R.string.newHabit)
         }
 
         if (habitId != "") {
@@ -74,13 +75,15 @@ class HabitFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
                 habitNameEditText.setText(it.get("name") as String)
                 habitDateInput.text = (it.get("endDate") as? Timestamp)?.let { it1 ->
                     formatDate(
-                        it1.toDate())
+                        it1.toDate()
+                    )
                 }
                 habitRemindMeCheckBox.isChecked = it.get("notifyMe") as Boolean
                 habitNotesEditText.setText(it.get("description") as String)
                 habitReminderTextView.text = (it.get("when") as? Timestamp)?.let { it1 ->
                     formatTime(
-                        it1.toDate())
+                        it1.toDate()
+                    )
                 }
                 habitColorPoint.setColorFilter((it.get("color") as String).toInt())
             }
@@ -90,7 +93,7 @@ class HabitFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
                 builder.setMessage(this.resources.getString(R.string.delete))
                     .setCancelable(false)
                     .setPositiveButton(this.resources.getString(R.string.yes)) { dialog, id ->
-                        db.collection("tasks").document(habitId).delete()
+                        db.collection("habits").document(habitId).delete()
                         showHabit()
                     }
                     .setNegativeButton(this.resources.getString(R.string.no)) { dialog, id ->
@@ -109,12 +112,16 @@ class HabitFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
         frequency.add(resources.getString(R.string.everyWeekFreq))
         frequency.add(resources.getString(R.string.everyTwoWeeksFreq))
         frequency.add(resources.getString(R.string.everyMonthFreq))
-        val adapter: ArrayAdapter<String> = ArrayAdapter(applicationContext, android.R.layout.simple_spinner_item, frequency)
+        val adapter: ArrayAdapter<String> = ArrayAdapter(
+            applicationContext,
+            android.R.layout.simple_spinner_item,
+            frequency
+        )
         frequencySpinner.adapter = adapter
 
         if (habitId!=""){
             db.collection("habits").document(habitId).get().addOnSuccessListener {
-                val freq = it.get("frequency") as Int
+                val freq = (it.get("frequency") as Long).toInt()
                 when (freq) {
                     0 -> frequencySpinner.setSelection(0)
                     1 -> frequencySpinner.setSelection(1)
@@ -215,8 +222,24 @@ class HabitFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
         val notes = habitNotesEditText.text.toString()
         val today = Calendar.getInstance().time
         val id = authEmail + "-" + name
+        val cal = Calendar.getInstance()
+        cal.time = today
+        cal.add(Calendar.DAY_OF_YEAR, -1)
+        val oneDayBefore = cal.time
 
-        val habit = Habit(id, name, notes, today, endDate, color, reminder, remindTime, frequency)
+        val habit = Habit(
+            id,
+            name,
+            notes,
+            today,
+            endDate,
+            color,
+            reminder,
+            remindTime,
+            frequency,
+            100,
+            oneDayBefore
+        )
 
         if (endDate!! < today) {
             Toast.makeText(

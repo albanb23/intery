@@ -128,4 +128,7 @@
     <string name="everyDayFreq">Todos los días</string>
     <string name="everyThreeDaysFreq">Cada tres días</string>
     <string name="habitDateValidator">La fecha de fin debe ser posterior a hoy</string>
+    <string name="editHabit">Editar hábito</string>
+    <string name="editTask">Editar tarea</string>
+    <string name="editTransaction">Editar transacción</string>
 </resources>

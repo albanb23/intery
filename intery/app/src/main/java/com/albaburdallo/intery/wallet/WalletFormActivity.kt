@@ -71,8 +71,10 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
         if (form == "edit") {
             trashImageView.visibility = View.VISIBLE
+            createTextView.text = resources.getString(R.string.editTransaction)
         } else {
             trashImageView.visibility = View.GONE
+            createTextView.text = resources.getString(R.string.newTransaction)
         }
 
         if (transactionId != "") {
