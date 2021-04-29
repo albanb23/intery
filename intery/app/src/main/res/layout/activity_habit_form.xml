@@ -86,19 +86,6 @@
         android:hint="@string/habitName"
         android:inputType="textPersonName" />
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="16dp"/>
-
-        <TextView
-            android:id="@+id/habitDateInput"
-            style="@style/input"
-            android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:background="@drawable/ic_input"
-            android:ems="10"
-            android:gravity="center_vertical"
-            android:hint="@string/habitDate" />
 
         <Space
             android:layout_width="wrap_content"

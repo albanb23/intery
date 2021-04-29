@@ -10,7 +10,10 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,11 +49,26 @@
         <TextView
             android:id="@+id/habitTitleText"
             style="@style/title"
+            android:textSize="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="titulo del habito"
             android:textAlignment="center"
             android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/habitMonthTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="date"
+                android:layout_marginTop="16dp"
+                style="@style/title"
+                android:gravity="center" />
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -58,21 +76,21 @@
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="24dp">
+            android:padding="24dp">
 
             <com.kizitonwose.calendarview.CalendarView
                 android:id="@+id/habitCalendarView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cv_dayViewResource="@layout/habit_calendar_day"
-                app:cv_monthHeaderResource="@layout/habit_calendar_header"
+                app:cv_monthHeaderResource="@layout/calendar_header_layout"
                 app:cv_orientation="horizontal"
                 app:cv_scrollMode="paged" />
         </LinearLayout>
@@ -83,7 +101,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -101,9 +118,11 @@
         <ProgressBar
             android:id="@+id/goalProgressBar"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:progressDrawable="@drawable/customprogressbar" />
     </LinearLayout>
 
     <ImageView
@@ -113,6 +132,15 @@
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
         app:srcCompat="@drawable/ic_tick_button" />
+
+    <ImageView
+        android:id="@+id/nocompleteHabitButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
+        app:srcCompat="@drawable/ic_x_button"
+        android:visibility="gone"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

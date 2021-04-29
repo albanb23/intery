@@ -2,78 +2,56 @@ package com.albaburdallo.intery.util.entities;
 
 import java.util.Date;
 
-public class Habit extends Base{
+public class Habit extends Base {
 
     private String id;
     private String name;
-    private String description;
+    private String notes;
     private Date startDate;
-    private Date endDate;
     private String color;
     private Boolean notifyMe;
     private Date when;
-    private Integer frequency;
-    private Integer progress;
+    private Integer period;
+    private Integer times;
+    private Double progress;
     private Date updated;
+    private String daysCompleted;
 
     public Habit() {
 
     }
 
-    public Habit(String id, String name, String description, Date startDate, Date endDate, String color, Boolean notifyMe, Date when, Integer frequency, Integer progress, Date updated) {
+    public Habit(String id, String name, String notes, Date startDate, String color, Boolean notifyMe,
+                 Date when, Integer period, Integer times, Double progress, Date updated, String daysCompleted) {
         super(java.util.Calendar.getInstance().getTime());
         this.id = id;
         this.name = name;
-        this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.color = color;
-        this.notifyMe = notifyMe;
-        this.when = when;
-        this.frequency = frequency;
-        this.progress = progress;
-        this.updated = updated;
-    }
-
-    public Habit(String id, String name, String description, Date startDate, String color, Boolean notifyMe, Date when, Integer frequency, Integer progress, Date updated) {
-        super(java.util.Calendar.getInstance().getTime());
-        this.id = id;
-        this.name = name;
-        this.description = description;
+        this.notes = notes;
         this.startDate = startDate;
         this.color = color;
         this.notifyMe = notifyMe;
         this.when = when;
-        this.frequency = frequency;
+        this.period = period;
+        this.times = times;
         this.progress = progress;
         this.updated = updated;
+        this.daysCompleted = daysCompleted;
     }
 
-    public Habit(String id, String name, String description, Date startDate, Date endDate, String color, Boolean notifyMe, Integer frequency, Integer progress, Date updated) {
+    public Habit(String id, String name, String notes, Date startDate, String color, Boolean notifyMe,
+                 Integer period, Integer times, Double progress, Date updated, String daysCompleted) {
         super(java.util.Calendar.getInstance().getTime());
         this.id = id;
         this.name = name;
-        this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.color = color;
-        this.notifyMe = notifyMe;
-        this.frequency = frequency;
-        this.progress = progress;
-        this.updated = updated;
-    }
-
-    public Habit(String id, String name, String description, Date startDate, String color, Boolean notifyMe, Integer frequency, Integer progress, Date updated) {
-        super(java.util.Calendar.getInstance().getTime());
-        this.id = id;
-        this.name = name;
-        this.description = description;
+        this.notes = notes;
         this.startDate = startDate;
         this.color = color;
         this.notifyMe = notifyMe;
-        this.frequency = frequency;
+        this.period = period;
+        this.times = times;
         this.progress = progress;
         this.updated = updated;
+        this.daysCompleted = daysCompleted;
     }
 
     public String getId() {
@@ -92,12 +70,12 @@ public class Habit extends Base{
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getNotes() {
+        return notes;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public Date getStartDate() {
@@ -106,14 +84,6 @@ public class Habit extends Base{
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
     }
 
     public String getColor() {
@@ -132,14 +102,6 @@ public class Habit extends Base{
         this.notifyMe = notifyMe;
     }
 
-    public Integer getFrequency() {
-        return frequency;
-    }
-
-    public void setFrequency(Integer frequency) {
-        this.frequency = frequency;
-    }
-
     public Date getWhen() {
         return when;
     }
@@ -148,11 +110,27 @@ public class Habit extends Base{
         this.when = when;
     }
 
-    public Integer getProgress() {
+    public Integer getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(Integer period) {
+        this.period = period;
+    }
+
+    public Integer getTimes() {
+        return times;
+    }
+
+    public void setTimes(Integer times) {
+        this.times = times;
+    }
+
+    public Double getProgress() {
         return progress;
     }
 
-    public void setProgress(Integer progress) {
+    public void setProgress(Double progress) {
         this.progress = progress;
     }
 
@@ -164,19 +142,11 @@ public class Habit extends Base{
         this.updated = updated;
     }
 
-    @Override
-    public String toString() {
-        return "Habit{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", color='" + color + '\'' +
-                ", notifyMe=" + notifyMe +
-                ", when=" + when +
-                ", frequency=" + frequency +
-                ", progress=" + progress +
-                '}';
+    public String getDaysCompleted() {
+        return daysCompleted;
+    }
+
+    public void setDaysCompleted(String daysCompleted) {
+        this.daysCompleted = daysCompleted;
     }
 }

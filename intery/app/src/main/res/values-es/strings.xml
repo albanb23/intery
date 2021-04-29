@@ -121,14 +121,16 @@
     <string name="habitColor">Color:</string>
     <string name="goal">Meta:</string>
     <string name="habitRemind">Hora</string>
-    <string name="everyTwoDaysFreq">Cada dos días</string>
-    <string name="everyTwoWeeksFreq">Cada dos semanas</string>
-    <string name="everyMonthFreq">Todos los meses</string>
-    <string name="everyWeekFreq">Todas las semanas</string>
-    <string name="everyDayFreq">Todos los días</string>
-    <string name="everyThreeDaysFreq">Cada tres días</string>
+    <string name="everyDay">Todos los días</string>
+    <string name="twoAWeek">Dos veces a la semana</string>
+    <string name="oneAWeek">Una vez a la semana</string>
+    <string name="oneAMonth">Una vez al mes</string>
+    <string name="twoAMonth">Dos veces al mes</string>
+    <string name="threeWeek">Tres veces a la semana</string>
+    <string name="threeMonth">Tres veces al mes</string>
     <string name="habitDateValidator">La fecha de fin debe ser posterior a hoy</string>
     <string name="editHabit">Editar hábito</string>
     <string name="editTask">Editar tarea</string>
     <string name="editTransaction">Editar transacción</string>
+    <string name="exisitingHabit">Este hábito ya existe</string>
 </resources>

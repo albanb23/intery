@@ -19,24 +19,28 @@ import kotlinx.android.synthetic.main.activity_habit_form.*
 import kotlinx.android.synthetic.main.activity_task_form.*
 import kotlinx.android.synthetic.main.habit_list.*
 import java.text.SimpleDateFormat
+import java.time.YearMonth
 import java.util.*
 
-class HabitFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
 
     private val db = FirebaseFirestore.getInstance()
     private lateinit var habits: MutableList<Habit>
     private val authEmail = FirebaseAuth.getInstance().currentUser?.email
     private lateinit var habitId: String
+    private var habitProgress = 0
 
-    var dateClicked = false
     var timeClicked = false
-    private var date: Date? = null
     private var time: Date? = null
     var year = 0
     var month = 0
     var day = 0
     var hour = 0
     var minute = 0
+    private var updated = Calendar.getInstance().time
+    private var startDate: Date? = null
+    private var habitName: String? = null
+    private var days = ""
 
     companion object {
         private const val COLOR_SELECTED = "selectedColor"
@@ -53,13 +57,20 @@ class HabitFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
         colors = this.resources.getIntArray(R.array.colors)
         selectedColor = savedInstanceState?.getInt(COLOR_SELECTED)?:colors.first()
         noColorOption = savedInstanceState?.getBoolean(NO_COLOR_OPTION)?:false
+        habitProgress = intent.extras?.getInt("progress") ?: 0
     }
 
     override fun onStart() {
         super.onStart()
         habitId = intent.extras?.getString("habitId") ?: ""
 
-        habitBackImageView.setOnClickListener { showHabit() }
+        habitBackImageView.setOnClickListener {
+            if (habitId=="") {
+                showHabit()
+            } else {
+                showHabit(habitId)
+            }
+        }
 
         val form = intent.extras?.getString("form") ?: ""
         if (form == "edit") {
@@ -73,19 +84,19 @@ class HabitFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
         if (habitId != "") {
             db.collection("habits").document(habitId).get().addOnSuccessListener {
                 habitNameEditText.setText(it.get("name") as String)
-                habitDateInput.text = (it.get("endDate") as? Timestamp)?.let { it1 ->
-                    formatDate(
-                        it1.toDate()
-                    )
-                }
+                habitName = it.get("name") as String
+                updated = (it.get("updated") as? Timestamp)?.toDate()
+                startDate = (it.get("startDate") as? Timestamp)?.toDate()
                 habitRemindMeCheckBox.isChecked = it.get("notifyMe") as Boolean
-                habitNotesEditText.setText(it.get("description") as String)
+                habitNotesEditText.setText(it.get("notes") as String)
+                days = it.get("daysCompleted") as String
                 habitReminderTextView.text = (it.get("when") as? Timestamp)?.let { it1 ->
                     formatTime(
                         it1.toDate()
                     )
                 }
                 habitColorPoint.setColorFilter((it.get("color") as String).toInt())
+                selectedColor = (it.get("color") as String).toInt()
             }
 
             habitsTrashImageView.setOnClickListener {
@@ -106,12 +117,13 @@ class HabitFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
 
         val frequencySpinner: Spinner = findViewById(R.id.habitFrequencySpinner)
         var frequency: ArrayList<String> = arrayListOf()
-        frequency.add(resources.getString(R.string.everyDayFreq))
-        frequency.add(resources.getString(R.string.everyTwoDaysFreq))
-        frequency.add(resources.getString(R.string.everyThreeDaysFreq))
-        frequency.add(resources.getString(R.string.everyWeekFreq))
-        frequency.add(resources.getString(R.string.everyTwoWeeksFreq))
-        frequency.add(resources.getString(R.string.everyMonthFreq))
+        frequency.add(resources.getString(R.string.everyDay))
+        frequency.add(resources.getString(R.string.twoAWeek))
+        frequency.add(resources.getString(R.string.oneAWeek))
+        frequency.add(resources.getString(R.string.twoAMonth))
+        frequency.add(resources.getString(R.string.oneAMonth))
+        frequency.add(resources.getString(R.string.threeWeek))
+        frequency.add(resources.getString(R.string.threeMonth))
         val adapter: ArrayAdapter<String> = ArrayAdapter(
             applicationContext,
             android.R.layout.simple_spinner_item,
@@ -121,14 +133,21 @@ class HabitFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
 
         if (habitId!=""){
             db.collection("habits").document(habitId).get().addOnSuccessListener {
-                val freq = (it.get("frequency") as Long).toInt()
-                when (freq) {
-                    0 -> frequencySpinner.setSelection(0)
-                    1 -> frequencySpinner.setSelection(1)
-                    2 -> frequencySpinner.setSelection(2)
-                    3 -> frequencySpinner.setSelection(3)
-                    4 -> frequencySpinner.setSelection(4)
-                    5 -> frequencySpinner.setSelection(5)
+                val period = (it.get("period") as Long).toInt()
+                val times = (it.get("times") as Long).toInt()
+                if (period == 7) {
+                    when (times) {
+                        1 -> frequencySpinner.setSelection(2)
+                        2 -> frequencySpinner.setSelection(1)
+                        3 -> frequencySpinner.setSelection(5)
+                        7 -> frequencySpinner.setSelection(0)
+                    }
+                } else {
+                    when (times) {
+                        1 -> frequencySpinner.setSelection(5)
+                        2 -> frequencySpinner.setSelection(3)
+                        3 -> frequencySpinner.setSelection(6)
+                    }
                 }
             }
         }
@@ -141,27 +160,17 @@ class HabitFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
                     selectedColor = selectedColor,
                     listener = { color ->
                         selectedColor = color
-                        colorButton.drawable.setTint(color)
+                        colorButton.drawable.setTint(selectedColor)
                     })
                 .show(supportFragmentManager)
-        }
 
+        }
 
         if (habitReminderTextView.text != "" && habitReminderTextView.text != null && !habitRemindMeCheckBox.isChecked){
             habitRemindMeCheckBox.isChecked = true
         }
 
         habits = arrayListOf()
-
-        habitDateInput.setOnClickListener {
-            dateClicked = true
-            val calendar: Calendar = Calendar.getInstance()
-            day = calendar.get(Calendar.DAY_OF_MONTH)
-            month = calendar.get(Calendar.MONTH)
-            year = calendar.get(Calendar.YEAR)
-            val datePickerDialog = DatePickerDialog(this, this, year, month, day)
-            datePickerDialog.show()
-        }
 
         habitReminderTextView.setOnClickListener {
             timeClicked = true
@@ -189,31 +198,42 @@ class HabitFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
         if (habitReminderTextView.text != "" && habitReminderTextView.text != null && !habitRemindMeCheckBox.isChecked){
             habitRemindMeCheckBox.isChecked = true
         }
+
         return res
     }
 
     private fun addHabit() {
         val name = habitNameEditText.text.toString()
-        val endDate = date
-        var frequency = 0
+        var period = 0
+        var times = 0
         when (habitFrequencySpinner.selectedItem) {
-            resources.getString(R.string.everyDayFreq) -> {
-                frequency = 0
+            resources.getString(R.string.everyDay) -> {
+                period = 7
+                times = 7
             }
-            resources.getString(R.string.everyTwoDaysFreq) -> {
-                frequency = 1
+            resources.getString(R.string.twoAWeek) -> {
+                period = 7
+                times = 2
             }
-            resources.getString(R.string.everyThreeDaysFreq) -> {
-                frequency = 2
+            resources.getString(R.string.oneAWeek) -> {
+                period = 7
+                times = 1
             }
-            resources.getString(R.string.everyWeekFreq) -> {
-                frequency = 3
+            resources.getString(R.string.twoAMonth) -> {
+                period = 30
+                times = 2
             }
-            resources.getString(R.string.everyTwoWeeksFreq) -> {
-                frequency = 4
+            resources.getString(R.string.oneAMonth) -> {
+                period = 30
+                times = 1
             }
-            resources.getString(R.string.everyMonthFreq) -> {
-                frequency = 5
+            resources.getString(R.string.threeWeek) -> {
+                period = 7
+                times = 3
+            }
+            resources.getString(R.string.threeMonth) -> {
+                period = 30
+                times = 3
             }
         }
         val reminder = habitRemindMeCheckBox.isChecked
@@ -221,38 +241,46 @@ class HabitFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
         val color = selectedColor.toString()
         val notes = habitNotesEditText.text.toString()
         val today = Calendar.getInstance().time
-        val id = authEmail + "-" + name
-        val cal = Calendar.getInstance()
-        cal.time = today
-        cal.add(Calendar.DAY_OF_YEAR, -1)
-        val oneDayBefore = cal.time
-
-        val habit = Habit(
-            id,
-            name,
-            notes,
-            today,
-            endDate,
-            color,
-            reminder,
-            remindTime,
-            frequency,
-            100,
-            oneDayBefore
-        )
-
-        if (endDate!! < today) {
-            Toast.makeText(
-                this,
-                this.getString(R.string.habitDateValidator),
-                Toast.LENGTH_LONG
-            ).show()
-        } else {
-            db.collection("habits").document(habit.id).set(habit)
-            habits.add(habit)
-            showHabit()
+        var start = startDate
+        if (startDate == null) {
+            start = today
         }
-    }
+
+        var id = habitId
+        if (id=="") {
+            id = authEmail + "-" + name
+        }
+        var oneDayBefore = updated
+        if (habitId == "" || (habitId!="" && formatDate(updated) != formatDate(today))) {
+            val cal = Calendar.getInstance()
+            cal.time = today
+            cal.add(Calendar.DAY_OF_YEAR, -1)
+            oneDayBefore = cal.time
+        }
+
+        val habit = Habit(id, name, notes, start, color, reminder, remindTime,
+            period, times, habitProgress.toDouble(), oneDayBefore, days)
+
+            db.collection("habits").whereEqualTo("user.email", authEmail).get().addOnSuccessListener { documents ->
+                var exists = false
+                for (document in documents) {
+                    if (habitName!=null && habitName!=name) { //si el nombre que se esta escribiendo es distinto que el que estaba
+                        val habitname = document.get("name") as String
+                        if (habitname == name) { //comprobamos que otro habito no tenga ese nombre
+                            exists = true
+                            break
+                        }
+                    }
+                }
+                if (!exists) {
+                    db.collection("habits").document(habit.id).set(habit)
+                    habits.add(habit)
+                    showHabit()
+                } else {
+                    Toast.makeText(this, R.string.exisitingHabit, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
 
     private fun formatDate(date: Date): String {
         val pattern = "dd/MM/yyyy"
@@ -275,13 +303,12 @@ class HabitFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
         startActivity(habitIntent)
     }
 
-    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        val textDate = dayOfMonth.toString() + "/" + (month + 1).toString() + "/" + year.toString()
-        if (dateClicked) {
-            habitDateInput.setText(textDate)
-            date = Date(year - 1900, month, dayOfMonth)
-            dateClicked = false
+    private fun showHabit(habitId: String) {
+        val habitIntent = Intent(this, HabitShowActivity::class.java)
+        if (habitId!=null) {
+            habitIntent.putExtra("habitId", habitId)
         }
+        startActivity(habitIntent)
     }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {

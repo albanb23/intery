@@ -1,6 +1,8 @@
 package com.albaburdallo.intery.habit
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Handler
 import android.view.LayoutInflater
@@ -14,6 +16,7 @@ import com.albaburdallo.intery.R
 import com.albaburdallo.intery.task.CalendarAdapter
 import com.albaburdallo.intery.util.entities.Habit
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.activity_habit_show.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -34,6 +37,7 @@ class HabitAdapter(private val habits: MutableList<Habit>): RecyclerView.Adapter
             itemView.setOnClickListener(this)
         }
 
+        @SuppressLint("ResourceAsColor")
         @RequiresApi(Build.VERSION_CODES.O)
         fun bind(habit: Habit) {
             habitName.text = habit.name
@@ -42,8 +46,9 @@ class HabitAdapter(private val habits: MutableList<Habit>): RecyclerView.Adapter
 
             //progress bar
             progressBar.max = 100 //if end no es null
-            progressBar.progress = habit.progress
-
+            progressBar.progress = habit.progress.toInt()
+            progressBar.progressTintList = ColorStateList.valueOf(habit.color.toInt())
+            progressBar.backgroundTintList = ColorStateList.valueOf(R.color.gray_back)
         }
 
         override fun onClick(v: View?) {

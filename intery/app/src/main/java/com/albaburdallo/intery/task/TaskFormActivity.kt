@@ -265,7 +265,6 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
 
     }
 
-
     private fun addTask() {
         val name = taskNameEditText.text.toString()
         val notes = notesEditText.text.toString()
@@ -410,7 +409,6 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         myYear = year
         myMonth = month
         val date = myDay.toString() + "/" + (myMonth + 1).toString() + "/" + myYear.toString()
-        val calendar: Calendar = Calendar.getInstance()
         if (startClicked) {
             startDateInput.text = date
             start = Date(myYear - 1900, myMonth, myDay)

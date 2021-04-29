@@ -36,6 +36,7 @@ class HabitActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_habit)
+        db.clearPersistence()
     }
 
     override fun onStart() {
@@ -46,34 +47,30 @@ class HabitActivity : AppCompatActivity() {
         habitList = findViewById(R.id.habitsList)
         habits = arrayListOf()
 
-//        db.clearPersistence()
+        db.clearPersistence()
         db.collection("habits").whereEqualTo("user.email", authEmail).addSnapshotListener { value, error ->
             if (error!=null) {
                 return@addSnapshotListener
             }
 
-            var endDate: Timestamp?
             habits.clear()
             for(document in value!!) {
                 val id = document.get("id") as String
                 val name = document.get("name") as String
-                val notes = document.get("description") as String
+                val notes = document.get("notes") as String
                 val startDate = document.get("startDate") as Timestamp
-                endDate = document.get("endDate") as? Timestamp
                 val color = document.get("color") as String
                 val notifyMe = document.get("notifyMe") as Boolean
                 val whenHabit = document.get("when") as? Timestamp
-                val frequency = document.get("frequency") as Long
-                val progress = document.get("progress") as Long
+                val period = document.get("period") as Long
+                val times = document.get("times") as Long
+                val progress = document.get("progress") as Double
                 val updated = document.get("updated") as Timestamp
-                if (endDate != null && whenHabit!= null) {
-                    habits.add(Habit(id, name, notes, startDate.toDate(), endDate.toDate(), color, notifyMe, whenHabit.toDate(), frequency.toInt(), progress.toInt(), updated.toDate()))
-                } else if (whenHabit != null){
-                    habits.add(Habit(id, name, notes, startDate.toDate(), color, notifyMe, whenHabit.toDate(), frequency.toInt(), progress.toInt(), updated.toDate()))
-                } else if (endDate!=null){
-                    habits.add(Habit(id, name, notes, startDate.toDate(), endDate.toDate(), color, notifyMe, frequency.toInt(), progress.toInt(), updated.toDate()))
+                val days = document.get("daysCompleted") as String
+                if (whenHabit!=null) {
+                    habits.add(Habit(id, name, notes, startDate.toDate(), color, notifyMe, whenHabit.toDate(), period.toInt(), times.toInt(), progress, updated.toDate(), days))
                 } else {
-                    habits.add(Habit(id, name, notes, startDate.toDate(), color, notifyMe, frequency.toInt(), progress.toInt(), updated.toDate()))
+                    habits.add(Habit(id, name, notes, startDate.toDate(), color, notifyMe, period.toInt(), times.toInt(), progress, updated.toDate(), days))
                 }
             }
 
@@ -87,6 +84,12 @@ class HabitActivity : AppCompatActivity() {
                 }
 
             })
+
+            if (habits.isEmpty()) {
+                noHabitsTextView.visibility = View.VISIBLE
+            } else {
+                noHabitsTextView.visibility = View.GONE
+            }
         }
 
         createHabitButton.setOnClickListener { showHabitForm(null, "create") }

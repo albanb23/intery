@@ -121,14 +121,16 @@
     <string name="habitColor">Color:</string>
     <string name="goal">Goal:</string>
     <string name="habitRemind">Time</string>
-    <string name="everyDayFreq">Every day</string>
-    <string name="everyTwoDaysFreq">Every two days</string>
-    <string name="everyWeekFreq">Every week</string>
-    <string name="everyTwoWeeksFreq">Every two weeks</string>
-    <string name="everyMonthFreq">Every month</string>
-    <string name="everyThreeDaysFreq">Every three days</string>
+    <string name="everyDay">Every day</string>
+    <string name="twoAWeek">Two days in a week</string>
+    <string name="oneAWeek">One day in a week</string>
+    <string name="oneAMonth">One day in a month</string>
+    <string name="twoAMonth">Two days in a month</string>
+    <string name="threeWeek">Three days in a week</string>
+    <string name="threeMonth">Three days in a month</string>
     <string name="habitDateValidator">End date must be later than today</string>
     <string name="editHabit">Edit habit</string>
     <string name="editTask">Edit task</string>
     <string name="editTransaction">Edit transaction</string>
+    <string name="exisitingHabit">This habit already exists</string>
 </resources>

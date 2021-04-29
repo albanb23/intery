@@ -159,7 +159,7 @@ class CalendarActivity : AppCompatActivity(), AddCalendarFragment.CalendarCallba
             }
             if (!exists) {
                 calendars.add(calendar)
-                query.document(calendar.id).set(calendar as Calendar)
+                query.document(calendar.id).set(calendar)
                 adapter.notifyDataSetChanged()
             } else {
                 Toast.makeText(this, R.string.exisitingCalendar, Toast.LENGTH_LONG).show()
