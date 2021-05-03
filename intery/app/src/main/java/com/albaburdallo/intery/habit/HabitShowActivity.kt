@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.children
 import com.albaburdallo.intery.R
@@ -73,7 +74,7 @@ class HabitShowActivity : AppCompatActivity() {
             goalProgressBar.progress = habitProgress.toInt()
             habitTitleText.text = it.get("name") as String
 
-            if (completed || formatDate(updated)==formatDate(today)) {
+            if (completed || formatDate(updated) == formatDate(today)) {
                 completeHabitButton.visibility = View.GONE
                 nocompleteHabitButton.visibility = View.VISIBLE
             } else {
@@ -82,22 +83,21 @@ class HabitShowActivity : AppCompatActivity() {
             }
 
             completeHabitButton.setOnClickListener { v ->
-                calculateProgress(start, today, period.toInt(), times.toInt(), true, daysCompleted)
-
-                db.collection("habits").document(habitId).update("updated", today)
-                completeHabitButton.visibility = View.GONE
                 completed = true
+                db.collection("habits").document(habitId).update("updated", today)
+                calculateProgress(start, today, period.toInt(), times.toInt(), completed, daysCompleted, habitProgress)
+                completeHabitButton.visibility = View.GONE
             }
 
             nocompleteHabitButton.setOnClickListener {
-                calculateProgress(start, today, period.toInt(), times.toInt(), false, daysCompleted)
+                completed = false
                 val cal = Calendar.getInstance()
                 cal.time = today
                 cal.add(Calendar.DAY_OF_YEAR, -1)
                 val yesterday = cal.time
                 db.collection("habits").document(habitId).update("updated", yesterday)
+                calculateProgress(start, today, period.toInt(), times.toInt(), completed, daysCompleted, habitProgress)
                 nocompleteHabitButton.visibility = View.GONE
-                completed = false
             }
 
             val color = it.get("color") as String
@@ -141,25 +141,15 @@ class HabitShowActivity : AppCompatActivity() {
                     textView.visibility = View.VISIBLE
                     db.collection("habits").document(habitId).get().addOnSuccessListener {
                         val color = it.get("color") as String
-                        textView.background.setTint(color.toInt())
                         val daysCompleted = it.get("daysCompleted") as String
                         val dates = daysCompleted.split(";")
-                        val cal = Calendar.getInstance()
-                        cal[Calendar.DAY_OF_MONTH] = 1
-                        val myMonth = cal[Calendar.MONTH]
-                        for (date in dates) {
-                            while (myMonth == cal[Calendar.MONTH]) {
-                                val day = cal.time
-                                if (date == formatDate(day)) {
-                                    textView.background.setTint(ColorUtils.blendARGB(color.toInt(), Color.BLACK, 0.2f))
-                                } else {
-                                    textView.background.setTint(color.toInt())
-                                }
-                                cal.add(Calendar.DAY_OF_MONTH, 1)
-                            }
-
+                        if (dates.contains(formatDate2(day.date))) {
+                            textView.setBackgroundResource(R.drawable.day_completed_background)
+                            textView.background.setTint(ColorUtils.blendARGB(color.toInt(), Color.BLACK, 0.4f))
+                        } else {
+                            textView.setBackgroundResource(R.drawable.day_background)
+                            textView.background.setTint(color.toInt())
                         }
-                        textView.background.setTint(color.toInt())
                     }
                 } else {
                     textView.visibility = View.GONE
@@ -199,45 +189,48 @@ class HabitShowActivity : AppCompatActivity() {
         period: Int,
         times: Int,
         completed: Boolean,
-        daysCompleted: String
+        daysCompleted: String,
+        habitProgress: Double
     ) {
         goalProgressBar.max = 100
         var progress: Double
         val handler = Handler()
         var days = daysCompleted
+        var done = habitProgress
         Thread {
             handler.post(Runnable {
                 var daysCompletedOfPeriod = 0
-                var day = start
-                while (day <= today) {
-                    val diff = (((day.time - start.time) / 1000 * 60 * 60 * 24) % period).toInt()
+                    val diff = (((today.time - start.time) / 1000 * 60 * 60 * 24) % period).toInt()
                     if (diff == 0) { // si es el primer dia del periodo
+                        println("es el primer dia!!!!!!!!!!!!!!!!!!!!!======")
                         daysCompletedOfPeriod = 0
-                    }
-                    if (days.contains(formatDate(day))) {
-                        daysCompletedOfPeriod++
+                        done = 0.0
                     }
                     if (completed) {
                         daysCompletedOfPeriod++
                         if (daysCompleted != "") {
                             days += ";"
                         }
-                        days += formatDate(day)//se añade el dia que se ha completado
+                        days += formatDate(today)//se añade el dia que se ha completado
                     } else {
                         daysCompletedOfPeriod--
-                        if (days.contains(formatDate(day))) {
+                        println("days======" + days)
+                        println("formatDate(today)======" + formatDate(today))
+                        println("days.contains(formatDate(today)======" + days.contains(formatDate(today)))
+                        if (days.contains(formatDate(today))) {
                             days = days.replace(
-                                formatDate(day),
+                                formatDate(today),
                                 ""
                             ) //borramos el dia del string de completados
                         }
                     }
-                    val c = Calendar.getInstance()
-                    c.time = day
-                    c.add(Calendar.DATE, 1)
-                    day = c.time
-                }
-                progress = (daysCompletedOfPeriod.toDouble() / times.toDouble()) * 100.0
+                println("days======" + days)
+                println("done======" + done)
+                println("period======" + period)
+                println("times======" + times)
+                println("days completed of period======" + daysCompletedOfPeriod)
+                progress = done + ((daysCompletedOfPeriod.toDouble() / times.toDouble()) * 100.0)
+                println("progress======" + progress)
                 goalProgressBar.progress = progress.toInt()
                 db.collection("habits").document(habitId).update("progress", progress)
                 db.collection("habits").document(habitId).update("daysCompleted", days)
@@ -300,6 +293,13 @@ class HabitShowActivity : AppCompatActivity() {
     @SuppressLint("SimpleDateFormat")
     private fun formatDate(date: LocalDate): String {
         val pattern = "d MMMM yyyy"
+        val simpleDateFormat = DateTimeFormatter.ofPattern(pattern)
+        return simpleDateFormat.format(date)
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private fun formatDate2(date: LocalDate): String {
+        val pattern = "dd/MM/yyyy"
         val simpleDateFormat = DateTimeFormatter.ofPattern(pattern)
         return simpleDateFormat.format(date)
     }

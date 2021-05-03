@@ -16,9 +16,12 @@ import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.habit.HabitActivity
+import com.albaburdallo.intery.habit.HabitAdapter
+import com.albaburdallo.intery.habit.HabitHomeAdapter
 import com.albaburdallo.intery.task.TaskActivity
 import com.albaburdallo.intery.task.TaskFormActivity
 import com.albaburdallo.intery.task.TaskHomeAdapter
+import com.albaburdallo.intery.util.entities.Habit
 import com.albaburdallo.intery.util.entities.Task
 import com.albaburdallo.intery.util.entities.Transaction
 import com.albaburdallo.intery.wallet.WalletActivity
@@ -29,9 +32,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
+import kotlinx.android.synthetic.main.activity_habit.*
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_home.taskFrame
 import kotlinx.android.synthetic.main.activity_task.*
+import kotlinx.android.synthetic.main.habit_list_home.*
 import kotlinx.android.synthetic.main.loading_layout.*
 import kotlinx.android.synthetic.main.nav_header.*
 import kotlinx.android.synthetic.main.options.*
@@ -52,6 +57,10 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var todayTaskList: RecyclerView
     private lateinit var tomorrowTaskList: RecyclerView
     private lateinit var nextDayTaskList: RecyclerView
+    private lateinit var habits: MutableList<Habit>
+    private lateinit var habitAdapter: HabitHomeAdapter
+    private lateinit var habitList: RecyclerView
+    private lateinit var layoutManager: LinearLayoutManager
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -224,6 +233,45 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
+        habitList = findViewById(R.id.habitListView)
+        habits = arrayListOf()
+        db.collection("habits").whereEqualTo("user.email", authEmail).addSnapshotListener { value, error ->
+            if (error!=null) {
+                return@addSnapshotListener
+            }
+
+            habits.clear()
+            for(document in value!!) {
+                val id = document.get("id") as String
+                val name = document.get("name") as String
+                val notes = document.get("notes") as String
+                val startDate = document.get("startDate") as Timestamp
+                val color = document.get("color") as String
+                val notifyMe = document.get("notifyMe") as Boolean
+                val whenHabit = document.get("when") as? Timestamp
+                val period = document.get("period") as Long
+                val times = document.get("times") as Long
+                val progress = document.get("progress") as Double
+                val updated = document.get("updated") as Timestamp
+                val days = document.get("daysCompleted") as String
+                if (whenHabit!=null) {
+                    habits.add(Habit(id, name, notes, startDate.toDate(), color, notifyMe, whenHabit.toDate(), period.toInt(), times.toInt(), progress, updated.toDate(), days))
+                } else {
+                    habits.add(Habit(id, name, notes, startDate.toDate(), color, notifyMe, period.toInt(), times.toInt(), progress, updated.toDate(), days))
+                }
+            }
+
+            layoutManager = LinearLayoutManager(this)
+            layoutManager.orientation = LinearLayoutManager.HORIZONTAL
+            habitList.layoutManager = layoutManager
+            habitAdapter = HabitHomeAdapter(habits.subList(0,3))
+            habitList.adapter = habitAdapter
+            if (habits.isEmpty()) {
+                noHabits.visibility = View.VISIBLE
+            } else {
+                noHabits.visibility = View.GONE
+            }
+        }
         nav_view.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.tasks_item -> {

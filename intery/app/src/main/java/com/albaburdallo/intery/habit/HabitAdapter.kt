@@ -45,7 +45,7 @@ class HabitAdapter(private val habits: MutableList<Habit>): RecyclerView.Adapter
             //cambiar color de la progress bar
 
             //progress bar
-            progressBar.max = 100 //if end no es null
+            progressBar.max = 100
             progressBar.progress = habit.progress.toInt()
             progressBar.progressTintList = ColorStateList.valueOf(habit.color.toInt())
             progressBar.backgroundTintList = ColorStateList.valueOf(R.color.gray_back)

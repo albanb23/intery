@@ -36,7 +36,7 @@ class HabitActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_habit)
-        db.clearPersistence()
+//        db.clearPersistence()
     }
 
     override fun onStart() {
@@ -47,7 +47,7 @@ class HabitActivity : AppCompatActivity() {
         habitList = findViewById(R.id.habitsList)
         habits = arrayListOf()
 
-        db.clearPersistence()
+//        db.clearPersistence()
         db.collection("habits").whereEqualTo("user.email", authEmail).addSnapshotListener { value, error ->
             if (error!=null) {
                 return@addSnapshotListener

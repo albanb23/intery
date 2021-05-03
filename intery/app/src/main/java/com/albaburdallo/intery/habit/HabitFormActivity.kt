@@ -129,6 +129,7 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
             android.R.layout.simple_spinner_item,
             frequency
         )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         frequencySpinner.adapter = adapter
 
         if (habitId!=""){
