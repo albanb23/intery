@@ -46,7 +46,12 @@ class WalletAdapter(options: FirestoreRecyclerOptions<Transaction>
                 incomeIcon.visibility = View.VISIBLE
                 transactionMoney.text = "+ " + transaction.money
             }
-            transactionName.text = transaction.concept
+
+            if (transaction.concept.length > 20) {
+                (transaction.concept.substring(0, 20) + "...").also { transactionName.text = it }
+            } else {
+                transactionName.text = transaction.concept
+            }
             transactionDate.text = formatDate(transaction.date)
 
             db.collection("common").document(FirebaseAuth.getInstance().currentUser?.email.toString()).get().addOnSuccessListener {

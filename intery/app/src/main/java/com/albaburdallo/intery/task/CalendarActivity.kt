@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.activity_calendar.*
+import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_task.*
 import kotlinx.android.synthetic.main.activity_task_form.*
 import kotlinx.android.synthetic.main.nav_header.*
@@ -49,6 +50,7 @@ class CalendarActivity : AppCompatActivity(), AddCalendarFragment.CalendarCallba
         createCalendarButton = findViewById(R.id.createCalendarButton)
         calendars = arrayListOf()
 
+        //populamos la lista de calendarios
         db.collection("calendars").whereEqualTo("user.email", authEmail).addSnapshotListener(this) { value, error ->
             if (error != null) {
                 return@addSnapshotListener
@@ -125,7 +127,9 @@ class CalendarActivity : AppCompatActivity(), AddCalendarFragment.CalendarCallba
         db.collection("users").document(authEmail!!).get().addOnSuccessListener {
             var photo = it.get("photo") as String
             if (photo == "") {
-                photo = ""
+                Picasso.get()
+                    .load("https://global-uploads.webflow.com/5bcb46130508ef456a7b2930/5f4c375c17865e08a63421ac_drawkit-og.png")
+                    .transform(CropCircleTransformation()).into(profilePicImage)
             } else {
                 Picasso.get().load(photo).transform(CropCircleTransformation()).into(profilePicImage)
             }

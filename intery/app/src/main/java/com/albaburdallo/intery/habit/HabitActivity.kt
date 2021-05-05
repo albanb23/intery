@@ -22,6 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.activity_habit.*
+import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.nav_header.*
 import kotlinx.android.synthetic.main.options.*
 
@@ -36,7 +37,6 @@ class HabitActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_habit)
-//        db.clearPersistence()
     }
 
     override fun onStart() {
@@ -47,7 +47,7 @@ class HabitActivity : AppCompatActivity() {
         habitList = findViewById(R.id.habitsList)
         habits = arrayListOf()
 
-//        db.clearPersistence()
+        //populamos la lista del recycler view
         db.collection("habits").whereEqualTo("user.email", authEmail).addSnapshotListener { value, error ->
             if (error!=null) {
                 return@addSnapshotListener
@@ -74,6 +74,7 @@ class HabitActivity : AppCompatActivity() {
                 }
             }
 
+            //adapter del recycler view
             habitList.layoutManager = LinearLayoutManager(this)
             adapter = HabitAdapter(habits)
             habitList.adapter = adapter
@@ -85,6 +86,7 @@ class HabitActivity : AppCompatActivity() {
 
             })
 
+            //si no hay hábitos mostramos el mensaje
             if (habits.isEmpty()) {
                 noHabitsTextView.visibility = View.VISIBLE
             } else {
@@ -133,15 +135,18 @@ class HabitActivity : AppCompatActivity() {
             var photo = it.get("photo") as String
             if (photo != "") {
                 Picasso.get().load(photo).transform(CropCircleTransformation()).into(profilePicImage)
+            } else {
+                Picasso.get()
+                    .load("https://global-uploads.webflow.com/5bcb46130508ef456a7b2930/5f4c375c17865e08a63421ac_drawkit-og.png")
+                    .transform(CropCircleTransformation()).into(profilePicImage)
             }
         }
 
+        // al pulsar sobre la foto de perfil del menu se va al perfil
         val header = nav_view.getHeaderView(0)
         val profilePicImage = header.findViewById<ImageView>(R.id.profilePicImage)
         profilePicImage.setOnClickListener {
-            if (authEmail != null) {
-                showProfile(authEmail)
-            }
+            showProfile(authEmail)
         }
     }
 

@@ -2,6 +2,7 @@ package com.albaburdallo.intery
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -24,6 +25,7 @@ import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.nav_header.*
 import java.io.IOException
+import java.net.URL
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -53,6 +55,10 @@ class ProfileActivity : AppCompatActivity() {
             if (photo!="") {
                 profilePic = photo
                 Picasso.get().load(photo).transform(CropCircleTransformation()).into(editProfileImageView)
+            } else {
+                Picasso.get()
+                    .load("https://global-uploads.webflow.com/5bcb46130508ef456a7b2930/5f4c375c17865e08a63421ac_drawkit-og.png")
+                    .transform(CropCircleTransformation()).into(editProfileImageView)
             }
             profileNameEditText.setText(name)
             profileSurnameEditText.setText(surname)
@@ -84,8 +90,6 @@ class ProfileActivity : AppCompatActivity() {
 
         editProfileImageView.setOnClickListener { launchGallery() }
 
-        uploadImage.setOnClickListener { uploadImage() }
-
         profileEmailEditText.setOnClickListener {
             Toast.makeText(
                 this,
@@ -95,6 +99,7 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+    //cuando vuelve de la galeria
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
@@ -105,7 +110,7 @@ class ProfileActivity : AppCompatActivity() {
             filePath = data.data
             try {
                 Picasso.get().load(filePath.toString()).transform(CropCircleTransformation()).into(editProfileImageView)
-                uploadImage.visibility = View.VISIBLE
+                uploadImage()
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -165,6 +170,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun uploadImage() {
         if (filePath != null) {
+            //subimos imagen a firebase storage
             val ref = storageReference.child("uploads/" + UUID.randomUUID().toString())
             val uploadTask = ref.putFile(filePath!!)
 
@@ -175,9 +181,9 @@ class ProfileActivity : AppCompatActivity() {
                 return@Continuation ref.downloadUrl
             }).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+                    //una vez subido la ponemos en el circulo
                     val downloadUri = task.result
                     Picasso.get().load(downloadUri.toString()).transform(CropCircleTransformation()).into(editProfileImageView)
-                    uploadImage.visibility = View.GONE
                     profilePic = downloadUri.toString()
                 } else {
                     Toast.makeText(this, resources.getString(R.string.fileError), Toast.LENGTH_SHORT).show()

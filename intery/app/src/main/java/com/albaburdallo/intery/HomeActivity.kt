@@ -35,6 +35,7 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.activity_habit.*
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_home.taskFrame
+import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_task.*
 import kotlinx.android.synthetic.main.habit_list_home.*
 import kotlinx.android.synthetic.main.loading_layout.*
@@ -261,10 +262,17 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
 
+            val habitsList = if (habits.isEmpty()) {
+                arrayListOf()
+            } else if (habits.size >=3) {
+                habits.subList(0,3)
+            } else {
+                habits
+            }
             layoutManager = LinearLayoutManager(this)
             layoutManager.orientation = LinearLayoutManager.HORIZONTAL
             habitList.layoutManager = layoutManager
-            habitAdapter = HabitHomeAdapter(habits.subList(0,3))
+            habitAdapter = HabitHomeAdapter(habitsList)
             habitList.adapter = habitAdapter
             if (habits.isEmpty()) {
                 noHabits.visibility = View.VISIBLE
@@ -335,7 +343,9 @@ class HomeActivity : AppCompatActivity() {
         db.collection("users").document(authEmail!!).get().addOnSuccessListener {
             var photo = it.get("photo") as String
             if (photo == "") {
-                photo = ""
+                Picasso.get()
+                    .load("https://global-uploads.webflow.com/5bcb46130508ef456a7b2930/5f4c375c17865e08a63421ac_drawkit-og.png")
+                    .transform(CropCircleTransformation()).into(profilePicImage)
             } else {
                 Picasso.get().load(photo).transform(CropCircleTransformation()).into(profilePicImage)
             }

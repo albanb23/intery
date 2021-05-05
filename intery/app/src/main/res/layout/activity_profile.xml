@@ -59,18 +59,6 @@
             <Space
                 android:layout_width="0dp"
                 android:layout_height="8dp" />
-            <Button
-                android:id="@+id/uploadImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/upload"
-                style="@style/button"
-                android:visibility="gone"/>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="24dp" />
 
             <TextView
                 android:id="@+id/profileNameTextView"

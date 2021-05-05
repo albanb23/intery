@@ -25,14 +25,17 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
+import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_task.*
 import kotlinx.android.synthetic.main.nav_header.*
 import kotlinx.android.synthetic.main.options.*
+import java.util.*
+import kotlin.collections.HashMap
 
 
 open class TaskActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
-
+    private val authEmail = FirebaseAuth.getInstance().currentUser?.email
     private lateinit var taskList: RecyclerView
     private lateinit var createTaskButton: Button
     private lateinit var adapter: TaskAdapter
@@ -50,6 +53,8 @@ open class TaskActivity : AppCompatActivity() {
         //Guardado de datos
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
         val prefsEdit = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
+
+        tasks = arrayListOf()
 
         calendarId = prefs.getString("calendar", "").toString()
         if (calendarId != "") {
@@ -107,8 +112,7 @@ open class TaskActivity : AppCompatActivity() {
 
         taskList = findViewById(R.id.taskList)
         createTaskButton = findViewById(R.id.createTaskButton)
-        tasks = arrayListOf()
-        val authEmail = FirebaseAuth.getInstance().currentUser?.email
+//        tasks = arrayListOf()
 
         if (calendarId=="") {
             if (showAll) {
@@ -286,7 +290,9 @@ open class TaskActivity : AppCompatActivity() {
         db.collection("users").document(authEmail!!).get().addOnSuccessListener {
             var photo = it.get("photo") as String
             if (photo == "") {
-                photo = ""
+                Picasso.get()
+                    .load("https://global-uploads.webflow.com/5bcb46130508ef456a7b2930/5f4c375c17865e08a63421ac_drawkit-og.png")
+                    .transform(CropCircleTransformation()).into(profilePicImage)
             } else {
                 Picasso.get().load(photo).transform(CropCircleTransformation()).into(profilePicImage)
             }

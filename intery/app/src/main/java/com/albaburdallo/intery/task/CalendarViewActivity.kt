@@ -61,6 +61,7 @@ class CalendarViewActivity : AppCompatActivity() {
 
         val tasks = arrayListOf<Task>()
 
+        //obtenemos las tareas
         db.collection("tasks").whereEqualTo("user.email", authEmail).addSnapshotListener(this) { value, error ->
             if (error != null) {
                 return@addSnapshotListener
@@ -129,7 +130,7 @@ class CalendarViewActivity : AppCompatActivity() {
         }
 
         eventsAdapter = EventsAdapter()
-        eventsItemAdapter = EventsItemAdapter(this)
+        eventsItemAdapter = EventsItemAdapter(this) //adapter para el listado de abajo del calendario
         layoutManager = LinearLayoutManager(this)
         calendarRecyclerView.layoutManager = layoutManager
         calendarRecyclerView.adapter = eventsItemAdapter
@@ -143,12 +144,15 @@ class CalendarViewActivity : AppCompatActivity() {
 
         val daysOfWeek = daysOfWeekFromLocale()
         val currentMonth = YearMonth.now()
+        //se crea el calendario
         calendarView.apply {
+            //se especifican el primer mes (actual-10), el ultimo (actual+10) y el primer dia de la semana según el locale
             setup(currentMonth.minusMonths(10), currentMonth.plusMonths(10), daysOfWeek.first())
-            scrollToMonth(currentMonth)
+            scrollToMonth(currentMonth)//lleva al mes actual
         }
 
         calendarView.post {
+            //la fecha seleccionada por defecto es la de hoy
             selectDate(today)
         }
 
@@ -158,7 +162,7 @@ class CalendarViewActivity : AppCompatActivity() {
             init {
                 view.setOnClickListener {
                     if (day.owner == DayOwner.THIS_MONTH) {
-                        selectDate(day.date)
+                        selectDate(day.date) // al darle click a un dia se selecciona esa fecha
                     }
                 }
             }
@@ -174,11 +178,12 @@ class CalendarViewActivity : AppCompatActivity() {
                 val dot3view = container.view.calendarDot3
                 val plusText = container.view.calendarPlusText
 
-                textView.text = day.date.dayOfMonth.toString()
+                textView.text = day.date.dayOfMonth.toString()//se ponen todos los dias del mes
 
                 if (day.owner == DayOwner.THIS_MONTH) {
                     textView.visibility = View.VISIBLE
 
+                    //contamos las tareas que hay para una fecha para mostrar los puntos
                     if (events[day.date].orEmpty().size >= 4) {
                         dot1view.visibility = View.VISIBLE
                         dot1view.drawable.setTint(events[day.date]!![0].calendar.color.toInt())
@@ -210,6 +215,7 @@ class CalendarViewActivity : AppCompatActivity() {
                         dot1view.drawable.setTint(events[day.date]!![0].calendar.color.toInt())
                     }
 
+                    //al seleccionar una fecha aparece con fondo
                     when(day.date) {
                         today -> {
                             textView.setTextColor(ContextCompat.getColor(this@CalendarViewActivity, R.color.yellow))
@@ -235,7 +241,7 @@ class CalendarViewActivity : AppCompatActivity() {
         }
 
         calendarView.monthScrollListener = {
-            selectDate(it.yearMonth.atDay(1))
+            selectDate(it.yearMonth.atDay(1)) // el mes por defecto es el actual
         }
 
         class MonthViewContainer(view: View) : ViewContainer(view) {
@@ -247,6 +253,7 @@ class CalendarViewActivity : AppCompatActivity() {
             override fun bind(container: MonthViewContainer, month: CalendarMonth) {
                 if (container.legendLayout.tag == null) {
                     container.legendLayout.tag = month.yearMonth
+                    //dias de la semana según el locale
                     container.legendLayout.children.map { it as TextView }.forEachIndexed { index, textView ->
                         textView.text = daysOfWeek[index].getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault()).toString().replace(".", "")
                     }

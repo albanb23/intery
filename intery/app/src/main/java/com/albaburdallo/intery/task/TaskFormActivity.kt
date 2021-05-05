@@ -63,7 +63,6 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_form)
         this.getSupportActionBar()?.hide()
-
     }
 
     override fun onStart() {
@@ -473,7 +472,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
             notificationChannel.enableLights(true)
             notificationChannel.lightColor = Color.RED
             notificationChannel.enableVibration(true)
-            notificationChannel.description = "La tarea!!!"
+            notificationChannel.description = "Complete task"
 
             val notificationManager = getSystemService(NotificationManager::class.java) as NotificationManager
             notificationManager.createNotificationChannel(notificationChannel)
@@ -530,12 +529,9 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
             NotificationManager::class.java
         ) as NotificationManager
             if (task.notifyMe) {
-                val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
-                prefs.putString("taskName", task.name)
                 val notifyIntent = Intent(this, AlarmReceiver::class.java)
                 notifyIntent.putExtra("messageBody", notificationBody)
                 notifyIntent.putExtra("title", notificationTitle)
-                notifyIntent.putExtra("taskId", task.id)
                 val notifyPendingIntent = PendingIntent.getBroadcast(
                     this,
                     0,

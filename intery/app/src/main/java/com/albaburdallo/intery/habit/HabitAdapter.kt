@@ -42,7 +42,6 @@ class HabitAdapter(private val habits: MutableList<Habit>): RecyclerView.Adapter
         fun bind(habit: Habit) {
             habitName.text = habit.name
             habitDate.text = formatDate(habit.startDate)
-            //cambiar color de la progress bar
 
             //progress bar
             progressBar.max = 100

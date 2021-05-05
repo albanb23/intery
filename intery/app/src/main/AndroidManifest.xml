@@ -13,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.intery.NoActionBar">
-        <activity android:name=".habit.HabitShowActivity"></activity>
+        <activity android:name=".habit.HabitShowActivity" />
         <activity android:name=".habit.HabitFormActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".task.CalendarViewActivity" />
@@ -40,10 +40,6 @@
             android:exported="false" />
         <receiver
             android:name=".util.notifications.SnoozeReceiver"
-            android:enabled="true"
-            android:exported="false" />
-        <receiver
-            android:name=".util.notifications.DoneReceiver"
             android:enabled="true"
             android:exported="false" />
     </application>

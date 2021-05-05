@@ -133,4 +133,15 @@
     <string name="editTask">Edit task</string>
     <string name="editTransaction">Edit transaction</string>
     <string name="exisitingHabit">This habit already exists</string>
+    <string name="habitNotificationBody">Have you completed your habit yet?</string>
+    <string name="populateTaskName1">Dinner with mom</string>
+    <string name="populateTaskDesc1">Restaurant</string>
+    <string name="populateTaskName2">Maria\'s birthday</string>
+    <string name="populateSection1">Subscriptions</string>
+    <string name="populateTransactionName">Maria\'s birthday groceries</string>
+    <string name="populateEntityName">Target</string>
+    <string name="populateSection2">Groceries</string>
+    <string name="populateEntity3">Anna</string>
+    <string name="populateTransactionName2">Bizum for dinner</string>
+    <string name="populateHabitName">Meditate</string>
 </resources>

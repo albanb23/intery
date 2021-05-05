@@ -22,6 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
+import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.options.*
 import kotlinx.android.synthetic.main.activity_wallet.*
 import kotlinx.android.synthetic.main.activity_wallet.view.*
@@ -171,7 +172,9 @@ class WalletActivity : AppCompatActivity(){
         db.collection("users").document(authEmail!!).get().addOnSuccessListener {
             var photo = it.get("photo") as String
             if (photo == "") {
-                photo = ""
+                Picasso.get()
+                    .load("https://global-uploads.webflow.com/5bcb46130508ef456a7b2930/5f4c375c17865e08a63421ac_drawkit-og.png")
+                    .transform(CropCircleTransformation()).into(profilePicImage)
             } else {
                 Picasso.get().load(photo).transform(CropCircleTransformation()).into(profilePicImage)
             }

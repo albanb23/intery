@@ -1,15 +1,20 @@
 package com.albaburdallo.intery.habit
 
-import android.app.AlertDialog
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.app.*
+import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.util.entities.Habit
+import com.albaburdallo.intery.util.notifications.AlarmReceiver
+import com.albaburdallo.intery.util.notifications.cancelNotifications
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -32,9 +37,6 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
 
     var timeClicked = false
     private var time: Date? = null
-    var year = 0
-    var month = 0
-    var day = 0
     var hour = 0
     var minute = 0
     private var updated = Calendar.getInstance().time
@@ -64,6 +66,7 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
         super.onStart()
         habitId = intent.extras?.getString("habitId") ?: ""
 
+        //si habitId es "" significa que se esta creando, sino se edita
         habitBackImageView.setOnClickListener {
             if (habitId=="") {
                 showHabit()
@@ -81,6 +84,7 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
             createHabitText.text = resources.getString(R.string.newHabit)
         }
 
+        //en caso de que se edite, llenar el formulario con los datos
         if (habitId != "") {
             db.collection("habits").document(habitId).get().addOnSuccessListener {
                 habitNameEditText.setText(it.get("name") as String)
@@ -90,6 +94,7 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
                 habitRemindMeCheckBox.isChecked = it.get("notifyMe") as Boolean
                 habitNotesEditText.setText(it.get("notes") as String)
                 days = it.get("daysCompleted") as String
+                time = (it.get("when") as? Timestamp)?.toDate()
                 habitReminderTextView.text = (it.get("when") as? Timestamp)?.let { it1 ->
                     formatTime(
                         it1.toDate()
@@ -161,12 +166,12 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
                     selectedColor = selectedColor,
                     listener = { color ->
                         selectedColor = color
-                        colorButton.drawable.setTint(selectedColor)
+                        colorButton.drawable.setTint(color)
                     })
                 .show(supportFragmentManager)
-
         }
 
+        //si se elige una hora de recordatorio pero no se marca el checkbox se marca solo
         if (habitReminderTextView.text != "" && habitReminderTextView.text != null && !habitRemindMeCheckBox.isChecked){
             habitRemindMeCheckBox.isChecked = true
         }
@@ -191,10 +196,10 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
     }
 
     private fun validateForm():Boolean {
-        var res = true
-        res && habitNameEditText.validator().nonEmpty().addErrorCallback { habitNameEditText.error = it }.check()
+        var res: Boolean
+        res = habitNameEditText.validator().nonEmpty().addErrorCallback { habitNameEditText.error = it }.check()
         if (habitRemindMeCheckBox.isChecked) {
-            res && habitReminderTextView.validator().nonEmpty().addErrorCallback { habitReminderTextView.error = it }.check()
+            res = habitReminderTextView.validator().nonEmpty().addErrorCallback { habitReminderTextView.error = it }.check()
         }
         if (habitReminderTextView.text != "" && habitReminderTextView.text != null && !habitRemindMeCheckBox.isChecked){
             habitRemindMeCheckBox.isChecked = true
@@ -233,7 +238,7 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
                 times = 3
             }
             resources.getString(R.string.threeMonth) -> {
-                period = 30
+                period = YearMonth.now().lengthOfMonth()
                 times = 3
             }
         }
@@ -255,7 +260,7 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
         if (habitId == "" || (habitId!="" && formatDate(updated) != formatDate(today))) {
             val cal = Calendar.getInstance()
             cal.time = today
-            cal.add(Calendar.DAY_OF_YEAR, -1)
+            cal.add(Calendar.DAY_OF_YEAR, -1) //restamos un dia
             oneDayBefore = cal.time
         }
 
@@ -281,6 +286,7 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
                     Toast.makeText(this, R.string.exisitingHabit, Toast.LENGTH_LONG).show()
                 }
             }
+            notification(habit)
         }
 
     private fun formatDate(date: Date): String {
@@ -306,9 +312,7 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
 
     private fun showHabit(habitId: String) {
         val habitIntent = Intent(this, HabitShowActivity::class.java)
-        if (habitId!=null) {
-            habitIntent.putExtra("habitId", habitId)
-        }
+        habitIntent.putExtra("habitId", habitId)
         startActivity(habitIntent)
     }
 
@@ -321,6 +325,52 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
             habitReminderTextView.setText(textTime)
             time = Date(year - 1900, month, day, hourOfDay, minute)
             timeClicked = false
+        }
+    }
+
+    //canal para las notificaciones
+    private fun createChannel(channelId: String, channelName: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                channelId, channelName,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+
+            notificationChannel.enableLights(true)
+            notificationChannel.lightColor = Color.RED
+            notificationChannel.enableVibration(true)
+            notificationChannel.description = "Complete habit"
+
+            val notificationManager = getSystemService(NotificationManager::class.java) as NotificationManager
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+    }
+
+    //metodo de notificaciones
+    private fun notification(habit: Habit) {
+        createChannel("intery_channel", "Intery")
+        val notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
+        if (habit.notifyMe) {
+            val today = Calendar.getInstance()
+            val diff = habit.`when`.time - today.time.time //milisegundos que se suman a los actuales para notificar en la hora indicada
+            val notificationTitle = habit.name
+            val notifyIntent = Intent(this, AlarmReceiver::class.java)
+            notifyIntent.putExtra("messageBody", this.resources.getString(R.string.habitNotificationBody))
+            notifyIntent.putExtra("title", notificationTitle)
+            val notifyPendingIntent = PendingIntent.getBroadcast(
+                this,
+                0,
+                notifyIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val interval = AlarmManager.INTERVAL_DAY * (habit.period.toLong()/habit.times.toLong()) //intervalo en el que se repite
+            alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime()+diff,
+                interval,
+                notifyPendingIntent)
+        } else {
+            notificationManager.cancelNotifications()
         }
     }
 }

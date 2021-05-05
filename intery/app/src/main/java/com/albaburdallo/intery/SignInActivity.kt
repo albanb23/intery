@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.albaburdallo.intery.util.entities.*
 import com.albaburdallo.intery.util.entities.Calendar
-import com.albaburdallo.intery.util.entities.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
@@ -67,6 +67,7 @@ class SignInActivity : AppCompatActivity() {
                             db.collection("common").document(user.email).set(
                                 hashMapOf("money" to "0.0", "currency" to currency)
                             )
+                            populate(user)
                             showLogin()
                         } else {
                             showAlert()
@@ -119,4 +120,128 @@ class SignInActivity : AppCompatActivity() {
         val loginIntent = Intent(this, LoginActivity::class.java).apply { }
         startActivity(loginIntent)
     }
+
+    private fun populate(user: User) {
+        db.collection("common").document(user.email).set(
+            hashMapOf("money" to "1735.79", "currency" to "€")
+        )
+        //popular tareas
+        val start1 = java.util.Calendar.getInstance()
+        start1.set(java.util.Calendar.DAY_OF_MONTH, 10)
+        start1.set(java.util.Calendar.HOUR_OF_DAY, 8)
+        start1.set(java.util.Calendar.MINUTE, 0)
+        start1.set(java.util.Calendar.SECOND, 0)
+        val end1 = java.util.Calendar.getInstance()
+        end1.set(java.util.Calendar.DAY_OF_MONTH, 10)
+        end1.set(java.util.Calendar.HOUR_OF_DAY, 10)
+        end1.set(java.util.Calendar.MINUTE, 0)
+        end1.set(java.util.Calendar.SECOND, 0)
+        val task1 = Task(
+            "00-"+resources.getString(R.string.populateTaskName1)+"-"+user.email,
+            resources.getString(R.string.populateTaskName1),
+            start1.time,
+            start1.time,
+            end1.time,
+            end1.time,
+            false,
+            false,
+            resources.getString(R.string.populateTaskDesc1),
+            false,
+            Calendar(
+                user.name + "-" + user.email,
+                user.name,
+                "Default",
+                "-4590167"
+            ),
+            "0"
+        )
+        db.collection("tasks").document("00-"+resources.getString(R.string.populateTaskName1)+"-"+user.email).set(task1)
+
+        val start2 = java.util.Calendar.getInstance()
+        start2.set(java.util.Calendar.DAY_OF_MONTH, 1)
+        start2.set(java.util.Calendar.HOUR_OF_DAY, 8)
+        start2.set(java.util.Calendar.MINUTE, 0)
+        start2.set(java.util.Calendar.SECOND, 0)
+        val task2 = Task(
+            "00-"+resources.getString(R.string.populateTaskName2)+"-"+user.email,
+            resources.getString(R.string.populateTaskName2),
+            start1.time,
+            true,
+            false,
+            "",
+            true,
+            Calendar(
+                user.name + "-" + user.email,
+                user.name,
+                "Default",
+                "-4590167"
+            ),
+            "0"
+        )
+        db.collection("tasks").document("00-"+resources.getString(R.string.populateTaskName2)+"-"+user.email).set(task2)
+
+        //popular cartera
+        val entity1 = Entity("Spotify-"+user.email, "Spotify")
+        db.collection("entities").document("Spotify-"+user.email).set(entity1)
+        val section1 = Section(resources.getString(R.string.populateSection1)+"-"+user.email, resources.getString(R.string.populateSection1))
+        db.collection("sections").document(resources.getString(R.string.populateSection1)+"-"+user.email).set(section1)
+        val transaction1 = Transaction("00-Spotify-"+user.email,
+            true,
+            false,
+            "Spotify",
+            14.99,
+            start2.time,
+            "",
+            entity1,
+            section1
+        )
+        db.collection("wallet").document("00-Spotify-"+user.email).set(transaction1)
+
+        val entity2 = Entity(resources.getString(R.string.populateEntityName)+"-"+user.email, resources.getString(R.string.populateEntityName))
+        db.collection("entities").document(resources.getString(R.string.populateEntityName)+"-"+user.email).set(entity2)
+        val section2 = Section(resources.getString(R.string.populateSection2)+"-"+user.email, resources.getString(R.string.populateSection2))
+        db.collection("sections").document(resources.getString(R.string.populateSection2)+"-"+user.email).set(section2)
+        val transaction2 = Transaction("00-"+resources.getString(R.string.populateTransactionName)+"-"+user.email,
+            true,
+            false,
+            resources.getString(R.string.populateTransactionName),
+            54.23,
+            start2.time,
+            "",
+            entity2,
+            section2
+        )
+        db.collection("wallet").document("00-"+resources.getString(R.string.populateTransactionName)+"-"+user.email).set(transaction2)
+
+        val entity3 = Entity(resources.getString(R.string.populateEntity3)+"-"+user.email, resources.getString(R.string.populateEntity3))
+        db.collection("entities").document(resources.getString(R.string.populateEntity3)+"-"+user.email).set(entity3)
+        val section3 = Section("Bizum-"+user.email, "Bizum")
+        db.collection("sections").document("Bizum-"+user.email).set(section3)
+        val transaction3 = Transaction("00-"+resources.getString(R.string.populateTransactionName2)+"-"+user.email,
+            false,
+            true,
+            resources.getString(R.string.populateTransactionName2),
+            20.00,
+            start1.time,
+            "",
+            entity3,
+            section3
+        )
+        db.collection("wallet").document("00-"+resources.getString(R.string.populateTransactionName2)+"-"+user.email).set(transaction3)
+
+        //popular habitos
+        val habit = Habit(user.email+"-"+resources.getString(R.string.populateHabitName),
+            resources.getString(R.string.populateHabitName),
+        "",
+            Date(2021, 2, 29),
+            "-4590167",
+            false,
+            7,
+            7,
+            50.0,
+            start1.time,
+            "29/03/2021;6/04/2021;18/04/2021;30/04/2021;1/05/2021")
+        db.collection("habits").document(user.email+"-"+resources.getString(R.string.populateHabitName)).set(habit)
+    }
+
 }

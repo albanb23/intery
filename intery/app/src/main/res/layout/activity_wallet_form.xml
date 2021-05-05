@@ -51,6 +51,7 @@
             style="@style/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
             android:text="@string/addTransaction"
             android:textAlignment="center" />
 

@@ -60,10 +60,10 @@ class AddCalendarFragment: DialogFragment() {
                     //add calendar
                     addCalendar(calendar)
                 })
-                .setNegativeButton(R.string.cancel, DialogInterface.OnClickListener { dialog, it ->
+                .setNegativeButton(R.string.cancel) { dialog, it ->
                     //cancelar
                     dialog.dismiss()
-                })
+                }
             builder.create()
         }?: throw IllegalStateException("Activity cannot be null")
     }

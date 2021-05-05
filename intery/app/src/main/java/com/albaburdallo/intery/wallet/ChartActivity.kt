@@ -29,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.activity_chart.*
+import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.nav_header.*
 import kotlinx.android.synthetic.main.options.*
 import java.sql.Timestamp
@@ -58,7 +59,7 @@ class ChartActivity : AppCompatActivity() {
 
         mainViewModel = ViewModelProvider(this).get(ChartViewModel::class.java)
         date_list.adapter = ChartAdapter(mainViewModel.dates, this) { date ->
-            mainViewModel.setSelectedDate(date)
+            mainViewModel.setSelectedDate(date)//seleccionamos la fecha actual
             scrollToDate(date)
         }
         date_list.layoutManager = layoutManager
@@ -86,25 +87,26 @@ class ChartActivity : AppCompatActivity() {
             graph()
         }
 
+        //al elegir fecha a través del scrolling
         date_list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                if (recyclerView.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
+                if (recyclerView.scrollState == RecyclerView.SCROLL_STATE_IDLE) { //cuando el scroll se para
                     val offset = (date_list.width / date_list.width - 1) / 2
-                    val position = layoutManager.findFirstCompletelyVisibleItemPosition() + offset
-                    if (position in 0 until mainViewModel.dates.size &&
+                    val position = layoutManager.findFirstCompletelyVisibleItemPosition() + offset //devuelve el item que este mas centrado
+                    if (position in mainViewModel.dates.indices &&
                         mainViewModel.dates[position] != mainViewModel.selectedDate.value
                     ) {
                         when (position) {
-                            0 -> {
+                            0 -> { //si la posición es la 0, se pone el 1
                                 mainViewModel.setSelectedDate(mainViewModel.dates[1])
                                 scrollToDate(mainViewModel.dates[1])
                             }
-                            mainViewModel.dates.size - 1 -> {
+                            mainViewModel.dates.size - 1 -> { //si la posición es la última se pone la penúltima
                                 mainViewModel.setSelectedDate(mainViewModel.dates[position - 1])
                                 scrollToDate(mainViewModel.dates[position - 1])
                             }
-                            else -> {
+                            else -> { //se selecciona la fecha de la posición
                                 mainViewModel.setSelectedDate(mainViewModel.dates[position])
                             }
                         }
@@ -159,7 +161,9 @@ class ChartActivity : AppCompatActivity() {
         db.collection("users").document(authEmail!!).get().addOnSuccessListener {
             var photo = it.get("photo") as String
             if (photo == "") {
-                photo = ""
+                Picasso.get()
+                    .load("https://global-uploads.webflow.com/5bcb46130508ef456a7b2930/5f4c375c17865e08a63421ac_drawkit-og.png")
+                    .transform(CropCircleTransformation()).into(profilePicImage)
             } else {
                 Picasso.get().load(photo).transform(CropCircleTransformation()).into(profilePicImage)
             }
@@ -184,8 +188,8 @@ class ChartActivity : AppCompatActivity() {
             var entries = arrayListOf<BarEntry>()
             val currDate = mainViewModel.selectedDate.value
 
-            var moneyExp = 0.0
-            var moneyInc = 0.0
+            var moneyExp = 0.0 //total gastado
+            var moneyInc = 0.0 //total ganado
             for (document in value!!) {
                 val user = document.get("user") as HashMap<*, *>
                 val date = (document.get("date") as com.google.firebase.Timestamp).toDate()
@@ -207,19 +211,25 @@ class ChartActivity : AppCompatActivity() {
                         moneyInc+=document.get("money") as Double
                     }
                 }
+
+                //creamos las dos barras
                 val expBarEntry = BarEntry(moneyExp.toFloat(), 0)
                 val incBarEntry = BarEntry(moneyInc.toFloat(), 1)
                 entries.add(expBarEntry)
                 entries.add(incBarEntry)
                 val barDataSet = BarDataSet(entries, "")
+                //colores de cada barra
                 val colors: MutableList<Int> = arrayListOf(ContextCompat.getColor(this,R.color.red),
                     ContextCompat.getColor(this, R.color.green))
                 barDataSet.colors = colors
+                //etiquetas de cada barra
                 val labels = arrayListOf<String>()
                 labels.add("")
                 labels.add("")
+                //añadimos los datos
                 val data = BarData(labels, barDataSet)
                 barchart.data = data
+                //borramos atributos de la grafica como la descripción, los ejes, las etiquetas de los ejes, etc
                 barchart.setDescription("")
                 barchart.axisLeft.setDrawGridLines(false)
                 barchart.axisRight.setDrawGridLines(false)
@@ -254,6 +264,7 @@ class ChartActivity : AppCompatActivity() {
                     if (error != null) {
                         return@addSnapshotListener
                     }
+                    //total ahorrado/gastado
                     val curr = value!!.get("currency") as String
                     (" " + curr + " " + ((totalSav * 100.0).roundToInt() / 100.0)).also { moneySavings.text = it }
                     ("$curr $moneyExp").also { totalSpentMoney.text = it }
@@ -265,6 +276,7 @@ class ChartActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initializeSelectedDate() {
+        //inicializar el recycler view al mes actual
         if (mainViewModel.selectedDate.value == null) {
             val now = mainViewModel.dates[mainViewModel.dates.size - 2]
             mainViewModel.setSelectedDate(now)
@@ -278,21 +290,21 @@ class ChartActivity : AppCompatActivity() {
         val date_item = findViewById<LinearLayout>(R.id.date_item)
         var width = date_list.width
 
-        if (width>0){
+        if (width>0){ //se comprueba el ancho porque hasta que el recycler view no se mueve no se fija uno concreto
             val dateWidth = date_item.width
+            //para centrar el mes en el centro
             layoutManager.scrollToPositionWithOffset(
                 mainViewModel.dates.indexOf(date),
                 width / 2 - dateWidth / 2
             )
         } else {
-            val vto = date_list.viewTreeObserver
-            vto.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            val vto = date_list.viewTreeObserver //para saber que el recycler view ha cargado todos los items
+            vto.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener { //al mover el recycler view
                 override fun onGlobalLayout() {
                     date_list.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     width = date_list.width
                     resources?.getDimensionPixelSize(R.dimen.date_item_width)?.let { dateWidth ->
                         layoutManager.scrollToPositionWithOffset(mainViewModel.dates.indexOf(date), width / 2 - dateWidth / 2)
-//                        layoutManager.scrollToPosition(mainViewModel.dates.indexOf(date))
                     }
                 }
             })

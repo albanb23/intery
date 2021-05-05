@@ -26,7 +26,9 @@ import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
 import kotlinx.android.synthetic.main.activity_calendar_view.*
 import kotlinx.android.synthetic.main.activity_habit_show.*
+import kotlinx.android.synthetic.main.activity_habit_show.habitCalendarView
 import kotlinx.android.synthetic.main.calendar_day_legend.view.*
+import kotlinx.android.synthetic.main.habit_calendar_day.*
 import kotlinx.android.synthetic.main.habit_calendar_day.view.*
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
@@ -58,7 +60,7 @@ class HabitShowActivity : AppCompatActivity() {
 
         habitShowBackImageView.setOnClickListener { showHabit() }
 
-//        db.clearPersistence()
+        //populamos la vista
         db.collection("habits").document(habitId).get().addOnSuccessListener {
             val start = (it.get("startDate") as Timestamp).toDate() //0%
             val updated = (it.get("updated") as Timestamp).toDate()
@@ -66,6 +68,7 @@ class HabitShowActivity : AppCompatActivity() {
             val period = it.get("period") as Long
             val times = it.get("times") as Long
             val daysCompleted = it.get("daysCompleted") as String
+            val color = it.get("color") as String
 
             if (updated == today) {
                 completed = true
@@ -83,6 +86,11 @@ class HabitShowActivity : AppCompatActivity() {
             }
 
             completeHabitButton.setOnClickListener { v ->
+                //se pone el dia en el calendario mas oscuro
+                habitCalendarDayTextView.setBackgroundResource(R.drawable.day_completed_background)
+                habitCalendarDayTextView.background.setTint(ColorUtils.blendARGB(color.toInt(), Color.BLACK, 0.4f))
+                habitCalendarView.notifyCalendarChanged()
+
                 completed = true
                 db.collection("habits").document(habitId).update("updated", today)
                 calculateProgress(start, today, period.toInt(), times.toInt(), completed, daysCompleted, habitProgress)
@@ -90,7 +98,13 @@ class HabitShowActivity : AppCompatActivity() {
             }
 
             nocompleteHabitButton.setOnClickListener {
+                //se pone el dia en el calendario mas claro
+                habitCalendarDayTextView.setBackgroundResource(R.drawable.day_background)
+                habitCalendarDayTextView.background.setTint(color.toInt())
+                habitCalendarView.notifyCalendarChanged()
+
                 completed = false
+                //se actualiza el atributo update a el día anterior
                 val cal = Calendar.getInstance()
                 cal.time = today
                 cal.add(Calendar.DAY_OF_YEAR, -1)
@@ -100,7 +114,6 @@ class HabitShowActivity : AppCompatActivity() {
                 nocompleteHabitButton.visibility = View.GONE
             }
 
-            val color = it.get("color") as String
             goalProgressBar.progressTintList = ColorStateList.valueOf(color.toInt())
             habitEditImageView.setOnClickListener { showHabitForm(
                 habitId,
@@ -111,9 +124,11 @@ class HabitShowActivity : AppCompatActivity() {
 
         val daysOfWeek = daysOfWeekFromLocale()
         val currentMonth = YearMonth.now()
+        //se crea el calendario
         habitCalendarView.apply {
+            //se especifican el primer mes (actual-10), el ultimo (actual+10) y el primer dia de la semana según el locale
             setup(currentMonth.minusMonths(10), currentMonth.plusMonths(10), daysOfWeek.first())
-            scrollToMonth(currentMonth)
+            scrollToMonth(currentMonth)//lleva al mes actual
         }
 
         habitCalendarView.post {
@@ -136,14 +151,14 @@ class HabitShowActivity : AppCompatActivity() {
             override fun bind(container: DayViewContainer, day: CalendarDay) {
                     container.day = day
                 val textView = container.view.habitCalendarDayTextView
-                textView.text = day.date.dayOfMonth.toString()
+                textView.text = day.date.dayOfMonth.toString() //se ponen todos los dias del mes
                 if (day.owner == DayOwner.THIS_MONTH) {
                     textView.visibility = View.VISIBLE
                     db.collection("habits").document(habitId).get().addOnSuccessListener {
                         val color = it.get("color") as String
                         val daysCompleted = it.get("daysCompleted") as String
                         val dates = daysCompleted.split(";")
-                        if (dates.contains(formatDate2(day.date))) {
+                        if (dates.contains(formatDate2(day.date))) { //se ponen mas oscuros los dias en los que el habito ha sido completado
                             textView.setBackgroundResource(R.drawable.day_completed_background)
                             textView.background.setTint(ColorUtils.blendARGB(color.toInt(), Color.BLACK, 0.4f))
                         } else {
@@ -160,7 +175,7 @@ class HabitShowActivity : AppCompatActivity() {
         }
 
         habitCalendarView.monthScrollListener = {
-            selectDate(it.yearMonth.atDay(1))
+            selectDate(it.yearMonth.atDay(1)) //se selecciona el mes actual
         }
 
         class MonthViewContainer(view: View) : ViewContainer(view) {
@@ -171,6 +186,7 @@ class HabitShowActivity : AppCompatActivity() {
             override fun bind(container: MonthViewContainer, month: CalendarMonth) {
                 if (container.legendLayout.tag == null) {
                     container.legendLayout.tag = month.yearMonth
+                    //se ponen los dias de la semana segun el locale
                     container.legendLayout.children.map { it as TextView }.forEachIndexed { index, textView ->
                         textView.text = daysOfWeek[index].getDisplayName(
                             TextStyle.SHORT_STANDALONE,
@@ -202,7 +218,6 @@ class HabitShowActivity : AppCompatActivity() {
                 var daysCompletedOfPeriod = 0
                     val diff = (((today.time - start.time) / 1000 * 60 * 60 * 24) % period).toInt()
                     if (diff == 0) { // si es el primer dia del periodo
-                        println("es el primer dia!!!!!!!!!!!!!!!!!!!!!======")
                         daysCompletedOfPeriod = 0
                         done = 0.0
                     }
@@ -214,9 +229,6 @@ class HabitShowActivity : AppCompatActivity() {
                         days += formatDate(today)//se añade el dia que se ha completado
                     } else {
                         daysCompletedOfPeriod--
-                        println("days======" + days)
-                        println("formatDate(today)======" + formatDate(today))
-                        println("days.contains(formatDate(today)======" + days.contains(formatDate(today)))
                         if (days.contains(formatDate(today))) {
                             days = days.replace(
                                 formatDate(today),
@@ -224,13 +236,7 @@ class HabitShowActivity : AppCompatActivity() {
                             ) //borramos el dia del string de completados
                         }
                     }
-                println("days======" + days)
-                println("done======" + done)
-                println("period======" + period)
-                println("times======" + times)
-                println("days completed of period======" + daysCompletedOfPeriod)
                 progress = done + ((daysCompletedOfPeriod.toDouble() / times.toDouble()) * 100.0)
-                println("progress======" + progress)
                 goalProgressBar.progress = progress.toInt()
                 db.collection("habits").document(habitId).update("progress", progress)
                 db.collection("habits").document(habitId).update("daysCompleted", days)
