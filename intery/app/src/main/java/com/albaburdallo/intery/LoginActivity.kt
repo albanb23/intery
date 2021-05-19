@@ -2,10 +2,12 @@ package com.albaburdallo.intery
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.albaburdallo.intery.util.entities.*
@@ -20,7 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_login.*
 import java.util.*
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
 
     private val GOOGLE_SIGN_IN = 100
     private val db = FirebaseFirestore.getInstance()
@@ -121,6 +123,7 @@ class LoginActivity : AppCompatActivity() {
         startActivity(homeIntent)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -168,7 +171,7 @@ class LoginActivity : AppCompatActivity() {
 
                                             val spanish = Locale("es", "ES")
                                             var currency = "$"
-                                            if (Locale.getDefault()==spanish){
+                                            if (this.resources?.configuration?.locales?.get(0)==spanish){
                                                 currency = "€"
                                             }
 
@@ -194,9 +197,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun populate(user: User) {
-        db.collection("common").document(user.email).set(
-            hashMapOf("money" to "1735.79", "currency" to "€")
-        )
         //popular tareas
         val start1 = java.util.Calendar.getInstance()
         start1.set(java.util.Calendar.DAY_OF_MONTH, 10)

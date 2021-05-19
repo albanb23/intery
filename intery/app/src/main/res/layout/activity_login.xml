@@ -8,6 +8,24 @@
     tools:context=".LoginActivity">
 
     <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="340dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/inputsLinearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/createHabitImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/login_avatar" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/inputsLinearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -123,6 +141,8 @@
         </LinearLayout>
     </LinearLayout>
 
-    <include layout="@layout/loading_layout"></include>
+    <include
+        android:id="@+id/include"
+        layout="@layout/loading_layout"></include>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

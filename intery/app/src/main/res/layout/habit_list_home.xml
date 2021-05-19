@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="8dp"
     android:paddingBottom="0dp">
 
     <LinearLayout
@@ -13,6 +13,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/ic_input"
         android:backgroundTint="@color/white"
+        android:padding="8dp"
         android:orientation="vertical">
     <TextView
         android:id="@+id/homeHabitName"

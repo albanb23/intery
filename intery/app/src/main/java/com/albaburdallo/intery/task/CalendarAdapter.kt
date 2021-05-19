@@ -49,7 +49,7 @@ class CalendarAdapter(private val calendars: MutableList<Calendar>) : RecyclerVi
             var remaining = hashSetOf<String>()
             db.collection("tasks").whereEqualTo("done", false).get().addOnSuccessListener { documents ->
                 for(document in documents) {
-                    val taskCalendar =  document.get("calendar") as HashMap<String, String>
+                    val taskCalendar =  document.get("calendar") as HashMap<*, *>
                     if (taskCalendar["name"] == calendar.name) {
                         remaining.add(document.get("name") as String)
                     }

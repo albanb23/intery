@@ -14,9 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.albaburdallo.intery.LoginActivity
-import com.albaburdallo.intery.ProfileActivity
-import com.albaburdallo.intery.R
+import com.albaburdallo.intery.*
 import com.albaburdallo.intery.habit.HabitActivity
 import com.albaburdallo.intery.task.TaskActivity
 import com.github.mikephil.charting.charts.BarChart
@@ -38,7 +36,7 @@ import java.time.ZoneId
 import java.util.*
 import kotlin.math.roundToInt
 
-class ChartActivity : AppCompatActivity() {
+class ChartActivity : BaseActivity() {
 
     private val db = FirebaseFirestore.getInstance()
     private val authEmail = FirebaseAuth.getInstance().currentUser?.email;
@@ -134,7 +132,7 @@ class ChartActivity : AppCompatActivity() {
                     true
                 }
                 R.id.habits_item -> {
-                    showHabit()
+                    showSettings()
                     true
                 }
                 R.id.settings_item -> {
@@ -330,6 +328,11 @@ class ChartActivity : AppCompatActivity() {
     private fun showHabit() {
         val habitIntent = Intent(this, HabitActivity::class.java).apply { }
         startActivity(habitIntent)
+    }
+
+    private fun showSettings() {
+        val settingsIntent = Intent(this, SettingsActivity::class.java).apply { }
+        startActivity(settingsIntent)
     }
 
     private fun showProfile(email: String) {

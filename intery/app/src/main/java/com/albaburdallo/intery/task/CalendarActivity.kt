@@ -10,9 +10,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.albaburdallo.intery.LoginActivity
-import com.albaburdallo.intery.ProfileActivity
-import com.albaburdallo.intery.R
+import com.albaburdallo.intery.*
 import com.albaburdallo.intery.habit.HabitActivity
 import com.albaburdallo.intery.util.entities.Calendar
 import com.albaburdallo.intery.wallet.WalletActivity
@@ -27,7 +25,7 @@ import kotlinx.android.synthetic.main.activity_task_form.*
 import kotlinx.android.synthetic.main.nav_header.*
 import kotlinx.android.synthetic.main.options.*
 
-class CalendarActivity : AppCompatActivity(), AddCalendarFragment.CalendarCallbackListener {
+class CalendarActivity : BaseActivity(), AddCalendarFragment.CalendarCallbackListener {
     private val db = FirebaseFirestore.getInstance()
 
     private lateinit var calendarList: RecyclerView
@@ -100,11 +98,11 @@ class CalendarActivity : AppCompatActivity(), AddCalendarFragment.CalendarCallba
                     true
                 }
                 R.id.habits_item -> {
-                    showHabit()
+                    showSettings()
                     true
                 }
                 R.id.settings_item -> {
-                    showHabit()
+                    showSettings()
                     true
                 }
                 else -> {
@@ -187,6 +185,11 @@ class CalendarActivity : AppCompatActivity(), AddCalendarFragment.CalendarCallba
     private fun showLogin() {
         val loginIntent = Intent(this, LoginActivity::class.java).apply { }
         startActivity(loginIntent)
+    }
+
+    private fun showSettings() {
+        val settingsIntent = Intent(this, SettingsActivity::class.java).apply { }
+        startActivity(settingsIntent)
     }
 
     private fun showWallet() {

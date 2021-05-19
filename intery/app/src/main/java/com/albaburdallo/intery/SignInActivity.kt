@@ -1,10 +1,13 @@
 package com.albaburdallo.intery
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import com.albaburdallo.intery.util.entities.*
 import com.albaburdallo.intery.util.entities.Calendar
 import com.google.firebase.auth.FirebaseAuth
@@ -14,10 +17,11 @@ import kotlinx.android.synthetic.main.activity_sign_in.*
 import java.util.*
 
 
-class SignInActivity : AppCompatActivity() {
+class SignInActivity : BaseActivity() {
 
     private val db = FirebaseFirestore.getInstance()
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
@@ -25,6 +29,7 @@ class SignInActivity : AppCompatActivity() {
         setup()
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun setup() {
         //Sign in
         signInButton.setOnClickListener {
@@ -61,7 +66,7 @@ class SignInActivity : AppCompatActivity() {
                                 .set(defaultCalendar)
                             val spanish = Locale("es", "ES")
                             var currency = "$"
-                            if (Locale.getDefault()==spanish){
+                            if (this.resources?.configuration?.locales?.get(0)==spanish){
                                 currency = "€"
                             }
                             db.collection("common").document(user.email).set(
@@ -86,21 +91,26 @@ class SignInActivity : AppCompatActivity() {
     private fun validateForm(): Boolean {
         var res = true
         if (emailEditTextSignIn != null && passwordEditTextSignIn != null) {
-            res = nameEditText.validator().nonEmpty().addErrorCallback { nameEditText.error = it }
+            res = nameEditText.validator().nonEmpty().addErrorCallback { nameEditText.error = resources.getString(R.string.nonEmptyValidation)
+            nameEditText.background = AppCompatResources.getDrawable(this, R.drawable.error_input)}
                 .check() &&
                     surnameEditText.validator().nonEmpty()
-                        .addErrorCallback { surnameEditText.error = it }.check() &&
+                        .addErrorCallback { surnameEditText.error = resources.getString(R.string.nonEmptyValidation)
+                        surnameEditText.background = AppCompatResources.getDrawable(this, R.drawable.error_input)}.check() &&
                     emailEditTextSignIn.validator().nonEmpty().validEmail()
-                        .addErrorCallback { emailEditTextSignIn.error = it }.check() &&
+                        .addErrorCallback { emailEditTextSignIn.error = resources.getString(R.string.nonEmptyValidation)
+                        emailEditTextSignIn.background = AppCompatResources.getDrawable(this, R.drawable.error_input)}.check() &&
                     passwordEditTextSignIn.validator().nonEmpty().atleastOneNumber()
-                        .addErrorCallback { passwordEditTextSignIn.error = it }.check() &&
+                        .addErrorCallback { passwordEditTextSignIn.error = resources.getString(R.string.nonEmptyValidation)
+                        passwordEditTextSignIn.background = AppCompatResources.getDrawable(this, R.drawable.error_input)}.check() &&
                     repeatPasswordEditText.validator()
                         .textEqualTo(passwordEditTextSignIn.text.toString())
-                        .addErrorCallback { repeatPasswordEditText.error = it }.check()
+                        .addErrorCallback { repeatPasswordEditText.error = resources.getString(R.string.equalToValidation)
+                        repeatPasswordEditText.background = AppCompatResources.getDrawable(this, R.drawable.error_input)}.check()
         } else {
             Toast.makeText(
                 this,
-                "Se ha producido un error. Por favor revise su email y contraseña",
+                resources.getString(R.string.loginError),
                 Toast.LENGTH_LONG
             ).show()
         }
@@ -110,7 +120,7 @@ class SignInActivity : AppCompatActivity() {
     private fun showAlert() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Error")
-        builder.setMessage("Se ha producido un error registrando al usuario")
+        builder.setMessage(resources.getString(R.string.alertError))
         builder.setPositiveButton("Aceptar", null)
         val dialog: AlertDialog = builder.create()
         dialog.show()
@@ -122,9 +132,6 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun populate(user: User) {
-        db.collection("common").document(user.email).set(
-            hashMapOf("money" to "1735.79", "currency" to "€")
-        )
         //popular tareas
         val start1 = java.util.Calendar.getInstance()
         start1.set(java.util.Calendar.DAY_OF_MONTH, 10)

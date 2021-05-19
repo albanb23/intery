@@ -141,7 +141,9 @@
                     android:layout_height="46dp"
                     android:background="@drawable/ic_input"
                     android:gravity="center_vertical"
-                    android:hint="@string/transactionDate" />
+                    android:paddingEnd="8dp"
+                    android:hint="@string/transactionDate"
+                    app:drawableEndCompat="@drawable/ic_calendario" />
 
                 <Space
                     android:layout_width="match_parent"

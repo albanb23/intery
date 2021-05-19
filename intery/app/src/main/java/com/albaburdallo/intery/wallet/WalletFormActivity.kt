@@ -4,12 +4,16 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import com.airbnb.lottie.LottieDrawable
+import com.albaburdallo.intery.BaseActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.util.entities.Entity
 import com.albaburdallo.intery.util.entities.Section
@@ -28,7 +32,7 @@ import java.util.*
 import kotlin.math.roundToInt
 
 
-class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
+class WalletFormActivity : BaseActivity(), DatePickerDialog.OnDateSetListener,
     AddEntityFragment.EntityCallBackListener, AddSectionFragment.SectionCallBackListener {
 
     private lateinit var transactions: ArrayList<Transaction>
@@ -36,7 +40,7 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     private lateinit var sections: ArrayList<String>
     private val db = FirebaseFirestore.getInstance()
     private lateinit var transaction: Transaction
-    private val authEmail = FirebaseAuth.getInstance().currentUser?.email;
+    private val authEmail = FirebaseAuth.getInstance().currentUser?.email
     private lateinit var transactionId: String
     private lateinit var date: Date
     private lateinit var entityAdapter: ArrayAdapter<String>
@@ -56,6 +60,7 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onStart() {
         super.onStart()
         loadingLottie.setAnimation(R.raw.loading)
@@ -382,13 +387,16 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     private fun validateForm(): Boolean {
         var res = true
         res =
-            quantityEditText.validator().nonEmpty().addErrorCallback { quantityEditText.error = it }
+            quantityEditText.validator().nonEmpty().addErrorCallback { quantityEditText.error = resources.getString(R.string.nonEmptyValidation)
+            quantityEditText.background = AppCompatResources.getDrawable(this, R.drawable.error_input)}
                 .check()
                     && conceptEditText.validator().nonEmpty()
-                .addErrorCallback { conceptEditText.error = it }
+                .addErrorCallback { conceptEditText.error = resources.getString(R.string.nonEmptyValidation)
+                conceptEditText.background = AppCompatResources.getDrawable(this, R.drawable.error_input)}
                 .check()
                     && dateEditText.validator().nonEmpty()
-                .addErrorCallback { dateEditText.error = it }
+                .addErrorCallback { dateEditText.error = resources.getString(R.string.nonEmptyValidation)
+                dateEditText.background = AppCompatResources.getDrawable(this, R.drawable.error_input)}
                 .check()
         if (sectionSpinner.selectedItem == resources.getString(R.string.selectSection)) {
             Toast.makeText(
@@ -396,6 +404,7 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                 this.getString(R.string.validateSection),
                 Toast.LENGTH_LONG
             ).show()
+            sectionSpinner.background = AppCompatResources.getDrawable(this, R.drawable.error_input)
             res = false
         }
         if (entitySpinner.selectedItem == resources.getString(R.string.selectEntity)) {
@@ -404,6 +413,7 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                 this.getString(R.string.validateEntity),
                 Toast.LENGTH_LONG
             ).show()
+            entitySpinner.background = AppCompatResources.getDrawable(this, R.drawable.error_input)
             res = false
         }
         return res
@@ -467,6 +477,7 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         startActivity(listIntent)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
         myDay = dayOfMonth
         myMonth = month
@@ -477,9 +488,10 @@ class WalletFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         dateEditText.text = formatDate(date)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun formatDate(date: Date): String {
         val pattern = "dd/MM/yyyy"
-        val simpleDateFormat = SimpleDateFormat(pattern)
+        val simpleDateFormat = SimpleDateFormat(pattern, resources?.configuration?.locales?.get(0))
         return simpleDateFormat.format(date)
     }
 

@@ -29,7 +29,7 @@ import java.net.URL
 import java.util.*
 import kotlin.collections.HashMap
 
-class ProfileActivity : AppCompatActivity() {
+class ProfileActivity : BaseActivity() {
     private val db = FirebaseFirestore.getInstance()
     private val authEmail = FirebaseAuth.getInstance().currentUser?.email
     private val PICK_IMAGE_REQUEST = 71

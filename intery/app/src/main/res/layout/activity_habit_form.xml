@@ -86,7 +86,6 @@
         android:hint="@string/habitName"
         android:inputType="textPersonName" />
 
-
         <Space
             android:layout_width="wrap_content"
             android:layout_height="16dp"/>
@@ -127,10 +126,12 @@
                 style="@style/input"
                 android:textSize="12sp"
                 android:ems="10"
+                android:paddingEnd="8dp"
                 android:gravity="center_vertical"
                 android:layout_weight="1"
                 android:hint="@string/habitRemind"
-                android:background="@drawable/ic_input"/>
+                android:background="@drawable/ic_input"
+                app:drawableEndCompat="@drawable/ic_reloj" />
 
         </LinearLayout>
 

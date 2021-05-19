@@ -2,11 +2,13 @@ package com.albaburdallo.intery.task
 
 import android.content.Context
 import android.graphics.Paint
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -39,6 +41,7 @@ class TaskAdapter(val tasks: MutableList<Task>): RecyclerView.Adapter<TaskAdapte
             itemView.setOnClickListener(this)
         }
 
+        @RequiresApi(Build.VERSION_CODES.N)
         fun bind(task: Task, tasks: MutableList<Task>) {
             taskName.text = task.name
             val unwrappedDrawable = AppCompatResources.getDrawable(context, R.drawable.calendar)
@@ -85,6 +88,7 @@ class TaskAdapter(val tasks: MutableList<Task>): RecyclerView.Adapter<TaskAdapte
             }
         }
 
+        @RequiresApi(Build.VERSION_CODES.N)
         private fun putDates(task: Task): String {
             var date = ""
             if (task.endDate == null || (task.endDate != null && task.startDate==task.endDate)) {
@@ -107,16 +111,18 @@ class TaskAdapter(val tasks: MutableList<Task>): RecyclerView.Adapter<TaskAdapte
             return date
         }
 
+        @RequiresApi(Build.VERSION_CODES.N)
         private fun formatDate(date: Date): String {
             val pattern = "dd/MM/yyyy"
-            val simpleDateFormat = SimpleDateFormat(pattern)
+            val simpleDateFormat = SimpleDateFormat(pattern, context.resources?.configuration?.locales?.get(0))
             return simpleDateFormat.format(date)
         }
 
+        @RequiresApi(Build.VERSION_CODES.N)
         private fun formatTime(date: Date): String {
             var res = ""
             val pattern = "dd/MM/yyyy HH:mm"
-            val simpleDateFormat = SimpleDateFormat(pattern)
+            val simpleDateFormat = SimpleDateFormat(pattern, context.resources?.configuration?.locales?.get(0))
             res = simpleDateFormat.format(date)
             val index = res.indexOf(" ")+1
             res = res.substring(index)
@@ -136,6 +142,7 @@ class TaskAdapter(val tasks: MutableList<Task>): RecyclerView.Adapter<TaskAdapte
         return ViewHolder(view)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onBindViewHolder(holder: TaskAdapter.ViewHolder, position: Int) {
         val task = tasks[position]
         holder.bind(task, tasks)

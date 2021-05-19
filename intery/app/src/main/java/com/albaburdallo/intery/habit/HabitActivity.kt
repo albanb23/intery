@@ -2,17 +2,21 @@ package com.albaburdallo.intery.habit
 
 import android.content.Context
 import android.content.Intent
-import android.icu.number.IntegerWidth
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.transition.Slide
+import android.transition.TransitionManager
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.albaburdallo.intery.HomeActivity
-import com.albaburdallo.intery.LoginActivity
-import com.albaburdallo.intery.ProfileActivity
-import com.albaburdallo.intery.R
+import com.albaburdallo.intery.*
 import com.albaburdallo.intery.task.TaskActivity
 import com.albaburdallo.intery.util.entities.Habit
 import com.albaburdallo.intery.wallet.WalletActivity
@@ -23,10 +27,12 @@ import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.activity_habit.*
 import kotlinx.android.synthetic.main.activity_profile.*
+import kotlinx.android.synthetic.main.habit_popup.*
 import kotlinx.android.synthetic.main.nav_header.*
 import kotlinx.android.synthetic.main.options.*
 
-class HabitActivity : AppCompatActivity() {
+
+class HabitActivity : BaseActivity() {
 
     private val db = FirebaseFirestore.getInstance()
     private val authEmail = FirebaseAuth.getInstance().currentUser?.email
@@ -37,6 +43,59 @@ class HabitActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_habit)
+        val editor = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
+        editor.clear().apply()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onResume() {
+        super.onResume()
+        val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
+        val dialogShown = prefs.getBoolean("habitDialog", false)
+
+        if (!dialogShown) {
+
+            // creamos la vista de popup
+            val inflater:LayoutInflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val view = inflater.inflate(R.layout.habit_popup, null)
+            val popup = PopupWindow(
+                view,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+
+            popup.elevation = 10.0F
+            //animacion del popup
+            val slideIn = Slide()
+            slideIn.slideEdge = Gravity.TOP
+            popup.enterTransition = slideIn
+
+            val slideOut = Slide()
+            slideOut.slideEdge = Gravity.RIGHT
+            popup.exitTransition = slideOut
+
+            //boton para cerrar el popup
+            val habitClosePopup = view.findViewById<ImageView>(R.id.habitClosePopup)
+            habitClosePopup.setOnClickListener {
+                popup.dismiss()
+            }
+
+            //enseñamos el popup en la app
+            Handler().postDelayed(Runnable {
+                TransitionManager.beginDelayedTransition(activity_habit)
+                popup.showAtLocation(
+                    findViewById(R.id.activity_habit), // Location to display popup window
+                    Gravity.CENTER, // Exact position of layout to display popup
+                    0, // X offset
+                    0 // Y offset
+                )
+            }, 100)
+
+
+            val editor = prefs.edit()
+            editor.putBoolean("habitDialog", true)
+            editor.apply()
+        }
     }
 
     override fun onStart() {
@@ -68,9 +127,38 @@ class HabitActivity : AppCompatActivity() {
                 val updated = document.get("updated") as Timestamp
                 val days = document.get("daysCompleted") as String
                 if (whenHabit!=null) {
-                    habits.add(Habit(id, name, notes, startDate.toDate(), color, notifyMe, whenHabit.toDate(), period.toInt(), times.toInt(), progress, updated.toDate(), days))
+                    habits.add(
+                        Habit(
+                            id,
+                            name,
+                            notes,
+                            startDate.toDate(),
+                            color,
+                            notifyMe,
+                            whenHabit.toDate(),
+                            period.toInt(),
+                            times.toInt(),
+                            progress,
+                            updated.toDate(),
+                            days
+                        )
+                    )
                 } else {
-                    habits.add(Habit(id, name, notes, startDate.toDate(), color, notifyMe, period.toInt(), times.toInt(), progress, updated.toDate(), days))
+                    habits.add(
+                        Habit(
+                            id,
+                            name,
+                            notes,
+                            startDate.toDate(),
+                            color,
+                            notifyMe,
+                            period.toInt(),
+                            times.toInt(),
+                            progress,
+                            updated.toDate(),
+                            days
+                        )
+                    )
                 }
             }
 
@@ -78,7 +166,7 @@ class HabitActivity : AppCompatActivity() {
             habitList.layoutManager = LinearLayoutManager(this)
             adapter = HabitAdapter(habits)
             habitList.adapter = adapter
-            adapter.setOnItemClickListener(object: HabitAdapter.ClickListener{
+            adapter.setOnItemClickListener(object : HabitAdapter.ClickListener {
                 override fun onItemClick(v: View, position: Int) {
                     val habit = habits[position]
                     showHabit(habit)
@@ -107,7 +195,7 @@ class HabitActivity : AppCompatActivity() {
                     true
                 }
                 R.id.habits_item -> {
-                    showHabit()
+                    showSettings()
                     true
                 }
                 R.id.settings_item -> {
@@ -170,6 +258,11 @@ class HabitActivity : AppCompatActivity() {
     private fun showLogin() {
         val loginIntent = Intent(this, LoginActivity::class.java).apply { }
         startActivity(loginIntent)
+    }
+
+    private fun showSettings() {
+        val settingsIntent = Intent(this, SettingsActivity::class.java).apply { }
+        startActivity(settingsIntent)
     }
 
     private fun showHome() {

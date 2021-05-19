@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.children
+import com.albaburdallo.intery.BaseActivity
 import com.albaburdallo.intery.R
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -39,7 +40,7 @@ import java.time.format.TextStyle
 import java.time.temporal.WeekFields
 import java.util.*
 
-class HabitShowActivity : AppCompatActivity() {
+class HabitShowActivity : BaseActivity() {
 
     private val db = FirebaseFirestore.getInstance()
     private val authEmail = FirebaseAuth.getInstance().currentUser?.email
@@ -64,11 +65,18 @@ class HabitShowActivity : AppCompatActivity() {
         db.collection("habits").document(habitId).get().addOnSuccessListener {
             val start = (it.get("startDate") as Timestamp).toDate() //0%
             val updated = (it.get("updated") as Timestamp).toDate()
-            val habitProgress = it.get("progress") as Double
+            var habitProgress = it.get("progress") as Double
             val period = it.get("period") as Long
             val times = it.get("times") as Long
             val daysCompleted = it.get("daysCompleted") as String
             val color = it.get("color") as String
+
+            val diff = ((today.time - start.time) / (1000*60*60*24)) //dias desde que empezo hasta hoy
+            println("diff============" + diff)
+            println("period============" + period)
+            if (diff >= period) { //si la ultima vez que se actualizo fue fuera del perdiodo, el progreso se actualiza
+                habitProgress = 0.0
+            }
 
             if (updated == today) {
                 completed = true
@@ -190,7 +198,7 @@ class HabitShowActivity : AppCompatActivity() {
                     container.legendLayout.children.map { it as TextView }.forEachIndexed { index, textView ->
                         textView.text = daysOfWeek[index].getDisplayName(
                             TextStyle.SHORT_STANDALONE,
-                            Locale.getDefault()
+                            resources?.configuration?.locales?.get(0)
                         ).toString().replace(".", "")
                     }
                 }
@@ -199,6 +207,7 @@ class HabitShowActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun calculateProgress(
         start: Date,
         today: Date,
@@ -249,8 +258,9 @@ class HabitShowActivity : AppCompatActivity() {
         }.start()
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun daysOfWeekFromLocale(): Array<DayOfWeek> {
-        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
+        val firstDayOfWeek = WeekFields.of(this.resources?.configuration?.locales?.get(0)).firstDayOfWeek
         var daysOfWeek = DayOfWeek.values()
         if (firstDayOfWeek != DayOfWeek.MONDAY) {
             val rhs = daysOfWeek.sliceArray(firstDayOfWeek.ordinal..daysOfWeek.indices.last)
@@ -267,11 +277,7 @@ class HabitShowActivity : AppCompatActivity() {
             selectedDate = date
             oldDate?.let { habitCalendarView.notifyDateChanged(it) }
             habitCalendarView.notifyDateChanged(date)
-            habitMonthTextView.text = formatDate(date).substring(
-                formatDate(date).indexOf(" "), formatDate(
-                    date
-                ).length
-            )
+            habitMonthTextView.text = formatMonth(date)
         }
     }
 
@@ -290,23 +296,34 @@ class HabitShowActivity : AppCompatActivity() {
         startActivity(habitFormIntent)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun formatDate(date: Date): String {
         val pattern = "dd/MM/yyyy"
-        val simpleDateFormat = SimpleDateFormat(pattern)
+        val simpleDateFormat = SimpleDateFormat(pattern, resources?.configuration?.locales?.get(0))
         return simpleDateFormat.format(date)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     @SuppressLint("SimpleDateFormat")
     private fun formatDate(date: LocalDate): String {
         val pattern = "d MMMM yyyy"
-        val simpleDateFormat = DateTimeFormatter.ofPattern(pattern)
+        val simpleDateFormat = DateTimeFormatter.ofPattern(pattern,resources?.configuration?.locales?.get(0))
         return simpleDateFormat.format(date)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
+    @SuppressLint("SimpleDateFormat")
+    private fun formatMonth(date: LocalDate): String {
+        val pattern = "MMMM"
+        val simpleDateFormat = DateTimeFormatter.ofPattern(pattern,resources?.configuration?.locales?.get(0))
+        return simpleDateFormat.format(date)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
     @SuppressLint("SimpleDateFormat")
     private fun formatDate2(date: LocalDate): String {
         val pattern = "dd/MM/yyyy"
-        val simpleDateFormat = DateTimeFormatter.ofPattern(pattern)
+        val simpleDateFormat = DateTimeFormatter.ofPattern(pattern,resources?.configuration?.locales?.get(0))
         return simpleDateFormat.format(date)
     }
 }

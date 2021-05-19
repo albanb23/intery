@@ -9,8 +9,11 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.view.View
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import com.albaburdallo.intery.BaseActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.util.entities.Habit
 import com.albaburdallo.intery.util.notifications.AlarmReceiver
@@ -27,7 +30,7 @@ import java.text.SimpleDateFormat
 import java.time.YearMonth
 import java.util.*
 
-class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
+class HabitFormActivity : BaseActivity(), TimePickerDialog.OnTimeSetListener {
 
     private val db = FirebaseFirestore.getInstance()
     private lateinit var habits: MutableList<Habit>
@@ -62,6 +65,7 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
         habitProgress = intent.extras?.getInt("progress") ?: 0
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onStart() {
         super.onStart()
         habitId = intent.extras?.getString("habitId") ?: ""
@@ -73,6 +77,19 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
             } else {
                 showHabit(habitId)
             }
+        }
+
+        val colorButton = findViewById<ImageView>(R.id.habitColorPoint)
+        colorButton.setOnClickListener {
+            ColorSheet().cornerRadius(8)
+                .colorPicker(colors = colors,
+                    noColorOption = noColorOption,
+                    selectedColor = selectedColor,
+                    listener = { color ->
+                        selectedColor = color
+                        colorButton.drawable.setTint(color)
+                    })
+                .show(supportFragmentManager)
         }
 
         val form = intent.extras?.getString("form") ?: ""
@@ -100,7 +117,7 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
                         it1.toDate()
                     )
                 }
-                habitColorPoint.setColorFilter((it.get("color") as String).toInt())
+                colorButton.drawable.setTint((it.get("color") as String).toInt())
                 selectedColor = (it.get("color") as String).toInt()
             }
 
@@ -158,19 +175,6 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
             }
         }
 
-        val colorButton = findViewById<ImageView>(R.id.habitColorPoint)
-        colorButton.setOnClickListener {
-            ColorSheet().cornerRadius(8)
-                .colorPicker(colors = colors,
-                    noColorOption = noColorOption,
-                    selectedColor = selectedColor,
-                    listener = { color ->
-                        selectedColor = color
-                        colorButton.drawable.setTint(color)
-                    })
-                .show(supportFragmentManager)
-        }
-
         //si se elige una hora de recordatorio pero no se marca el checkbox se marca solo
         if (habitReminderTextView.text != "" && habitReminderTextView.text != null && !habitRemindMeCheckBox.isChecked){
             habitRemindMeCheckBox.isChecked = true
@@ -197,9 +201,11 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
 
     private fun validateForm():Boolean {
         var res: Boolean
-        res = habitNameEditText.validator().nonEmpty().addErrorCallback { habitNameEditText.error = it }.check()
+        res = habitNameEditText.validator().nonEmpty().addErrorCallback { habitNameEditText.error = resources.getString(R.string.nonEmptyValidation)
+        habitNameEditText.background = AppCompatResources.getDrawable(this, R.drawable.error_input)}.check()
         if (habitRemindMeCheckBox.isChecked) {
-            res = habitReminderTextView.validator().nonEmpty().addErrorCallback { habitReminderTextView.error = it }.check()
+            res = habitReminderTextView.validator().nonEmpty().addErrorCallback { habitReminderTextView.error = resources.getString(R.string.nonEmptyValidation)
+            habitReminderTextView.background = AppCompatResources.getDrawable(this, R.drawable.error_input)}.check()
         }
         if (habitReminderTextView.text != "" && habitReminderTextView.text != null && !habitRemindMeCheckBox.isChecked){
             habitRemindMeCheckBox.isChecked = true
@@ -208,6 +214,7 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
         return res
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun addHabit() {
         val name = habitNameEditText.text.toString()
         var period = 0
@@ -289,16 +296,18 @@ class HabitFormActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListene
             notification(habit)
         }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun formatDate(date: Date): String {
         val pattern = "dd/MM/yyyy"
-        val simpleDateFormat = SimpleDateFormat(pattern)
+        val simpleDateFormat = SimpleDateFormat(pattern, resources?.configuration?.locales?.get(0))
         return simpleDateFormat.format(date)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun formatTime(date: Date): String {
         var res: String
         val pattern = "dd/MM/yyyy HH:mm"
-        val simpleDateFormat = SimpleDateFormat(pattern)
+        val simpleDateFormat = SimpleDateFormat(pattern, resources?.configuration?.locales?.get(0))
         res = simpleDateFormat.format(date)
         val index = res.indexOf(" ") + 1
         res = res.substring(index)

@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.albaburdallo.intery.BaseActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.util.entities.Task
 import com.google.firebase.Timestamp
@@ -36,7 +37,7 @@ import java.time.format.TextStyle
 import java.time.temporal.WeekFields
 import java.util.*
 
-class CalendarViewActivity : AppCompatActivity() {
+class CalendarViewActivity : BaseActivity() {
 
     private val db = FirebaseFirestore.getInstance()
     private val authEmail = FirebaseAuth.getInstance().currentUser?.email;
@@ -219,7 +220,6 @@ class CalendarViewActivity : AppCompatActivity() {
                     when(day.date) {
                         today -> {
                             textView.setTextColor(ContextCompat.getColor(this@CalendarViewActivity, R.color.yellow))
-//                            textView.setBackgroundResource(R.drawable.calendar_selected)
                         }
                         selectedDate -> {
                             textView.setTextColor(ContextCompat.getColor(this@CalendarViewActivity, R.color.white))
@@ -255,7 +255,7 @@ class CalendarViewActivity : AppCompatActivity() {
                     container.legendLayout.tag = month.yearMonth
                     //dias de la semana según el locale
                     container.legendLayout.children.map { it as TextView }.forEachIndexed { index, textView ->
-                        textView.text = daysOfWeek[index].getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault()).toString().replace(".", "")
+                        textView.text = daysOfWeek[index].getDisplayName(TextStyle.SHORT_STANDALONE, resources?.configuration?.locales?.get(0)).toString().replace(".", "")
                     }
                 }
             }
@@ -282,8 +282,9 @@ class CalendarViewActivity : AppCompatActivity() {
         startActivity(taskFormIntent)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun daysOfWeekFromLocale(): Array<DayOfWeek> {
-        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
+        val firstDayOfWeek = WeekFields.of(this.resources?.configuration?.locales?.get(0)).firstDayOfWeek
         var daysOfWeek = DayOfWeek.values()
         if (firstDayOfWeek != DayOfWeek.MONDAY) {
             val rhs = daysOfWeek.sliceArray(firstDayOfWeek.ordinal..daysOfWeek.indices.last)
@@ -304,6 +305,7 @@ class CalendarViewActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun updateAdapterForDate(date: LocalDate) {
         eventsAdapter.apply {
             events.clear()
@@ -319,10 +321,11 @@ class CalendarViewActivity : AppCompatActivity() {
         monthTextView.text = formatDate(date).substring(formatDate(date).indexOf(" "), formatDate(date).length)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     @SuppressLint("SimpleDateFormat")
     private fun formatDate(date: LocalDate): String {
         val pattern = "d MMMM yyyy"
-        val simpleDateFormat = DateTimeFormatter.ofPattern(pattern)
+        val simpleDateFormat = DateTimeFormatter.ofPattern(pattern, resources?.configuration?.locales?.get(0))
         return simpleDateFormat.format(date)
     }
 }

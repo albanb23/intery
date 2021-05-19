@@ -1,9 +1,11 @@
 package com.albaburdallo.intery.task
 
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.util.entities.Task
@@ -22,6 +24,7 @@ class EventsItemAdapter(val context: Context): RecyclerView.Adapter<EventsItemAd
             itemView.setOnClickListener(this)
         }
 
+        @RequiresApi(Build.VERSION_CODES.N)
         fun bind(task: Task) {
             itemView.taskNameTextView.text = task.name
             itemView.taskNotesTextView.text = task.notes
@@ -29,6 +32,7 @@ class EventsItemAdapter(val context: Context): RecyclerView.Adapter<EventsItemAd
             itemView.taskTimeTextView.text = putDates(task)
         }
 
+        @RequiresApi(Build.VERSION_CODES.N)
         private fun putDates(task: Task): String {
             var date = ""
             if (task.endDate == null || (task.endDate != null && task.startDate==task.endDate)) {
@@ -48,16 +52,18 @@ class EventsItemAdapter(val context: Context): RecyclerView.Adapter<EventsItemAd
             return date
         }
 
+        @RequiresApi(Build.VERSION_CODES.N)
         private fun formatDate(date: Date): String {
             val pattern = "d MMMM yyyy"
-            val simpleDateFormat = SimpleDateFormat(pattern)
+            val simpleDateFormat = SimpleDateFormat(pattern, context.resources?.configuration?.locales?.get(0))
             return simpleDateFormat.format(date)
         }
 
+        @RequiresApi(Build.VERSION_CODES.N)
         private fun formatTime(date: Date): String {
             var res = ""
             val pattern = "dd/MM/yyyy HH:mm"
-            val simpleDateFormat = SimpleDateFormat(pattern)
+            val simpleDateFormat = SimpleDateFormat(pattern, context.resources?.configuration?.locales?.get(0))
             res = simpleDateFormat.format(date)
             val index = res.indexOf(" ")+1
             res = res.substring(index)
@@ -76,6 +82,7 @@ class EventsItemAdapter(val context: Context): RecyclerView.Adapter<EventsItemAd
         return EventsViewHolder(view)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onBindViewHolder(holder: EventsViewHolder, position: Int) {
         val task = events[position]
         holder.bind(task)

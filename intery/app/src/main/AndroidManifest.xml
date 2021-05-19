@@ -12,7 +12,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:configChanges="locale|orientation"
         android:theme="@style/Theme.intery.NoActionBar">
+        <activity android:name=".SettingsActivity" />
         <activity android:name=".habit.HabitShowActivity" />
         <activity android:name=".habit.HabitFormActivity" />
         <activity android:name=".ProfileActivity" />

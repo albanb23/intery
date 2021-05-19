@@ -2,21 +2,15 @@ package com.albaburdallo.intery
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.icu.number.NumberFormatter.with
-import android.icu.number.NumberRangeFormatter.with
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.habit.HabitActivity
-import com.albaburdallo.intery.habit.HabitAdapter
 import com.albaburdallo.intery.habit.HabitHomeAdapter
 import com.albaburdallo.intery.task.TaskActivity
 import com.albaburdallo.intery.task.TaskFormActivity
@@ -42,14 +36,11 @@ import kotlinx.android.synthetic.main.loading_layout.*
 import kotlinx.android.synthetic.main.nav_header.*
 import kotlinx.android.synthetic.main.options.*
 import kotlinx.android.synthetic.main.task_list.*
-import java.io.IOException
-import java.net.MalformedURLException
-import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : BaseActivity() {
     private val db = FirebaseFirestore.getInstance()
     private lateinit var todayTasks: MutableList<Task>
     private lateinit var tomorrowTasks: MutableList<Task>
@@ -67,7 +58,6 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        this.getSupportActionBar()?.hide()
 
         val bundle = intent.extras
         val email = bundle?.getString("email")
@@ -301,7 +291,7 @@ class HomeActivity : AppCompatActivity() {
                     true
                 }
                 R.id.settings_item -> {
-                    showHabit()
+                    showSettings()
                     true
                 }
                 else -> {
@@ -378,6 +368,11 @@ class HomeActivity : AppCompatActivity() {
     private fun showHabit() {
         val habitIntent = Intent(this, HabitActivity::class.java).apply { }
         startActivity(habitIntent)
+    }
+
+    private fun showSettings() {
+        val settingsIntent = Intent(this, SettingsActivity::class.java).apply { }
+        startActivity(settingsIntent)
     }
 
     private fun showTaskForm(task: Task?, form: String) {

@@ -10,8 +10,11 @@ import android.os.SystemClock
 import android.text.TextUtils
 import android.view.View
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import com.albaburdallo.intery.BaseActivity
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.util.entities.Task
 import com.albaburdallo.intery.util.notifications.AlarmReceiver
@@ -26,7 +29,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
+class TaskFormActivity : BaseActivity(), DatePickerDialog.OnDateSetListener,
     TimePickerDialog.OnTimeSetListener {
     //    private lateinit var adapter: TaskAdapter
     private lateinit var tasks: ArrayList<Task>
@@ -65,6 +68,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         this.getSupportActionBar()?.hide()
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onStart() {
         super.onStart()
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
@@ -264,6 +268,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun addTask() {
         val name = taskNameEditText.text.toString()
         val notes = notesEditText.text.toString()
@@ -373,18 +378,25 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
     private fun validateForm(): Boolean {
         var res: Boolean
         res =
-            taskNameEditText.validator().nonEmpty().addErrorCallback { taskNameEditText.error = it }
+            taskNameEditText.validator().nonEmpty().addErrorCallback {
+                taskNameEditText.error = resources.getString(R.string.nonEmptyValidation)
+                taskNameEditText.background = AppCompatResources.getDrawable(this, R.drawable.error_input)
+            }
                 .check()
                     && startDateInput.validator().nonEmpty()
-                .addErrorCallback { startDateInput.error = it }.check()
+                .addErrorCallback { startDateInput.error = resources.getString(R.string.nonEmptyValidation)
+                startDateInput.background = AppCompatResources.getDrawable(this, R.drawable.error_input)}.check()
         if (!allDayCheckBox.isChecked) {
             res =
-                startTimeInput.validator().nonEmpty().addErrorCallback { startTimeInput.error = it }
+                startTimeInput.validator().nonEmpty().addErrorCallback { startTimeInput.error = resources.getString(R.string.nonEmptyValidation)
+                startTimeInput.background = AppCompatResources.getDrawable(this, R.drawable.error_input)}
                     .check()
                         && endDateInput.validator().nonEmpty()
-                    .addErrorCallback { endDateInput.error = it }.check()
+                    .addErrorCallback { endDateInput.error = resources.getString(R.string.nonEmptyValidation)
+                    endDateInput.background = AppCompatResources.getDrawable(this, R.drawable.error_input)}.check()
                         && endTimeInput.validator().nonEmpty()
-                    .addErrorCallback { endTimeInput.error = it }.check()
+                    .addErrorCallback { endTimeInput.error = resources.getString(R.string.nonEmptyValidation)
+                    endTimeInput.background = AppCompatResources.getDrawable(this, R.drawable.error_input)}.check()
         }
         if (calendarSelect.selectedItem == null) {
             Toast.makeText(
@@ -392,6 +404,7 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                 this.getString(R.string.calendarValidation),
                 Toast.LENGTH_LONG
             ).show()
+            calendarSelect.background = AppCompatResources.getDrawable(this, R.drawable.error_input)
             res = false
         }
 
@@ -446,16 +459,18 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun formatDate(date: Date): String {
         val pattern = "dd/MM/yyyy"
-        val simpleDateFormat = SimpleDateFormat(pattern)
+        val simpleDateFormat = SimpleDateFormat(pattern, resources?.configuration?.locales?.get(0))
         return simpleDateFormat.format(date)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun formatTime(date: Date): String {
         var res: String
         val pattern = "dd/MM/yyyy HH:mm"
-        val simpleDateFormat = SimpleDateFormat(pattern)
+        val simpleDateFormat = SimpleDateFormat(pattern, resources?.configuration?.locales?.get(0))
         res = simpleDateFormat.format(date)
         val index = res.indexOf(" ") + 1
         res = res.substring(index)
@@ -479,9 +494,10 @@ class TaskFormActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun notification(task: Task) {
         val cal = Calendar.getInstance()
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd/MM/yyyy", this.resources?.configuration?.locales?.get(0))
         cal.time = sdf.parse(startDateInput.text.toString())!!
         val startTime = Calendar.getInstance()
         if (task.startTime != null) {

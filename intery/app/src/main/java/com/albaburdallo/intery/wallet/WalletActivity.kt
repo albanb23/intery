@@ -9,10 +9,7 @@ import android.widget.ImageView
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.albaburdallo.intery.HomeActivity
-import com.albaburdallo.intery.LoginActivity
-import com.albaburdallo.intery.ProfileActivity
-import com.albaburdallo.intery.R
+import com.albaburdallo.intery.*
 import com.albaburdallo.intery.habit.HabitActivity
 import com.albaburdallo.intery.util.entities.Transaction
 import com.albaburdallo.intery.task.TaskActivity
@@ -29,7 +26,7 @@ import kotlinx.android.synthetic.main.activity_wallet.view.*
 import kotlinx.android.synthetic.main.loading_layout.*
 import kotlinx.android.synthetic.main.nav_header.*
 
-class WalletActivity : AppCompatActivity(){
+class WalletActivity : BaseActivity(){
 
     private val db = FirebaseFirestore.getInstance()
 
@@ -146,7 +143,7 @@ class WalletActivity : AppCompatActivity(){
                     true
                 }
                 R.id.habits_item -> {
-                    showHabit()
+                    showSettings()
                     true
                 }
                 R.id.settings_item -> {
@@ -214,6 +211,11 @@ class WalletActivity : AppCompatActivity(){
     private fun showHabit() {
         val habitIntent = Intent(this, HabitActivity::class.java).apply { }
         startActivity(habitIntent)
+    }
+
+    private fun showSettings() {
+        val settingsIntent = Intent(this, SettingsActivity::class.java).apply { }
+        startActivity(settingsIntent)
     }
 
     private fun showHome() {

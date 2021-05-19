@@ -1,10 +1,12 @@
 package com.albaburdallo.intery.task
 
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +27,6 @@ class TaskHomeAdapter(val tasks: MutableList<Task>): RecyclerView.Adapter<TaskHo
             context.getString(R.string.prefs_file),
             Context.MODE_PRIVATE
         )
-        private val showAll = prefs.getBoolean("showAll", false)
 
         private val taskName = itemView.findViewById<TextView>(R.id.taskNameListHome)
         private val taskDate = itemView.findViewById<TextView>(R.id.dateTaskListHome)
@@ -33,6 +34,7 @@ class TaskHomeAdapter(val tasks: MutableList<Task>): RecyclerView.Adapter<TaskHo
         val task: Task? = null
 
 
+        @RequiresApi(Build.VERSION_CODES.N)
         fun bind(task: Task, tasks: MutableList<Task>) {
             taskName.text = task.name
             val unwrappedDrawable = AppCompatResources.getDrawable(context, R.drawable.calendar)
@@ -47,6 +49,7 @@ class TaskHomeAdapter(val tasks: MutableList<Task>): RecyclerView.Adapter<TaskHo
             taskDate.text = putDates(task)
         }
 
+        @RequiresApi(Build.VERSION_CODES.N)
         private fun putDates(task: Task): String {
             var date = ""
             if (task.endDate == null || (task.endDate != null && task.startDate==task.endDate)) {
@@ -69,16 +72,18 @@ class TaskHomeAdapter(val tasks: MutableList<Task>): RecyclerView.Adapter<TaskHo
             return date
         }
 
+        @RequiresApi(Build.VERSION_CODES.N)
         private fun formatDate(date: Date): String {
             val pattern = "dd/MM/yyyy"
-            val simpleDateFormat = SimpleDateFormat(pattern)
+            val simpleDateFormat = SimpleDateFormat(pattern, context.resources?.configuration?.locales?.get(0))
             return simpleDateFormat.format(date)
         }
 
+        @RequiresApi(Build.VERSION_CODES.N)
         private fun formatTime(date: Date): String {
             var res = ""
             val pattern = "dd/MM/yyyy HH:mm"
-            val simpleDateFormat = SimpleDateFormat(pattern)
+            val simpleDateFormat = SimpleDateFormat(pattern, context.resources?.configuration?.locales?.get(0))
             res = simpleDateFormat.format(date)
             val index = res.indexOf(" ")+1
             res = res.substring(index)
@@ -92,6 +97,7 @@ class TaskHomeAdapter(val tasks: MutableList<Task>): RecyclerView.Adapter<TaskHo
         return ViewHolder(view)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onBindViewHolder(holder: TaskHomeAdapter.ViewHolder, position: Int) {
         val task = tasks[position]
         holder.bind(task, tasks)

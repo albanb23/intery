@@ -59,14 +59,6 @@
             android:paddingTop="16dp"
             android:paddingBottom="0dp">
 
-            <TextView
-                android:id="@+id/currencyTextView"
-                style="@style/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$"
-                android:textSize="32sp" />
-
             <EditText
                 android:id="@+id/moneyTextNumber"
                 style="@style/title"
@@ -76,6 +68,14 @@
                 android:inputType="numberDecimal"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
+                android:textSize="32sp" />
+
+            <TextView
+                android:id="@+id/currencyTextView"
+                style="@style/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$"
                 android:textSize="32sp" />
 
         </LinearLayout>
@@ -94,7 +94,7 @@
                 style="@style/button"
                 android:layout_width="wrap_content"
                 android:background="@drawable/transaction_button"
-                android:text="@string/addTransactionButton" />
+                android:text="@string/addTransaction" />
         </LinearLayout>
 
         <LinearLayout

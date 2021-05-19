@@ -56,9 +56,10 @@ class HabitAdapter(private val habits: MutableList<Habit>): RecyclerView.Adapter
             }
         }
 
+        @RequiresApi(Build.VERSION_CODES.N)
         private fun formatDate(date: Date): String {
             val pattern = "d MMMM yyyy"
-            val simpleDateFormat = SimpleDateFormat(pattern)
+            val simpleDateFormat = SimpleDateFormat(pattern, context.resources?.configuration?.locales?.get(0))
             return simpleDateFormat.format(date)
         }
 

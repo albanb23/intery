@@ -10,6 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.albaburdallo.tfg"
+        resConfigs "es", "en"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
@@ -68,6 +69,7 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-firestore:6.2.0'
     implementation 'com.github.PhilJay:MPAndroidChart:v2.2.4'
     implementation 'com.github.kizitonwose:CalendarView:1.0.3'
+    //noinspection GradleCompatible
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     implementation 'com.squareup.picasso:picasso:2.71828'

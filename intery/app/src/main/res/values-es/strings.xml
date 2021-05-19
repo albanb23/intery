@@ -27,7 +27,7 @@
     <string name="noTasks"><i>Aún no hay tareas</i></string>
     <string name="create_task">Nueva tarea</string>
     <string name="addTask"><b>Nueva tarea</b></string>
-    <string name="taskName">Título</string>
+    <string name="taskName">Título (Ej: Cenar con mamá)</string>
     <string name="taskStart">Inicio</string>
     <string name="taskEnd">Fin</string>
     <string name="taskDate">Fecha</string>
@@ -43,10 +43,10 @@
     <string name="myCalendars"><b>Mis calendarios</b></string>
     <string name="noCalendars">Aún no hay calendarios</string>
     <string name="create_calendar">Nuevo calendario</string>
-    <string name="calendarTitle">Título</string>
+    <string name="calendarTitle">Título (Ej: Trabajo)</string>
     <string name="create_calendar_title"><b><i>Nuevo calendario</i></b></string>
     <string name="cancel">Cancelar</string>
-    <string name="calendarDescription">Descripción</string>
+    <string name="calendarDescription">Descripción (Ej: Tareas para el trabajo)</string>
     <string name="calendarColor">Color</string>
     <string name="remainingTasks">tareas sin completar</string>
     <string name="calendarValidation">Se debe seleccionar un calendario</string>
@@ -56,7 +56,7 @@
     <string name="deleteCalendar" >Al borrar el calendario se borrarán todas las tareas que contiene, ¿desea continuar?</string>
     <string name="seeMore"><i>Ver más...</i></string>
     <string name="noTasksForToday"><i>No hay tareas para hoy</i></string>
-    <string name="addTransaction"><b>Añadir transacción</b></string>
+    <string name="addTransaction">Añadir transacción</string>
     <string name="all">Todo</string>
     <string name="expenditures">Gastos</string>
     <string name="incomes">Ingresos</string>
@@ -68,8 +68,8 @@
     <string name="newTransaction"><b><i>Nueva transacción</i></b></string>
     <string name="expenditure">Gasto</string>
     <string name="income">Ingreso</string>
-    <string name="transactionQuantity">Cantidad</string>
-    <string name="transactionConcept">Concepto</string>
+    <string name="transactionQuantity">Cantidad (Ej: 16.50)</string>
+    <string name="transactionConcept">Concepto (Ej: Ropa)</string>
     <string name="transactionDate">Fecha</string>
     <string name="transactionNotes">Notas</string>
     <string name="addEntity">Añadir entidad</string>
@@ -78,7 +78,6 @@
     <string name="sectionExists">Esta sección ya existe</string>
     <string name="createEntity"><b><i>Crear entidad</i></b></string>
     <string name="createSection"><b><i>Crear sección</i></b></string>
-    <string name="addTransactionButton">Añadir transacción</string>
     <string name="validateEntity">Se debe seleccionar una entidad</string>
     <string name="validateSection">Se debe seleccionar una sección</string>
     <string name="totalSavings">Este mes has ahorrado: </string>
@@ -114,13 +113,12 @@
     <string name="noHabits">Aún no hay hábitos</string>
     <string name="newHabit">Nuevo hábito</string>
     <string name="started">Empezó:</string>
-    <string name="habitName">Título</string>
-    <string name="habitDate">Fecha de fin</string>
+    <string name="habitName">Título (Ej: Ir a correr)</string>
     <string name="habitReminder">Recordatorio</string>
     <string name="habitNotes">Notas</string>
     <string name="habitColor">Color:</string>
     <string name="goal">Meta:</string>
-    <string name="habitRemind">Hora</string>
+    <string name="habitRemind">Hora del recordatorio</string>
     <string name="everyDay">Todos los días</string>
     <string name="twoAWeek">Dos veces a la semana</string>
     <string name="oneAWeek">Una vez a la semana</string>
@@ -144,4 +142,21 @@
     <string name="populateEntity3">Ana</string>
     <string name="populateTransactionName2">Bizum por la cena</string>
     <string name="populateHabitName">Meditar</string>
+    <string name="settings">Ajustes</string>
+    <string name="settingsLanguage">Idioma</string>
+    <string name="settingsCurrency">Moneda</string>
+    <string name="privacyPolicy">Política de privacidad</string>
+    <string name="serviceConditions">Condiciones de servicio</string>
+    <string name="legalNotice">Aviso legal</string>
+    <string name="privacySettings">Configuración de privacidad</string>
+    <string name="english">Inglés</string>
+    <string name="spanish">Español</string>
+    <string name="nonEmptyValidation">No puede estar vacío</string>
+    <string name="equalToValidation">Las contraseñas deben coincidir</string>
+    <string name="loginError">Se ha producido un error. Por favor revise su email y contraseña</string>
+    <string name="alertError">Se ha producido un error registrando al usuario</string>
+    <string name="entityName">Nombre (Ej: SheIn)</string>
+    <string name="sectionName">Nombre (Ej: Compras)</string>
+    <string name="habits">Un hábito es una actividad que se realiza repetidamente de forma corriente. ¡En esta sección podrás mantener el seguimiento de todos!</string>
+    <string name="whatAreHabits">¿Qué son los hábitos?</string>
 </resources>

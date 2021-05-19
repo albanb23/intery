@@ -1,11 +1,13 @@
 package com.albaburdallo.intery.wallet
 
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.albaburdallo.intery.R
 import com.albaburdallo.intery.util.entities.Transaction
@@ -36,6 +38,7 @@ class WalletAdapter(options: FirestoreRecyclerOptions<Transaction>
             itemView.setOnClickListener(this)
         }
 
+        @RequiresApi(Build.VERSION_CODES.N)
         fun bind(transaction: Transaction) {
             if(transaction.expenditure) {
                 expenditureIcon.visibility = View.VISIBLE
@@ -67,9 +70,10 @@ class WalletAdapter(options: FirestoreRecyclerOptions<Transaction>
             }
         }
 
+        @RequiresApi(Build.VERSION_CODES.N)
         private fun formatDate(date: Date): String {
             val pattern = "dd/MM/yyyy"
-            val simpleDateFormat = SimpleDateFormat(pattern)
+            val simpleDateFormat = SimpleDateFormat(pattern, context.resources?.configuration?.locales?.get(0))
             return simpleDateFormat.format(date)
         }
 
@@ -88,6 +92,7 @@ class WalletAdapter(options: FirestoreRecyclerOptions<Transaction>
         fun onItemCLick(v: View, position: Int)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onBindViewHolder(holder: ViewHolder, position: Int, model: Transaction) {
         holder.bind(model)
     }
