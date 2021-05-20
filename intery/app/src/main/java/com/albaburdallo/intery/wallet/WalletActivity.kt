@@ -2,10 +2,20 @@ package com.albaburdallo.intery.wallet
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.transition.Slide
+import android.transition.TransitionManager
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,6 +47,69 @@ class WalletActivity : BaseActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wallet)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onResume() {
+        super.onResume()
+        val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
+        val dialogShown = prefs.getBoolean("walletDialog", false)
+        val lang = prefs.getString("language", "")
+
+        if (!dialogShown) {
+
+            // creamos la vista de popup
+            val inflater: LayoutInflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val view = inflater.inflate(R.layout.wallet_popup, null)
+            val popup = PopupWindow(
+                view,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+
+            popup.elevation = 10.0F
+            //animacion del popup
+            val slideIn = Slide()
+            slideIn.slideEdge = Gravity.LEFT
+            popup.enterTransition = slideIn
+
+            val slideOut = Slide()
+            slideOut.slideEdge = Gravity.RIGHT
+            popup.exitTransition = slideOut
+
+            //idioma
+            val walletPopUpEsp = view.findViewById<ImageView>(R.id.wallet_popup_esp)
+            val walletPopUpEng = view.findViewById<ImageView>(R.id.wallet_popup_eng)
+            if (lang!="" && lang=="es") {
+                walletPopUpEsp.visibility = View.VISIBLE
+                walletPopUpEng.visibility = View.GONE
+            } else {
+                walletPopUpEng.visibility = View.VISIBLE
+                walletPopUpEsp.visibility = View.GONE
+            }
+
+            //boton para cerrar el popup
+            val walletClosePopup = view.findViewById<TextView>(R.id.walletClose)
+            walletClosePopup.setOnClickListener {
+                popup.dismiss()
+            }
+
+            //enseñamos el popup en la app
+            Handler().postDelayed(Runnable {
+                TransitionManager.beginDelayedTransition(activity_wallet)
+                popup.showAtLocation(
+                    findViewById(R.id.activity_wallet), // Location to display popup window
+                    Gravity.CENTER, // Exact position of layout to display popup
+                    0, // X offset
+                    0 // Y offset
+                )
+            }, 100)
+
+
+            val editor = prefs.edit()
+            editor.putBoolean("walletDialog", true)
+            editor.apply()
+        }
     }
 
 

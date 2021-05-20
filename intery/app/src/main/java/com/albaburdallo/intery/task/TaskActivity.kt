@@ -11,10 +11,7 @@ import android.transition.TransitionManager
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.PopupWindow
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,8 +48,6 @@ open class TaskActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task)
-        val editor = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
-        editor.clear().apply()
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -60,6 +55,7 @@ open class TaskActivity : BaseActivity() {
         super.onResume()
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
         val dialogShown = prefs.getBoolean("taskDialog", false)
+        val lang = prefs.getString("language", "")
 
         if (!dialogShown) {
 
@@ -75,15 +71,26 @@ open class TaskActivity : BaseActivity() {
             popup.elevation = 10.0F
             //animacion del popup
             val slideIn = Slide()
-            slideIn.slideEdge = Gravity.TOP
+            slideIn.slideEdge = Gravity.LEFT
             popup.enterTransition = slideIn
 
             val slideOut = Slide()
             slideOut.slideEdge = Gravity.RIGHT
             popup.exitTransition = slideOut
 
+            //idioma
+            val taskPopUpEsp = view.findViewById<ImageView>(R.id.tasks_popup_esp)
+            val taskPopUpEng = view.findViewById<ImageView>(R.id.tasks_popup_eng)
+            if (lang!="" && lang=="es") {
+                taskPopUpEsp.visibility = View.VISIBLE
+                taskPopUpEng.visibility = View.GONE
+            } else {
+                taskPopUpEng.visibility = View.VISIBLE
+                taskPopUpEsp.visibility = View.GONE
+            }
+
             //boton para cerrar el popup
-            val taskClosePopup = view.findViewById<ImageView>(R.id.taskClosePopup)
+            val taskClosePopup = view.findViewById<TextView>(R.id.taskClose)
             taskClosePopup.setOnClickListener {
                 popup.dismiss()
             }

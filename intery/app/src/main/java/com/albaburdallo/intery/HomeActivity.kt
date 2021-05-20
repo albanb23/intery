@@ -4,8 +4,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.transition.Slide
+import android.transition.TransitionManager
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -68,6 +76,70 @@ class HomeActivity : BaseActivity() {
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
         prefs.putString("email", email)
         prefs.apply()
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onResume() {
+        super.onResume()
+        val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
+        val dialogShown = prefs.getBoolean("homeDialog", false)
+        val lang = prefs.getString("language", "")
+
+        if (!dialogShown) {
+
+            // creamos la vista de popup
+            val inflater: LayoutInflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val view = inflater.inflate(R.layout.home_popup, null)
+            val popup = PopupWindow(
+                view,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+
+            popup.elevation = 10.0F
+            //animacion del popup
+            val slideIn = Slide()
+            slideIn.slideEdge = Gravity.LEFT
+            popup.enterTransition = slideIn
+
+            val slideOut = Slide()
+            slideOut.slideEdge = Gravity.RIGHT
+            popup.exitTransition = slideOut
+
+            //idioma
+            val homePopUpEsp = view.findViewById<ImageView>(R.id.home_popup_esp)
+            val homePopUpEng = view.findViewById<ImageView>(R.id.home_popup_eng)
+            if (lang!="" && lang=="es") {
+                homePopUpEsp.visibility = View.VISIBLE
+                homePopUpEng.visibility = View.GONE
+            } else {
+                homePopUpEng.visibility = View.VISIBLE
+                homePopUpEsp.visibility = View.GONE
+            }
+
+            //boton para cerrar el popup
+            val homeClosePopup = view.findViewById<TextView>(R.id.homeClose)
+            homeClosePopup.setOnClickListener {
+                popup.dismiss()
+            }
+
+            //enseñamos el popup en la app
+            Handler().postDelayed(Runnable {
+                TransitionManager.beginDelayedTransition(drawerLayout)
+                popup.showAtLocation(
+                    findViewById(R.id.drawerLayout), // Location to display popup window
+                    Gravity.CENTER, // Exact position of layout to display popup
+                    0, // X offset
+                    0 // Y offset
+                )
+            }, 100)
+
+
+            val editor = prefs.edit()
+            editor.putBoolean("homeDialog", true)
+            editor.apply()
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -106,9 +178,9 @@ class HomeActivity : BaseActivity() {
         val tomorrow = simpleDateFormat.format(cal.time)
         cal.add(Calendar.DATE, 1)
         val nextDay = simpleDateFormat.format(cal.time)
-        todayTextView.text = today
-        tomorrowTextView.text = tomorrow
-        nextDayTextView.text = nextDay
+        todayTextView.text = today.substring(0,1).toUpperCase() + today.substring(1)
+        tomorrowTextView.text = tomorrow.substring(0,1).toUpperCase() + tomorrow.substring(1)
+        nextDayTextView.text = nextDay.substring(0,1).toUpperCase() + nextDay.substring(1)
 
         val query = db.collection("tasks").whereEqualTo("done", false)
         query.orderBy("created", Query.Direction.DESCENDING).addSnapshotListener { value, error ->
@@ -224,6 +296,7 @@ class HomeActivity : BaseActivity() {
             }
         }
 
+        db.clearPersistence()
         habitList = findViewById(R.id.habitListView)
         habits = arrayListOf()
         db.collection("habits").whereEqualTo("user.email", authEmail).addSnapshotListener { value, error ->

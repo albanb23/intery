@@ -13,6 +13,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,8 +44,6 @@ class HabitActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_habit)
-        val editor = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
-        editor.clear().apply()
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -52,6 +51,7 @@ class HabitActivity : BaseActivity() {
         super.onResume()
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
         val dialogShown = prefs.getBoolean("habitDialog", false)
+        val lang = prefs.getString("language", "")
 
         if (!dialogShown) {
 
@@ -67,15 +67,26 @@ class HabitActivity : BaseActivity() {
             popup.elevation = 10.0F
             //animacion del popup
             val slideIn = Slide()
-            slideIn.slideEdge = Gravity.TOP
+            slideIn.slideEdge = Gravity.LEFT
             popup.enterTransition = slideIn
 
             val slideOut = Slide()
             slideOut.slideEdge = Gravity.RIGHT
             popup.exitTransition = slideOut
 
+            //idioma
+            val habitPopUpEsp = view.findViewById<ImageView>(R.id.habit_popup_esp)
+            val habitPopUpEng = view.findViewById<ImageView>(R.id.habit_popup_eng)
+            if (lang!="" && lang=="es") {
+                habitPopUpEsp.visibility = View.VISIBLE
+                habitPopUpEng.visibility = View.GONE
+            } else {
+                habitPopUpEng.visibility = View.VISIBLE
+                habitPopUpEsp.visibility = View.GONE
+            }
+
             //boton para cerrar el popup
-            val habitClosePopup = view.findViewById<ImageView>(R.id.habitClosePopup)
+            val habitClosePopup = view.findViewById<TextView>(R.id.habitClose)
             habitClosePopup.setOnClickListener {
                 popup.dismiss()
             }

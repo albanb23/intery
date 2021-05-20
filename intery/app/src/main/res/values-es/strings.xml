@@ -157,6 +157,5 @@
     <string name="alertError">Se ha producido un error registrando al usuario</string>
     <string name="entityName">Nombre (Ej: SheIn)</string>
     <string name="sectionName">Nombre (Ej: Compras)</string>
-    <string name="habits">Un hábito es una actividad que se realiza repetidamente de forma corriente. ¡En esta sección podrás mantener el seguimiento de todos!</string>
-    <string name="whatAreHabits">¿Qué son los hábitos?</string>
+    <string name="donePopup">ENTENDIDO</string>
 </resources>

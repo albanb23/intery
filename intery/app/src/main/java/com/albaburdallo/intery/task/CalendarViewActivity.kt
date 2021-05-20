@@ -318,7 +318,8 @@ class CalendarViewActivity : BaseActivity() {
             notifyDataSetChanged()
         }
         selectedDateText.text = formatDate(date)
-        monthTextView.text = formatDate(date).substring(formatDate(date).indexOf(" "), formatDate(date).length)
+        val month = date.month.getDisplayName(TextStyle.FULL_STANDALONE, resources?.configuration?.locales?.get(0)).toString().replace(".", "")
+        monthTextView.text = month.substring(0,1).toUpperCase()+month.substring(1)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)

@@ -157,6 +157,5 @@
     <string name="alertError">An error occurred while registering the user</string>
     <string name="entityName">Name (Ex: SheIn)</string>
     <string name="sectionName">Name (Ex: Shopping)</string>
-    <string name="whatAreHabits">What are habits?</string>
-    <string name="habits">A habit is an activity that is repeatedly performed on a regular basis. In this section you can keep track of them all!</string>
+    <string name="donePopup">DONE</string>
 </resources>

@@ -71,10 +71,11 @@ class HabitShowActivity : BaseActivity() {
             val daysCompleted = it.get("daysCompleted") as String
             val color = it.get("color") as String
 
-            val diff = ((today.time - start.time) / (1000*60*60*24)) //dias desde que empezo hasta hoy
-            println("diff============" + diff)
-            println("period============" + period)
-            if (diff >= period) { //si la ultima vez que se actualizo fue fuera del perdiodo, el progreso se actualiza
+            val cal = Calendar.getInstance()
+            cal.time = updated //fecha que se ha actualizado
+            cal.add(Calendar.DAY_OF_YEAR, period.toInt()) //se suma a la fecha que se actualizo los dias del periodo
+
+            if (cal.time.before(today) || cal.time.equals(today)) { //si ya ha pasado un periodo, se actualiza el progreso a 0
                 habitProgress = 0.0
             }
 
@@ -277,7 +278,8 @@ class HabitShowActivity : BaseActivity() {
             selectedDate = date
             oldDate?.let { habitCalendarView.notifyDateChanged(it) }
             habitCalendarView.notifyDateChanged(date)
-            habitMonthTextView.text = formatMonth(date)
+            val month = date.month.getDisplayName(TextStyle.FULL_STANDALONE, resources?.configuration?.locales?.get(0)).toString().replace(".", "")
+            habitMonthTextView.text = month.substring(0,1).toUpperCase()+month.substring(1)
         }
     }
 
