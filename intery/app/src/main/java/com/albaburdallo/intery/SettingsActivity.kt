@@ -11,6 +11,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_settings.*
@@ -109,6 +110,14 @@ class SettingsActivity : BaseActivity() {
             currencySpinner.setSelection(currSelection)
         }
 
+        privacyPolicy.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(resources.getString(R.string.privacyPolicy))
+            builder.setMessage(resources.getString(R.string.privacy_policy))
+            builder.setPositiveButton(resources.getString(R.string.done), null)
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
 
     }
 

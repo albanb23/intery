@@ -339,9 +339,9 @@ open class TaskActivity : BaseActivity() {
 
         logOutButton.setOnClickListener{
             //Borrado de datos
-            val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
-            prefs.clear()
-            prefs.apply()
+//            val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
+//            prefs.clear()
+//            prefs.apply()
 
             FirebaseAuth.getInstance().signOut()
             //onBackPressed() //para volver a la pantalla anterior

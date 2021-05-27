@@ -98,6 +98,7 @@ class HabitShowActivity : BaseActivity() {
                 //se pone el dia en el calendario mas oscuro
                 habitCalendarDayTextView.setBackgroundResource(R.drawable.day_completed_background)
                 habitCalendarDayTextView.background.setTint(ColorUtils.blendARGB(color.toInt(), Color.BLACK, 0.4f))
+                habitCalendarView.performClick()
                 habitCalendarView.notifyCalendarChanged()
 
                 completed = true
@@ -110,6 +111,7 @@ class HabitShowActivity : BaseActivity() {
                 //se pone el dia en el calendario mas claro
                 habitCalendarDayTextView.setBackgroundResource(R.drawable.day_background)
                 habitCalendarDayTextView.background.setTint(color.toInt())
+                habitCalendarView.performClick()
                 habitCalendarView.notifyCalendarChanged()
 
                 completed = false

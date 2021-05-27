@@ -181,13 +181,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="8dp" />
 
-            <CheckBox
-                android:id="@+id/termsCheckBox"
-                style="@style/text"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Acepto los términos  y condiciones"
-                android:textSize="16dp" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/termsCheckBox"
+                    style="@style/text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/acepto_los"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/termsTexView"
+                    style="@style/text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="6dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/red"
+                    android:text="@string/terminos_y_condiciones"
+                    android:textSize="16sp" />
+            </LinearLayout>
 
             <Space
                 android:layout_width="match_parent"

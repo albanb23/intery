@@ -86,6 +86,15 @@ class SignInActivity : BaseActivity() {
         closeViewSignIn.setOnClickListener {
             showLogin()
         }
+
+        termsTexView.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(resources.getString(R.string.terminos_y_condiciones))
+            builder.setMessage(resources.getString(R.string.terms_conditions))
+            builder.setPositiveButton(resources.getString(R.string.done), null)
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
     }
 
     private fun validateForm(): Boolean {

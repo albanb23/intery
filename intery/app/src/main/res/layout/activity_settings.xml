@@ -105,46 +105,46 @@
             android:padding="8dp"
             android:text="@string/privacyPolicy" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="1dp"-->
+<!--            android:background="@android:color/darker_gray"/>-->
 
-        <TextView
-            android:id="@+id/serviceConditions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            style="@style/title"
-            android:padding="8dp"
-            android:text="@string/serviceConditions" />
+<!--        <TextView-->
+<!--            android:id="@+id/serviceConditions"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            style="@style/title"-->
+<!--            android:padding="8dp"-->
+<!--            android:text="@string/serviceConditions" />-->
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="1dp"-->
+<!--            android:background="@android:color/darker_gray"/>-->
 
-        <TextView
-            android:id="@+id/legalNotice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            style="@style/title"
-            android:padding="8dp"
-            android:text="@string/legalNotice" />
+<!--        <TextView-->
+<!--            android:id="@+id/legalNotice"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            style="@style/title"-->
+<!--            android:padding="8dp"-->
+<!--            android:text="@string/legalNotice" />-->
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="1dp"-->
+<!--            android:background="@android:color/darker_gray"/>-->
 
-        <TextView
-            android:id="@+id/privacySettings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            style="@style/title"
-            android:padding="8dp"
-            android:text="@string/privacySettings" />
+<!--        <TextView-->
+<!--            android:id="@+id/privacySettings"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            style="@style/title"-->
+<!--            android:padding="8dp"-->
+<!--            android:text="@string/privacySettings" />-->
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

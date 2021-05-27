@@ -158,4 +158,88 @@
     <string name="entityName">Nombre (Ej: SheIn)</string>
     <string name="sectionName">Nombre (Ej: Compras)</string>
     <string name="donePopup">ENTENDIDO</string>
+    <string name="terminos_y_condiciones">Términos y condiciones</string>
+    <string name="acepto_los">Acepto los</string>
+    <string name="privacy_policy"><p>Fecha última actualización: 27/05/2021</p><br /><br />
+        <p>De conformidad con el Reglamento (UE) 2016/679, del Parlamento Europeo y del Consejo, de 27 de abril de 2016, relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de estos datos (Reglamento General de Protección de Datos - RGPD), Intery, informa a los usuarios de la aplicación Intery (en adelante, la Aplicación), acerca del tratamiento de los datos personales, que ellos voluntariamente hayan facilitado durante el proceso de registro, acceso y utilización del servicio. </p>
+        <br />
+        <ol>
+            <li><p><strong>IDENTIFICACIÓN DEL RESPONSABLE DEL TRATAMIENTO.</strong></p>
+                <p>Intery es la entidad responsable del tratamiento de los datos facilitados por los clientes de la Aplicación (en adelante, el/los Usuario/s)</p>
+            </li>
+            <br />
+            <li><p><strong>FINALIDAD DEL TRATAMIENTO DE DATOS.</strong></p>
+                <p>Para proceder al registro, acceso y posterior uso de la Aplicación, el Usuario deberá facilitar -de forma voluntaria-, datos de carácter personal (esencialmente, identificativos y de contacto), los cuales serán incorporados a soportes automatizados titularidad de Intery.</p>
+            </li>
+        </ol>
+        <br />
+        <p>La recogida, almacenamiento, modificación, estructuración y en su caso, eliminación, de los datos proporcionados por los Usuarios, constituirán operaciones de tratamiento llevadas a cabo por el Responsable, con la finalidad de garantizar el correcto funcionamiento de la Aplicación, mantener la relación de prestación de servicios y/o comercial con el Usuario, y para la gestión, administración, información, prestación y mejora del servicio. </p>
+        <p>Los datos personales facilitados por el Usuario -especialmente, el correo electrónico o e-mail- podrán emplearse también para remitir boletines (newsletters), así como comunicaciones comerciales de promociones y/o publicidad de la Aplicación, siempre y cuando, el Usuario haya prestado previamente su consentimiento expreso para la recepción de estas comunicaciones vía electrónica. </p>
+        <br />
+        <ol>
+            <li><strong>LEGITIMACIÓN.</strong></li>
+        </ol>
+        <p>El tratamiento de los datos del Usuario, se realiza con las siguientes bases jurídicas que legitiman el mismo: </p>
+        <ul>
+            <li>La solicitud de información y/o la contratación de los servicios de la Aplicación, cuyos términos y condiciones se pondrán a disposición del Usuario en todo caso, con carácter previo, para su expresa aceptación. </li>
+            <li>El consentimiento libre, específico, informado e inequívoco del Usuario, poniendo a su disposición la presente política de privacidad, que deberá aceptar mediante una declaración o una clara acción afirmativa, como el marcado de una casilla dispuesta al efecto.</li>
+        </ul>
+        <p>En caso de que el Usuario no facilite a Intery sus datos, o lo haga de forma errónea o incompleta, no será posible proceder al uso de la Aplicación.</p>
+        <br />
+        <ol>
+            <li><strong>CONSERVACIÓN DE LOS DATOS PERSONALES.</strong> </li>
+        </ol>
+        <p>Los datos personales proporcionados por el Usuario, se conservarán en los sistemas y bases de datos del Responsable del Tratamiento, mientras aquél continúe haciendo uso de la Aplicación, y siempre que no solicite su supresión. </p>
+        <p>Con el objetivo de depurar las posibles responsabilidades derivadas del tratamiento, los datos se conservarán por un período mínimo de cinco años</p>
+        <br />
+        <ol>
+            <li><strong>DESTINATARIOS</strong></li>
+        </ol>
+        <p>Los datos no se comunicarán a ningún tercero ajeno a Intery, salvo obligación legal o en cualquier caso, previa solicitud del consentimiento del Usuario. </p>
+        <p>De otra parte, Intery podrá dar acceso o transmitir los datos personales facilitados por el Usuario, a terceros proveedores de servicios, con los que haya suscrito acuerdos de encargo de tratamiento de datos, y que únicamente accedan a dicha información para prestar un servicio en favor y por cuenta del Responsable. </p>
+        <br />
+        <ol>
+            <li><strong>RETENCIÓN DE DATOS. </strong></li>
+        </ol>
+        <p>Inery, informa al Usuario de que, como prestador de servicio de alojamiento de datos y en virtud de lo establecido en la Ley 34/2002 de 11 de julio de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI), retiene por un período máximo de 12 meses la información imprescindible para identificar el origen de los datos alojados y el momento en que se inició la prestación del servicio.</p>
+        <p> La retención de estos datos no afecta al secreto de las comunicaciones y sólo podrán ser utilizados en el marco de una investigación criminal o para la salvaguardia de la seguridad pública, poniéndose a disposición de los jueces y/o tribunales o del Ministerio que así los requiera. </p>
+        <p>La comunicación de datos a las Fuerzas y Cuerpos de Seguridad del Estado, se hará en virtud de lo dispuesto por la normativa sobre protección de datos personales, y bajo el máximo respeto a la misma. </p>
+        <br />
+        <ol>
+            <li><strong>PROTECCIÓN DE LA INFORMACIÓN ALOJADA</strong></li>
+        </ol>
+        <p>El Responsable del Tratamiento, adopta las medidas necesarias para garantizar la seguridad, integridad y confidencialidad de los datos conforme a lo dispuesto en el Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016, relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de los mismos. </p>
+        <p>Si bien el Responsable, realiza copias de seguridad de los contenidos alojados en sus servidores, sin embargo no se responsabiliza de la pérdida o el borrado accidental de los datos por parte de los Usuarios. De igual manera, no garantiza la reposición total de los datos borrados por los Usuarios, ya que los citados datos podrían haber sido suprimidos y/o modificados durante el periodo de tiempo transcurrido desde la última copia de seguridad. </p>
+        <p>Los servicios facilitados o prestados a través de la Aplicación, excepto los servicios específicos de backup, no incluyen la reposición de los contenidos conservados en las copias de seguridad realizadas por el Responsable del Tratamiento, cuando esta pérdida sea imputable al usuario; en este caso, se determinará una tarifa acorde a la complejidad y volumen de la recuperación, siempre previa aceptación del usuario. La reposición de datos borrados sólo está incluida en el precio del servicio cuando la pérdida del contenido sea debida a causas atribuibles al Responsable. </p>
+        <br />
+        <ol>
+            <li><strong>EJERCICIO DE DERECHOS. </strong></li>
+        </ol>
+        <p>Intery, informa al Usuario de que le asisten los derechos de acceso, rectificación, limitación, supresión, oposición y portabilidad, los cuales podrá ejercitar mediante petición dirigida al correo electrónico:intery@gmail.com.</p>
+        <p> Asimismo, el Usuario tiene derecho a revocar el consentimiento inicialmente prestado, y a interponer reclamaciones de derechos frente a la Agencia Española de Protección de Datos (AEPD). </p>
+        <br />
+        <ol>
+            <li><strong>COMUNICACIONES COMERCIALES POR VÍA ELECTRÓNICA.</strong> </li>
+        </ol>
+        <p>En aplicación de la LSSI (Ley de Servicios de la Sociedad de la Información), Intery, no enviará comunicaciones publicitarias o promocionales por correo electrónico u otro medio de comunicación electrónica equivalente que previamente no hubieran sido solicitadas o expresamente autorizadas por los destinatarios de las mismas.</p>
+        <p>En el caso de usuarios con los que exista una relación contractual, jurídica o de servicios previa, el Responsable del Tratamiento, sí está autorizado al envío de comunicaciones comerciales referentes a productos o servicios del Responsable que sean similares a los que inicialmente fueron objeto de contratación con el cliente. </p>
+        <p>En caso de que el Usuario quiera darse de baja a la hora de recibir las citadas comunicaciones, podrá hacerlo remitiendo su voluntad por e-mail al correo electrónico: intery@gmail.com</p>
+    </string>
+    <string name="terms_conditions"><p>Estos términos y condiciones (&quot;Acuerdo&quot;) establecen los términos y condiciones generales de su uso de la aplicación móvil &quot;Intery&quot; (&quot;Aplicación móvil&quot; o &quot;Servicio&quot;) y cualquiera de sus productos y servicios relacionados (colectivamente, &quot;Servicios&quot;). Este Acuerdo es legalmente vinculante entre usted (&quot;Usuario&quot;, &quot;usted&quot; o &quot;su&quot;) y este desarrollador de la Aplicación Móvil (&quot;Operador&quot;, &quot;nosotros&quot;, &quot;nos&quot; o &quot;nuestro&quot;). Al acceder y utilizar la Aplicación Móvil y los Servicios, usted reconoce que ha leído, comprendido y aceptado los términos de este Acuerdo. Si celebra el presente Acuerdo en nombre de una empresa u otra entidad jurídica, declara que tiene autoridad para vincular a dicha entidad al presente Acuerdo, en cuyo caso los términos "Usuario", "usted" o "su" se referirán a dicha entidad. Si usted no tiene dicha autoridad, o si no está de acuerdo con los términos de este Acuerdo, no debe aceptar este Acuerdo y no puede acceder y utilizar la Aplicación Móvil y los Servicios. Usted reconoce que este Acuerdo es un contrato entre usted y el Operador, aunque sea electrónico y no esté firmado físicamente por usted, y que rige su uso de la Aplicación Móvil y los Servicios.</p>
+        <h2>Cuentas y afiliación</h2>
+<p>Si usted crea una cuenta en la Aplicación Móvil, es responsable de mantener la seguridad de su cuenta y es totalmente responsable de todas las actividades que se produzcan bajo la cuenta y de cualquier otra acción realizada en relación con ella. Podemos, pero no tenemos la obligación, de supervisar y revisar las nuevas cuentas antes de que usted pueda iniciar sesión y comenzar a utilizar los Servicios. Proporcionar información de contacto falsa de cualquier tipo puede dar lugar a la cancelación de su cuenta. Debe notificarnos inmediatamente cualquier uso no autorizado de su cuenta o cualquier otra violación de la seguridad. No seremos responsables de ningún acto u omisión por su parte, incluidos los daños de cualquier tipo que se produzcan como resultado de dichos actos u omisiones. Podemos suspender, inhabilitar o eliminar su cuenta (o cualquier parte de ella) si determinamos que usted ha violado cualquier disposición de este Acuerdo o que su conducta o contenido tiende a dañar nuestra reputación y buena voluntad. Si eliminamos su cuenta por los motivos anteriores, no podrá volver a registrarse en nuestros Servicios. Podremos bloquear su dirección de correo electrónico y su dirección de protocolo de Internet para evitar que vuelva a registrarse.</p>
+<h2>Contenido del usuario</h2>
+<p>No somos propietarios de ningún dato, información o material (colectivamente, &quot;Contenido&quot;) que usted envíe en la Aplicación Móvil en el curso del uso del Servicio. Usted será el único responsable de la exactitud, calidad, integridad, legalidad, fiabilidad, adecuación y propiedad intelectual o derecho de uso de todo el Contenido enviado. Podemos, pero no tenemos la obligación de, supervisar y revisar el Contenido en la Aplicación Móvil enviado o creado usando nuestros Servicios por usted. Usted nos autoriza a acceder, copiar, distribuir, almacenar, transmitir, reformatear, mostrar y ejecutar el Contenido de su cuenta de usuario únicamente en la medida en que sea necesario para prestarle los Servicios. Sin limitar ninguna de esas representaciones o garantías, tenemos el derecho, aunque no la obligación, de, a nuestra propia discreción, rechazar o eliminar cualquier Contenido que, en nuestra opinión razonable, viole cualquiera de nuestras políticas o sea de alguna manera perjudicial u objetable. A menos que usted lo permita específicamente, su uso de la Aplicación Móvil y los Servicios no nos otorga la licencia para utilizar, reproducir, adaptar, modificar, publicar o distribuir el Contenido creado por usted o almacenado en su cuenta de usuario con fines comerciales, de marketing o cualquier otro propósito similar.</p>
+<h2>Copias de seguridad</h2>
+<p>Realizamos copias de seguridad periódicas del Contenido y haremos todo lo posible para garantizar la integridad y exactitud de estas copias de seguridad. En caso de fallo de hardware o pérdida de datos, restauraremos las copias de seguridad automáticamente para minimizar el impacto y el tiempo de inactividad.</p>
+<h2>Enlaces a otros recursos</h2>
+<p>Aunque la Aplicación Móvil y los Servicios pueden enlazar con otros recursos (como sitios web, aplicaciones móviles, etc.), no estamos, directa o indirectamente, implicando ninguna aprobación, asociación, patrocinio, respaldo o afiliación con ningún recurso enlazado, a menos que se indique específicamente en el presente documento. No somos responsables de examinar o evaluar, y no garantizamos las ofertas de ninguna empresa o individuo ni el contenido de sus recursos. No asumimos ninguna responsabilidad por las acciones, productos, servicios y contenidos de terceros. Usted debe revisar cuidadosamente las declaraciones legales y otras condiciones de uso de cualquier recurso al que acceda a través de un enlace en la Aplicación Móvil y los Servicios. Su enlace a cualquier otro recurso fuera del sitio es bajo su propio riesgo.</p>
+<h2>Cambios y modificaciones</h2>
+<p>Nos reservamos el derecho a modificar este Acuerdo o sus términos relacionados con la Aplicación Móvil y los Servicios en cualquier momento, con efecto a partir de la publicación de una versión actualizada de este Acuerdo en la Aplicación Móvil. Cuando lo hagamos, revisaremos la fecha de actualización en la parte inferior de esta página. El uso continuado de la Aplicación Móvil y los Servicios después de cualquiera de estos cambios constituirá su consentimiento a dichos cambios.</p>
+<h2>Aceptación de estos términos</h2>
+<p>Usted reconoce que ha leído este Acuerdo y acepta todos sus términos y condiciones. Al acceder y utilizar la Aplicación Móvil y los Servicios, usted acepta someterse a este Acuerdo. Si no acepta cumplir los términos de este Acuerdo, no está autorizado a acceder o utilizar la Aplicación Móvil y los Servicios. Esta política de términos y condiciones fue creada con el <a target="_blank" href="https://www.websitepolicies.com/terms-and-conditions-generator">generador de términos y condiciones</a>.</p>
+<h2>Contactar con nosotros</h2>
+<p>Si desea ponerse en contacto con nosotros para comprender mejor este Acuerdo o desea ponerse en contacto con nosotros sobre cualquier asunto relacionado con él, puede enviar un correo electrónico a i&#110;&#116;&#101;&#114;&#121;&#64;g&#109;&#97;il.&#99;o&#109;.</p>
+<p>Este documento fue actualizado por última vez el 27 de mayo de 2021</p>
+</string>
 </resources>
