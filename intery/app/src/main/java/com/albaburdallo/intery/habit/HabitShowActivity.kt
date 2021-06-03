@@ -43,7 +43,6 @@ import java.util.*
 class HabitShowActivity : BaseActivity() {
 
     private val db = FirebaseFirestore.getInstance()
-    private val authEmail = FirebaseAuth.getInstance().currentUser?.email
     private lateinit var habitId: String
     private val today = Calendar.getInstance().time
     private var completed = false

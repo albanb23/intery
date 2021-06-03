@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/activity_habit"
+    android:background="@color/white"
     tools:context=".habit.HabitActivity">
 
     <LinearLayout
