@@ -206,11 +206,11 @@ class HabitActivity : BaseActivity() {
                     true
                 }
                 R.id.habits_item -> {
-                    showSettings()
+                    showHabit()
                     true
                 }
                 R.id.settings_item -> {
-                    showHabit()
+                    showSettings()
                     true
                 }
                 else -> {

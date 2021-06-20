@@ -149,7 +149,7 @@ class HomeActivity : BaseActivity() {
         floatingCreateTask.setOnClickListener { showTaskForm(null, "create") }
         floatingCreateTransaction.setOnClickListener { showWalletForm(null, "create") }
 
-        db.collection("common").document(authEmail ?: "").addSnapshotListener { value, error ->
+        db.collection("common").document(authEmail!!).addSnapshotListener { value, error ->
             if (error != null) {
                 return@addSnapshotListener
             }
