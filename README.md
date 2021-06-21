@@ -2,5 +2,8 @@
 
 Aplicación para la organización diaria
 
-<img src="/intery/app/src/main/res/drawable/Login.png" alt="Pantalla de inicio de sesión"/>
-<img src="/intery/app/src/main/res/drawable/Home.png" alt="Pantalla de home"/>
+<img src="/intery/app/src/main/res/drawable/readme.png" />
+
+
+Para importar el proyecto en Android Studio se debe descargar, pulsar en File > New > Import project... y seleccionar la carpeta donde lo tengamos.
+Para instalarlo en un dispositivo móvil habrá que descargar el apk.
