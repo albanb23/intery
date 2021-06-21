@@ -55,7 +55,7 @@ open class TaskActivity : BaseActivity() {
         super.onResume()
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
         val dialogShown = prefs.getBoolean("taskDialog", false)
-        val lang = prefs.getString("language", "")
+        val lang = prefs.getString("language", "es")
 
         if (!dialogShown) {
 

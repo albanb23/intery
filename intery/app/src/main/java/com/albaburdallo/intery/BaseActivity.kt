@@ -12,7 +12,7 @@ open class BaseActivity: AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
-        val lang = prefs.getString("language", "")
+        val lang = prefs.getString("language", "es")
         val myLocale = Locale(lang)
         val res = resources
         val dm = res.displayMetrics

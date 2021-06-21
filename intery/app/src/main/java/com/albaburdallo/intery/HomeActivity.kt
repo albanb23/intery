@@ -84,7 +84,7 @@ class HomeActivity : BaseActivity() {
         super.onResume()
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
         val dialogShown = prefs.getBoolean("homeDialog", false)
-        val lang = prefs.getString("language", "")
+        val lang = prefs.getString("language", "es")
 
         if (!dialogShown) {
 
@@ -296,7 +296,6 @@ class HomeActivity : BaseActivity() {
             }
         }
 
-        db.clearPersistence()
         habitList = findViewById(R.id.habitListView)
         habits = arrayListOf()
         db.collection("habits").whereEqualTo("user.email", authEmail).addSnapshotListener { value, error ->

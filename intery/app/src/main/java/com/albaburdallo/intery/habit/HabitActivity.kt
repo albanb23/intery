@@ -51,7 +51,7 @@ class HabitActivity : BaseActivity() {
         super.onResume()
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
         val dialogShown = prefs.getBoolean("habitDialog", false)
-        val lang = prefs.getString("language", "")
+        val lang = prefs.getString("language", "es")
 
         if (!dialogShown) {
 
@@ -230,6 +230,13 @@ class HabitActivity : BaseActivity() {
             showLogin()
         }
 
+        // al pulsar sobre la foto de perfil del menu se va al perfil
+        val header = nav_view.getHeaderView(0)
+        val profilePicImage = header.findViewById<ImageView>(R.id.profilePicImage)
+        profilePicImage.setOnClickListener {
+            showProfile(authEmail!!)
+        }
+
         db.collection("users").document(authEmail!!).get().addOnSuccessListener {
             var photo = it.get("photo") as String
             if (photo != "") {
@@ -241,12 +248,7 @@ class HabitActivity : BaseActivity() {
             }
         }
 
-        // al pulsar sobre la foto de perfil del menu se va al perfil
-        val header = nav_view.getHeaderView(0)
-        val profilePicImage = header.findViewById<ImageView>(R.id.profilePicImage)
-        profilePicImage.setOnClickListener {
-            showProfile(authEmail)
-        }
+
     }
 
     private fun showHabit(habit: Habit) {
