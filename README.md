@@ -6,4 +6,4 @@ Aplicación para la organización diaria
 
 
 Para importar el proyecto en Android Studio se debe descargar, pulsar en File > New > Import project... y seleccionar la carpeta donde lo tengamos.
-Para instalarlo en un dispositivo móvil habrá que descargar el apk.
+Para instalarlo en un dispositivo móvil habrá que descargar el apk de la release.
